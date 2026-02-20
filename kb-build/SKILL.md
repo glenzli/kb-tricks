@@ -1,5 +1,5 @@
 ---
-name: kb-builder
+name: kb-build
 description: "An advanced skill for building highly efficient, agent-consumable, and validated knowledge bases using a cognitive-mapping pipeline."
 ---
 
