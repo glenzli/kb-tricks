@@ -6,14 +6,27 @@ A collection of composable AI skills designed around **Cognitive Mapping**, **Ad
 
 ## Skills
 
-### 🧠 [kb-build](./kb-build/SKILL.md) — Full Knowledge Base Construction
+### 🚀 [kb-init](./kb-init/SKILL.md) — One-Click Orchestration Pipeline
 
-Builds a high-signal, low-maintenance knowledge base from scratch.
+An orchestrator meta-skill that autonomously drives the `kb-plan` -> `Human Confirmation` -> `kb-build` pipeline, providing a seamless "Plan & Execute" experience.
 
+### 🗺️ [kb-plan](./kb-plan/SKILL.md) — Knowledge Base Blueprinting
+
+Scans the repository to identify high-signal boundaries and generates a structured `KB_PLAN.md` blueprint.
+
+- **Macro Discovery**: Reads manifest files and directory trees without deep-diving into code
+- **Signal-to-Noise Isolation**: Explicitly filters out boilerplate, tests, and dependencies
+- **Task Chunking**: Breaks down the documentation process into manageable, file-by-file tasks
+
+### 🧠 [kb-build](./kb-build/SKILL.md) — Blueprint Execution & KB Construction
+
+Executes the `KB_PLAN.md` blueprint chunk by chunk to build a high-signal knowledge base.
+
+- **Plan Execution**: Iteratively processes tasks from the blueprint ensuring no loss of context
 - **Cognitive Mapping**: Captures cross-module contracts and design trade-offs, not boilerplate
 - **Mermaid Diagrams**: Mandatory for complex API interaction chains
 - **Semantic Glossary**: Terms + synonyms as retrieval anchors for RAG
-- **3-D Adversarial Validation**: Architecture / Design Intent / Boundary questions, scored against KB-only access
+- **Context-Cleared Validation**: 3-D adversarial questions scored against KB-only access to prevent hallucination
 - **Source Fingerprinting**: Git Commit IDs for rot detection
 
 ### 🔄 [kb-update](./kb-update/SKILL.md) — Incremental Knowledge Maintenance
@@ -40,9 +53,11 @@ Multi-dimensional code review using specialized expert prompts.
 ## How They Connect
 
 ```
-kb-build ──fingerprints──→ kb-update ──stale detection──→ kb-update
-    │                                                        ↑
-    └──────── KB ──────────→ moe-cr ──KB-Action: UPDATE──────┘
+kb-init (Orchestrator) ──drives──┐
+                                 ▼
+kb-plan ──blueprint──→ kb-build ──fingerprints──→ kb-update ──stale detection──→ kb-update
+                           │                                                        ↑
+                           └──────── KB ──────────→ moe-cr ──KB-Action: UPDATE──────┘
 ```
 
 ## License
@@ -59,14 +74,27 @@ kb-build ──fingerprints──→ kb-update ──stale detection──→ kb
 
 ## 技能一览
 
-### 🧠 [kb-build](./kb-build/SKILL.md) — 全量知识库构建
+### 🚀 [kb-init](./kb-init/SKILL.md) — 一键编排流水线
 
-从零构建高信噪比、低维护成本的知识库。
+一个“元技能 (Meta-Skill)”，它负责自主编排 `kb-plan` -> `人类确认` -> `kb-build` 这一完整的“规划与执行 (Plan & Execute)”流水线，提供顺滑的交互体验。
 
+### 🗺️ [kb-plan](./kb-plan/SKILL.md) — 知识库蓝图规划
+
+通过宏观扫描代码库，区分高信噪比边界，并生成结构化的 `KB_PLAN.md` 施工计划书。
+
+- **宏观探索**：阅读配置和目录树，不深陷具体代码细节
+- **信噪比隔离**：显式过滤样板代码、测试文件和外部依赖
+- **任务分块**：将文档化过程拆解为可管理、防上下文溢出的逐文件任务
+
+### 🧠 [kb-build](./kb-build/SKILL.md) — 蓝图执行与知识库构建
+
+按块执行 `KB_PLAN.md` 计划书，构建高信噪比、低维护成本的知识库。
+
+- **计划执行**：迭代式处理蓝图中的任务，确保不丢失上下文
 - **认知地图**：记录跨模块契约和设计权衡，而非样板代码
 - **Mermaid 图谱**：复杂 API 交互链路强制要求可视化
 - **语义触发词典**：术语 + 同义词，作为 RAG 检索锚点
-- **三维对抗验证**：架构 / 设计意图 / 边界条件三个维度提问，仅允许基于 KB 作答
+- **清空上下文验证**：架构/设计意图/边界三维提问，仅允许基于 KB 作答以防幻觉
 - **源码指纹**：Git Commit ID 用于知识腐烂检测
 
 ### 🔄 [kb-update](./kb-update/SKILL.md) — 增量知识维护
@@ -93,9 +121,11 @@ kb-build ──fingerprints──→ kb-update ──stale detection──→ kb
 ## 技能之间的关联
 
 ```
-kb-build ──指纹──→ kb-update ──过期检测──→ kb-update
-    │                                        ↑
-    └──── KB ────→ moe-cr ──KB-Action: UPDATE─┘
+kb-init (Orchestrator) ──驱动──┐
+                             ▼
+kb-plan ──蓝图──→ kb-build ──指纹──→ kb-update ──过期检测──→ kb-update
+                      │                                        ↑
+                      └──── KB ────→ moe-cr ──KB-Action: UPDATE─┘
 ```
 
 ## 许可证
