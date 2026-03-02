@@ -53,3 +53,31 @@ description: "一个高级执行技能，它读取并执行 KB_PLAN.md 计划书
 1. 回到 `KB_PLAN.md`。
 2. 将刚刚完美执行完毕的任务的复选框从 `[ ]` 更新为 `[x]`。
 3. **重复循环**返回【第 1 步】，继续认领下一个未完成的任务，直到 `KB_PLAN.md` 中的所有复选框均被打勾完毕。
+
+# 示例 (Examples)
+
+## 示例：为一个 Express API 项目的鉴权模块构建知识库
+1. **计划载入 (Load Plan)**：读取 `KB_PLAN.md`，发现第一个未完成任务：
+   ```
+   - [ ] `.agent/kb/api/auth-flow.md`
+     - **Sources**: `src/api/auth.ts`, `src/middleware/rbac.ts`
+     - **Focus**: JWT 令牌的分发、校验机制以及基于角色的访问控制验证链路。
+   ```
+2. **精准阅读**：仅读取 `src/api/auth.ts` 和 `src/middleware/rbac.ts` 两个文件。
+3. **生成文档**：在 `.agent/kb/api/auth-flow.md` 中生成认知地图，包含：
+   - Frontmatter（`id: "api-auth-flow"`, `fingerprint` 含两个源码文件的当前 commit hash）。
+   - 一个 Mermaid 时序图展示 `Request → rbacMiddleware → JWT Verify → Controller` 流程。
+   - SSOT 链接指向 `.agent/kb/core/database.md`（引用用户表结构，不重复定义）。
+4. **更新词汇表**：在 `GLOSSARY.md` 中添加 `JWT | Bearer Token, Auth Token | [auth-flow.md](./api/auth-flow.md)`。
+5. **自我评估**：
+   - *架构问题*："如果要新增一个 'SuperAdmin' 角色，需要修改哪些文件？" — 仅从 KB 回答，成功引用了 `rbac.ts` 的角色枚举。
+   - *边界问题*："公钥轮换时尚未过期的 Token 如何处理？" — KB 中未记载，标记为盲区，补充文档后重试通过。
+6. **推进计划**：将 `KB_PLAN.md` 中该条目更新为 `[x]`，进入下一个任务。
+
+# 联动触发 (Cross-Skill Triggers)
+> 以下建议在对应技能已安装时可选触发。调用时使用技能名称，Agent 会自动查找对应的 SKILL.md。如果技能未安装，在结果中告知用户并建议手动执行对应操作。
+
+| 触发条件 | 建议调用技能 | 目的 |
+|---|---|---|
+| `KB_PLAN.md` 中所有任务均已完成 | `kb-audit` | 对新构建的知识库进行全面健康体检 |
+
