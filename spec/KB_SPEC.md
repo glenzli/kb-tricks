@@ -144,6 +144,49 @@ python3 tools/kb_update_plan.py --repo /path/to/project --since HEAD~1 --json
 
 It reuses the same mutually exclusive scope options as `kb impact`, then adds dirty-source gates and bounded update actions. JSON output includes `actions`, `blocked`, `docsActions`, `newKbCandidates`, `specialActions`, `releaseExcludedChanges`, and `policy`. It is read-only: it does not read changed file contents, rewrite KB prose, mutate `KB_PLAN.md`, or refresh fingerprints.
 
+### Query Answer Schema
+
+`kb-query` answers must be provenance-first Markdown documents. Every factual line in the answer section must use one or more source markers:
+
+- `[KB]`
+- `[源码回退]` or `[Source Fallback]`
+- `[现有 docs]` or `[Existing Docs]`
+
+Inference must not appear in the factual answer section. If inference is unavoidable, isolate it under `## 不确定性与推断 (Uncertainty & Inference)` and mark it with `⚠️ [推断]` or `[Inference]`.
+
+Required sections:
+
+```markdown
+## 回答 (Answer)
+
+<factual answer lines with source markers>
+
+## 不确定性与推断 (Uncertainty & Inference)
+
+无
+
+## 引用出处 (Citations)
+
+- KB: `.agent/kb/...`
+- 源码: `src/file.ts:42`
+- 现有 docs: `docs/file.md`
+- 推断: 无
+
+## 知识库状态 (KB Status)
+
+- ✅ 新鲜 / ⚠️ 部分过期 / ⚠️ dirty 或 draft / ❌ 未覆盖
+```
+
+`templates/query-answer.md` provides the starter structure. `tools/kb_query_lint.py` checks required sections, factual source markers, inference isolation, and citation coverage:
+
+```text
+kb query-lint answer.md
+kb query-lint --json answer.md
+python3 tools/kb_query_lint.py templates/query-answer.md
+```
+
+Exit code `0` means the answer contract passed. Exit code `1` means the linter found provenance or structure failures. Exit code `2` means the linter could not read the requested input.
+
 ## KB Frontmatter
 
 Every authoritative KB document must start with YAML-like frontmatter:

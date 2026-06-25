@@ -18,6 +18,7 @@ COMMANDS = {
     "fingerprint": "tools.kb_fingerprint",
     "impact": "tools.kb_impact",
     "manifest": "tools.kb_manifest",
+    "query-lint": "tools.kb_query_lint",
     "scaffold": "tools.kb_scaffold",
     "update-plan": "tools.kb_update_plan",
 }

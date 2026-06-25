@@ -31,6 +31,7 @@ Current repository support:
 - `tools/kb_fingerprint.py` generates and checks dirty-aware source fingerprints used by KB frontmatter.
 - `tools/kb_impact.py` maps `--staged`, `--worktree`, `--base`, `--since`, or `--files` changes to Manifest tasks, existing docs changes, and special KB artifact changes for diff-first maintenance.
 - `tools/kb_update_plan.py` turns impact results into read-only bounded update actions, blockers, existing-docs reviews, special artifact reviews, and new KB candidates.
+- `tools/kb_query_lint.py` checks `kb-query` answer drafts for required sections, source type markers, inference isolation, and citation coverage.
 - `kb` is the installed CLI dispatcher for the deterministic tools; source checkouts may still call `python3 tools/kb_*.py` directly.
 - `kb self-check` is the release smoke boundary: it imports every released subcommand module and verifies that the installed dispatcher can reach each tool.
 
@@ -157,7 +158,7 @@ Every factual answer from `kb-query` must label its source type:
 - `Existing docs`
 - `Inference`
 
-Inference must be isolated in an uncertainty section and must not be presented as fact.
+Inference must be isolated in an uncertainty section and must not be presented as fact. `templates/query-answer.md` and `kb query-lint` make this contract checkable before an answer is delivered or reused.
 
 ### 8. Diff-first maintenance
 
@@ -209,7 +210,7 @@ python3 tools/kb_audit.py --min-score B
 ### P1: Make it maintainable
 
 - Long-lived `KB_PLAN.md` manifest states.
-- Hard provenance in `kb-query`.
+- Hard provenance in `kb-query` with lintable answer drafts.
 - Diff-first `kb-update`.
 - Persisted validation artifacts.
 - Audit awareness of draft, dirty, stale, orphaned, merged, and deprecated states.

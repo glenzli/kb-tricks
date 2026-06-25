@@ -22,7 +22,7 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 ## Specs And Tooling
 
 - [spec/KB_SPEC.md](./spec/KB_SPEC.md): stable artifact schema for `.agent/kb/config.yaml`, `KB_PLAN.md`, KB frontmatter, validation files, glossary, and `index.json`.
-- [templates/](./templates): starter templates for config, manifest, KB docs, and validation artifacts.
+- [templates/](./templates): starter templates for config, manifest, KB docs, validation artifacts, and query answers.
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py): dependency-free scaffold helper for installing starter config, manifest, and reserved KB directories into a target repository.
 - [tools/kb_manifest.py](./tools/kb_manifest.py): dependency-free selector for bounded `KB_PLAN.md` task execution.
 - [tools/kb_docs.py](./tools/kb_docs.py): dependency-free existing-docs inventory and manifest comparison coverage helper.
@@ -30,6 +30,7 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py): dependency-free helper for generating and checking dirty-aware source fingerprints.
 - [tools/kb_impact.py](./tools/kb_impact.py): dependency-free diff-first changed-file to Manifest task mapper for `kb-update`.
 - [tools/kb_update_plan.py](./tools/kb_update_plan.py): dependency-free read-only planner that turns impact data into bounded update actions, blockers, docs reviews, and new KB candidates.
+- [tools/kb_query_lint.py](./tools/kb_query_lint.py): dependency-free provenance linter for `kb-query` answers.
 
 Installed CLI example:
 
@@ -44,6 +45,7 @@ kb impact --repo /path/to/project --base main --json
 kb impact --repo /path/to/project --since HEAD~1 --json
 kb update-plan --repo /path/to/project --staged --json
 kb update-plan --repo /path/to/project --worktree --draft --json
+kb query-lint templates/query-answer.md
 kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
 kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```
@@ -54,6 +56,7 @@ Source checkout fallback:
 python3 tools/kb_audit.py --repo /path/to/project --write-index .agent/kb/index.json
 python3 tools/kb_impact.py --repo /path/to/project --files src/cli/release.ts --json
 python3 tools/kb_update_plan.py --repo /path/to/project --since HEAD~1 --json
+python3 tools/kb_query_lint.py templates/query-answer.md
 ```
 
 Minimal CI smoke chain:
@@ -113,7 +116,7 @@ Anti-hallucination knowledge retrieval with automatic source code verification.
 - **Glossary-Driven Lookup**: Semantic trigger matching via `GLOSSARY.md` for precise document routing
 - **Graph Walk**: Traverses SSOT links to collect full context — never scans the entire KB
 - **Source Code Fallback**: When KB lacks concrete API signatures or logic details, automatically reads source code to verify — never fabricates
-- **Structured Citations**: Every answer marks sources as 📚 KB or 📄 Source Fallback
+- **Provenance Contract**: Every factual answer line marks KB, source fallback, or existing docs; inference is isolated and lintable
 - **Blindspot Reporting**: Honestly reports gaps instead of hallucinating
 
 ### 🩺 [kb-audit](./kb-audit/SKILL.md) — Knowledge Base Health Check
@@ -238,7 +241,7 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 ## 规范与工具
 
 - [spec/KB_SPEC.md](./spec/KB_SPEC.md)：定义 `.agent/kb/config.yaml`、`KB_PLAN.md`、KB frontmatter、验证文件、词汇表和 `index.json` 的稳定结构。
-- [templates/](./templates)：提供 config、Manifest、KB 文档和验证产物模板。
+- [templates/](./templates)：提供 config、Manifest、KB 文档、验证产物和查询回答模板。
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py)：无依赖的初始化辅助工具，用于把 starter config、Manifest 和 KB 保留目录安装到目标仓库。
 - [tools/kb_manifest.py](./tools/kb_manifest.py)：无依赖的 `KB_PLAN.md` 小步任务选择器，用于落实 bounded execution。
 - [tools/kb_docs.py](./tools/kb_docs.py)：无依赖的现有文档清单与 Manifest Docs Comparison 覆盖率检查工具。
@@ -246,6 +249,7 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py)：无依赖的 dirty-aware source fingerprint 生成与检查工具。
 - [tools/kb_impact.py](./tools/kb_impact.py)：无依赖的 diff-first changed files 到 Manifest 任务影响面映射工具，供 `kb-update` 使用。
 - [tools/kb_update_plan.py](./tools/kb_update_plan.py)：无依赖的只读更新规划工具，把 impact 结果转换为 bounded actions、阻塞项、docs review 和新 KB 候选。
+- [tools/kb_query_lint.py](./tools/kb_query_lint.py)：无依赖的 `kb-query` 回答来源类型与推断隔离检查工具。
 
 安装后的 CLI 示例：
 
@@ -260,6 +264,7 @@ kb impact --repo /path/to/project --base main --json
 kb impact --repo /path/to/project --since HEAD~1 --json
 kb update-plan --repo /path/to/project --staged --json
 kb update-plan --repo /path/to/project --worktree --draft --json
+kb query-lint templates/query-answer.md
 kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
 kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```
@@ -270,6 +275,7 @@ kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 python3 tools/kb_audit.py --repo /path/to/project --write-index .agent/kb/index.json
 python3 tools/kb_impact.py --repo /path/to/project --files src/cli/release.ts --json
 python3 tools/kb_update_plan.py --repo /path/to/project --since HEAD~1 --json
+python3 tools/kb_query_lint.py templates/query-answer.md
 ```
 
 最小 CI smoke chain：
@@ -329,7 +335,7 @@ kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --fail-on 
 - **词汇表驱动检索**：通过 `GLOSSARY.md` 语义触发匹配精准定位文档
 - **图谱遍历**：沿 SSOT 链接按需展开上下文——从不全量扫描 KB
 - **源码回退**：当 KB 缺乏具体 API 签名或逻辑细节时，自动读取源码验证——绝不捏造
-- **结构化引用**：每条回答标注来源为 📚 KB 或 📄 源码回退
+- **来源契约**：每条事实回答标注 KB、源码回退或现有 docs；推断隔离并可被 lint
 - **盲区上报**：诚实报告知识空白，而非幻觉填充
 
 ### 🩺 [kb-audit](./kb-audit/SKILL.md) — 知识库健康体检
