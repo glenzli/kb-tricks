@@ -51,6 +51,7 @@ description: "一个高级执行技能，它按小切片读取并执行 KB_PLAN.
 为选定的任务生成知识库 Markdown 文件，并遵从以下规范：
 
 1. **标准元数据 (Frontmatter)**：每个 KB 文件**必须**在头部包含 YAML Frontmatter 区块。
+   可参考 `templates/kb-doc.md`；稳定字段定义见 `spec/KB_SPEC.md`。
    ```yaml
    ---
    id: "module-unique-id"
@@ -82,6 +83,8 @@ description: "一个高级执行技能，它按小切片读取并执行 KB_PLAN.
 
 ### 第 5 步：清空上下文自我评估并落盘 (Context-Cleared Validation Artifact)
 为了保证文档并非依赖你大脑内部的临时源码记忆，在生成阶段完成且落地写入完毕后，就当前写入的这篇文档执行一次校验，并把验证产物写入 `.agent/kb/_validation/<task-id>.md`：
+
+可参考 `templates/validation.md`；稳定字段定义见 `spec/KB_SPEC.md`。
 
 1. 设计 1 个架构问题和 1 个边界条件问题（共 2 个刁钻问题）。
 2. 在脑内抹除刚刚看过的相关源码的细节记忆。

@@ -18,6 +18,12 @@ The knowledge base is not the source of truth. Source code, configuration, tests
 
 The first implementation stage should strengthen the Skill and Spec layers without pretending that a full CLI already exists. CLI-shaped options such as `slice 2` or `dry-run` are interpreted as skill invocation contracts until a real tool layer is added.
 
+Current repository support:
+
+- `spec/KB_SPEC.md` defines the artifact schema.
+- `templates/` provides starter artifacts for target repositories.
+- `tools/kb_audit.py` provides the first deterministic Tool Layer helper. It audits existing artifacts and can write `.agent/kb/index.json`; it does not generate KB prose.
+
 ## Core Operating Contracts
 
 ### 1. Bounded execution by default
@@ -167,12 +173,12 @@ Each validation file should record questions, KB-only answers, citations, pass/f
 
 After the core schemas stabilize, `kb-tricks` should generate `.agent/kb/index.json` with document paths, terms, source files, fingerprints, links, tags, status, and staleness.
 
-The future tool layer should support CI-friendly checks such as:
+The deterministic tool layer should support CI-friendly checks such as:
 
 ```text
-kb-audit --fail-on stale
-kb-audit --fail-on dead-links
-kb-audit --min-score B
+python3 tools/kb_audit.py --fail-on stale
+python3 tools/kb_audit.py --fail-on dead-links
+python3 tools/kb_audit.py --min-score B
 ```
 
 ## Delivery Phases

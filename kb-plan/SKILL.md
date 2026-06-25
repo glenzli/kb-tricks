@@ -34,7 +34,8 @@ description: "一个用于探索代码库并生成长期知识库 Manifest (KB_P
        - docs/**
    ```
 3. 如果不存在，基于仓库结构在 `KB_PLAN.md` 中生成一个 **Proposed Artifact Boundary** 区块，列出建议的 include / exclude / releaseExcluded / docs.existing，并暂停要求用户确认或调整。不要在边界未确认时继续生成细粒度任务。
-4. `releaseExcluded` 表示不应被发布产物语义吸收的上下文资产。规划时可以读取，但在报告中必须标注其不属于 release-facing docs。
+4. 可参考 `templates/config.yaml` 的结构生成建议配置；稳定字段定义见 `spec/KB_SPEC.md`。
+5. `releaseExcluded` 表示不应被发布产物语义吸收的上下文资产。规划时可以读取，但在报告中必须标注其不属于 release-facing docs。
 
 ### 第 1 步：宏观探索 (Macro Discovery)
 1. **禁止深入阅读具体代码。**
@@ -62,6 +63,8 @@ description: "一个用于探索代码库并生成长期知识库 Manifest (KB_P
 
 ### 第 4 步：生成长期 Manifest (Generate Long-Lived Manifest)
 在**项目的根目录**（与 `README.md` 同级）生成或更新 `KB_PLAN.md`。`KB_PLAN.md` 不应放入 `.agent/kb/` 知识库内容目录中。知识库正文内容统一存放在 `.agent/kb/` 目录下。
+
+可参考 `templates/KB_PLAN.md` 的结构；稳定字段定义见 `spec/KB_SPEC.md`。
 
 **必须使用如下格式规范：**
 

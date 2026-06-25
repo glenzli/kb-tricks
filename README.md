@@ -19,6 +19,19 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - **Existing docs comparison**: KB planning should compare existing docs before creating a parallel documentation island.
 - **Provenance-first answers**: query results distinguish KB, source fallback, existing docs, and inference.
 
+## Specs And Tooling
+
+- [spec/KB_SPEC.md](./spec/KB_SPEC.md): stable artifact schema for `.agent/kb/config.yaml`, `KB_PLAN.md`, KB frontmatter, validation files, glossary, and `index.json`.
+- [templates/](./templates): starter templates for config, manifest, KB docs, and validation artifacts.
+- [tools/kb_audit.py](./tools/kb_audit.py): dependency-free deterministic audit helper for hashes, dirty-state checks, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
+
+Example:
+
+```bash
+python3 tools/kb_audit.py --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
+python3 tools/kb_audit.py --repo /path/to/project --write-index .agent/kb/index.json
+```
+
 ## Skills
 
 ### 🚀 [kb-init](./kb-init/SKILL.md) — One-Click Orchestration Pipeline
@@ -187,6 +200,19 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - **dirty-aware 指纹**：KB 元数据记录 Git 状态和内容哈希，而不只是 commit ID。
 - **已有文档对比**：规划 KB 前先比较现有文档，避免制造第二套文档孤岛。
 - **来源优先回答**：查询结果必须区分 KB、源码回退、现有文档和推断。
+
+## 规范与工具
+
+- [spec/KB_SPEC.md](./spec/KB_SPEC.md)：定义 `.agent/kb/config.yaml`、`KB_PLAN.md`、KB frontmatter、验证文件、词汇表和 `index.json` 的稳定结构。
+- [templates/](./templates)：提供 config、Manifest、KB 文档和验证产物模板。
+- [tools/kb_audit.py](./tools/kb_audit.py)：无依赖的确定性审计辅助工具，负责 hash、dirty 状态、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
+
+示例：
+
+```bash
+python3 tools/kb_audit.py --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
+python3 tools/kb_audit.py --repo /path/to/project --write-index .agent/kb/index.json
+```
 
 ## 技能一览
 
