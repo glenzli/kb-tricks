@@ -30,11 +30,12 @@ description: "一个高级执行技能，它按小切片读取并执行 KB_PLAN.
 ### 第 1 步：计划载入与小步选择 (Load Plan & Bounded Selection)
 1. 读取 `KB_PLAN.md`。
 2. 将旧版 `[ ]` 任务视为 `[planned]`，将 `[x]` 任务视为 `[built]`。
-3. 选择状态为 `[planned]` 或 `[stale]` 的任务；跳过 `[built]`、`[merged-into-docs]`、`[deprecated]`、`[orphaned]`，除非用户明确指定 `only`。
-4. 应用 `only <id|tag|path>` 过滤。
-5. 应用 `slice N` 限制。默认只处理 **1 个**任务。禁止默认执行到全部完成。
-6. 如果用户指定 `dry-run` 或 `plan-only`，输出本轮将处理的任务、源码、目标 KB、验证文件和词汇表变更后停止，不落盘。
-7. 精准地阅读任务中 `Sources` 所列出的源码文件。
+3. 如果仓库中存在 `tools/kb_manifest.py`，先运行 `python3 tools/kb_manifest.py --repo . --status planned --slice <N> --json`；若用户提供 `only`，同步传入 `--only <value>`。后续只能处理 JSON `selected` 中返回的任务。
+4. 如果没有 selector 工具，手动选择状态为 `[planned]` 的任务；跳过 `[built]`、`[stale]`、`[merged-into-docs]`、`[deprecated]`、`[orphaned]`，除非用户明确指定 `only` 和合适状态。
+5. 应用 `only <id|tag|path>` 过滤。
+6. 应用 `slice N` 限制。默认只处理 **1 个**任务。禁止默认执行到全部完成。
+7. 如果用户指定 `dry-run` 或 `plan-only`，输出本轮将处理的任务、源码、目标 KB、验证文件和词汇表变更后停止，不落盘。
+8. 精准地阅读任务中 `Sources` 所列出的源码文件。
 
 ### 第 2 步：正式 KB 写入门控 (Authoritative Write Gate)
 1. 对每个任务的 `Sources` 检查 Git 状态：

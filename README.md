@@ -24,6 +24,7 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [spec/KB_SPEC.md](./spec/KB_SPEC.md): stable artifact schema for `.agent/kb/config.yaml`, `KB_PLAN.md`, KB frontmatter, validation files, glossary, and `index.json`.
 - [templates/](./templates): starter templates for config, manifest, KB docs, and validation artifacts.
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py): dependency-free scaffold helper for installing starter config, manifest, and reserved KB directories into a target repository.
+- [tools/kb_manifest.py](./tools/kb_manifest.py): dependency-free selector for bounded `KB_PLAN.md` task execution.
 - [tools/kb_audit.py](./tools/kb_audit.py): dependency-free deterministic audit helper for hashes, dirty-state checks, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py): dependency-free helper for generating and checking dirty-aware source fingerprints.
 
@@ -32,10 +33,20 @@ Example:
 ```bash
 python3 tools/kb_scaffold.py --repo /path/to/project --dry-run
 python3 tools/kb_scaffold.py --repo /path/to/project
+python3 tools/kb_manifest.py --repo /path/to/project --slice 1 --json
+python3 tools/kb_manifest.py --repo /path/to/project --only release-packaging
 python3 tools/kb_audit.py --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
 python3 tools/kb_audit.py --repo /path/to/project --write-index .agent/kb/index.json
 python3 tools/kb_fingerprint.py --repo /path/to/project src/cli/release.ts
 python3 tools/kb_fingerprint.py --repo /path/to/project --check .agent/kb/release/packaging.md
+```
+
+Minimal CI smoke chain:
+
+```bash
+python3 tools/kb_manifest.py --repo /path/to/project --slice 1 --json
+python3 tools/kb_fingerprint.py --repo /path/to/project --check .agent/kb/<topic>.md
+python3 tools/kb_audit.py --repo /path/to/project --fail-on stale --fail-on dead-links --fail-on missing-validation --min-score B
 ```
 
 ## Skills
@@ -212,6 +223,7 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - [spec/KB_SPEC.md](./spec/KB_SPEC.md)：定义 `.agent/kb/config.yaml`、`KB_PLAN.md`、KB frontmatter、验证文件、词汇表和 `index.json` 的稳定结构。
 - [templates/](./templates)：提供 config、Manifest、KB 文档和验证产物模板。
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py)：无依赖的初始化辅助工具，用于把 starter config、Manifest 和 KB 保留目录安装到目标仓库。
+- [tools/kb_manifest.py](./tools/kb_manifest.py)：无依赖的 `KB_PLAN.md` 小步任务选择器，用于落实 bounded execution。
 - [tools/kb_audit.py](./tools/kb_audit.py)：无依赖的确定性审计辅助工具，负责 hash、dirty 状态、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py)：无依赖的 dirty-aware source fingerprint 生成与检查工具。
 
@@ -220,10 +232,20 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 ```bash
 python3 tools/kb_scaffold.py --repo /path/to/project --dry-run
 python3 tools/kb_scaffold.py --repo /path/to/project
+python3 tools/kb_manifest.py --repo /path/to/project --slice 1 --json
+python3 tools/kb_manifest.py --repo /path/to/project --only release-packaging
 python3 tools/kb_audit.py --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
 python3 tools/kb_audit.py --repo /path/to/project --write-index .agent/kb/index.json
 python3 tools/kb_fingerprint.py --repo /path/to/project src/cli/release.ts
 python3 tools/kb_fingerprint.py --repo /path/to/project --check .agent/kb/release/packaging.md
+```
+
+最小 CI smoke chain：
+
+```bash
+python3 tools/kb_manifest.py --repo /path/to/project --slice 1 --json
+python3 tools/kb_fingerprint.py --repo /path/to/project --check .agent/kb/<topic>.md
+python3 tools/kb_audit.py --repo /path/to/project --fail-on stale --fail-on dead-links --fail-on missing-validation --min-score B
 ```
 
 ## 技能一览

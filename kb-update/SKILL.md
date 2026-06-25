@@ -33,11 +33,12 @@ description: "一个增量知识库维护技能，通过 diff-first 范围分析
 ### 第 1 步：变更范围入口 (Diff-First Scope)
 1. 如果用户提供 `files <path...>`，将这些路径作为唯一入口，按 Manifest 的 `Sources` 和 KB frontmatter `fingerprint.file` 反查相关 KB。
 2. 如果用户提供 `since <commitish>`，运行 Git diff 获取 changed files，并按 Manifest 和 fingerprint 反查相关 KB。
-3. 如果用户未提供范围：
+3. 如果仓库中存在 `tools/kb_manifest.py`，用它对 Manifest 候选任务做最终 bounded selection：对 diff 命中的路径传入 `--only <path> --status any --slice <N> --json`，先选中相关任务，再由第 2 步 fingerprint diff 判定是否真的 stale。只有在全量扫描已经确认 Manifest 状态为 stale 时，才使用 `--status stale`；若用户明确要求新建缺失 KB，可额外选择 `planned`。
+4. 如果用户未提供范围：
    - 若用户明确提供 `full-scan`，进入第 2 步扫描全量 Manifest 和 KB 指纹。
    - 若用户未提供 `full-scan`，允许执行低成本的 Manifest + fingerprint 扫描，但仍受默认 `slice 1` 限制；报告这是 fallback 行为。
-4. 对 `releaseExcluded` 路径的变更单独标注：它们可能影响 Agent 上下文，但不一定影响发布语义。
-5. 如果 `dry-run`，在识别影响面后输出候选 KB、候选状态变化和需要的验证文件，然后停止。
+5. 对 `releaseExcluded` 路径的变更单独标注：它们可能影响 Agent 上下文，但不一定影响发布语义。
+6. 如果 `dry-run`，在识别影响面后输出候选 KB、候选状态变化和需要的验证文件，然后停止。
 
 ### 第 2 步：dirty-aware 指纹差异对比 (Dirty-Aware Fingerprint Diff)
 1. 扫描候选 KB 文件中 YAML Frontmatter 头部的 `fingerprint` 区块。
@@ -64,15 +65,16 @@ description: "一个增量知识库维护技能，通过 diff-first 范围分析
 ### 第 4 步：分块认领与正式写入门控 (Chunked Rewrite & Write Gate)
 **默认仅认领 1 个过期文档**进行处理。用户指定 `slice N` 时最多处理 N 个。不要尝试一次性修复所有过期文件，以防上下文窗口溢出。
 
-1. 在重写正式 KB 前，对相关 `Sources` 执行与 `kb-build` 一致的 clean tracked source gate：
+1. 如果第 1 步已调用 `tools/kb_manifest.py`，本轮只允许处理其 JSON `selected` 数组中的任务；不要自行扩大任务集。
+2. 在重写正式 KB 前，对相关 `Sources` 执行与 `kb-build` 一致的 clean tracked source gate：
    - clean tracked source：允许更新正式 KB。
    - dirty/untracked source：默认阻塞正式 KB，建议先提交。
    - `draft`：写入 `.agent/kb/_draft/` 或 `.agent/kb/_impact/`，不刷新正式 KB 指纹。
    - `allow-dirty`：允许写正式 KB，但 frontmatter 必须包含 `notAuthoritative: true`，最终报告必须警告。
 
-2. **对于补丁级变更**：更新现有 KB 文件中受影响的段落。保持文档的整体结构不变。
-3. **对于破坏性变更**：重写受影响的章节。更新所有指向已变更定义的 SSOT 交叉引用。更新或重绘相关的 Mermaid 图表。
-4. **对于新模块**：
+3. **对于补丁级变更**：更新现有 KB 文件中受影响的段落。保持文档的整体结构不变。
+4. **对于破坏性变更**：重写受影响的章节。更新所有指向已变更定义的 SSOT 交叉引用。更新或重绘相关的 Mermaid 图表。
+5. **对于新模块**：
    - 参考 **`kb-build/SKILL.md` 第 3 步（构建认知地图文档）**中的标准 Frontmatter 模板和文档规范来创建新的 KB 文件。
    - 新文件必须包含完整的 YAML Frontmatter（`id`, `title`, `status`, `notAuthoritative`, `fingerprint`, `tags`）。
    - 如涉及多组件联动，必须包含 Mermaid 图表。

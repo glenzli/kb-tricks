@@ -160,7 +160,7 @@ def parse_scalar(value: str) -> Any:
 
 
 def split_csv(value: str) -> list[str]:
-    value = strip_value(value)
+    value = value.strip()
     if not value:
         return []
     return [strip_value(part) for part in value.split(",") if strip_value(part)]
@@ -212,17 +212,23 @@ def parse_manifest(path: Path) -> list[ManifestTask]:
         value = field_match.group("value").strip()
         normalized_key = key.lower().replace(" ", "")
         clean_value = strip_value(value)
-        current.fields[key] = clean_value
         if normalized_key == "id":
+            current.fields[key] = clean_value
             current.task_id = slugify(clean_value)
         elif normalized_key == "kb":
+            current.fields[key] = clean_value
             current.kb = clean_value
         elif normalized_key == "sources":
-            current.sources = split_csv(clean_value)
+            current.sources = split_csv(value)
+            current.fields[key] = ", ".join(current.sources)
         elif normalized_key == "tags":
-            current.tags = split_csv(clean_value)
+            current.tags = split_csv(value)
+            current.fields[key] = ", ".join(current.tags)
         elif normalized_key == "status":
+            current.fields[key] = clean_value
             current.status = normalize_status(clean_value)
+        else:
+            current.fields[key] = clean_value
     return tasks
 
 

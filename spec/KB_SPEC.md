@@ -89,6 +89,20 @@ Compatibility:
 - Old `[ ]` entries are interpreted as `planned`.
 - Old `[x]` entries are interpreted as `built`.
 
+### Manifest Selection
+
+`tools/kb_manifest.py` is the deterministic selector for bounded Manifest execution:
+
+```text
+python3 tools/kb_manifest.py --repo /path/to/project --slice 1 --json
+python3 tools/kb_manifest.py --repo /path/to/project --slice 2
+python3 tools/kb_manifest.py --repo /path/to/project --only release-packaging
+python3 tools/kb_manifest.py --repo /path/to/project --status planned --json
+python3 tools/kb_manifest.py --repo /path/to/project --status any --slice 10
+```
+
+Default selection is `status planned, stale` with `slice 1`. `--only` may match task ID, task name, tag, KB path, or source path. The tool is read-only: it never reads source content, writes KB prose, mutates `KB_PLAN.md`, or updates status. Skills must treat the JSON `selected` array as the maximum task set they are allowed to process in the current bounded turn.
+
 ## KB Frontmatter
 
 Every authoritative KB document must start with YAML-like frontmatter:

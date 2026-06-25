@@ -23,6 +23,7 @@ Current repository support:
 - `spec/KB_SPEC.md` defines the artifact schema.
 - `templates/` provides starter artifacts for target repositories.
 - `tools/kb_scaffold.py` installs starter config, manifest, and reserved KB directories into a target repository without generating KB prose.
+- `tools/kb_manifest.py` selects bounded `KB_PLAN.md` tasks by status, ID/tag/path filters, and slice size; it does not execute or generate KB prose.
 - `tools/kb_audit.py` provides the first deterministic Tool Layer helper. It audits existing artifacts and can write `.agent/kb/index.json`; it does not generate KB prose.
 - `tools/kb_fingerprint.py` generates and checks dirty-aware source fingerprints used by KB frontmatter.
 
