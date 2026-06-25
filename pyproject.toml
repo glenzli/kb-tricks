@@ -17,4 +17,4 @@ authors = [
 kb = "kb_tricks.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["kb_tricks", "tools"]
+include = ["kb_tricks", "kb_tricks.*", "tools", "tools.*"]

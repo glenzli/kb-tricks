@@ -33,6 +33,7 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 Installed CLI example:
 
 ```bash
+kb self-check --json
 kb scaffold --repo /path/to/project --dry-run
 kb manifest --repo /path/to/project --slice 1 --json
 kb docs --repo /path/to/project --check-manifest
@@ -51,6 +52,7 @@ python3 tools/kb_impact.py --repo /path/to/project --files src/cli/release.ts --
 Minimal CI smoke chain:
 
 ```bash
+kb self-check --json
 kb manifest --repo /path/to/project --slice 1 --json
 kb docs --repo /path/to/project --check-manifest
 kb fingerprint --repo /path/to/project --check .agent/kb/<topic>.md

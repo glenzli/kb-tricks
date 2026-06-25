@@ -31,6 +31,7 @@ Current repository support:
 - `tools/kb_fingerprint.py` generates and checks dirty-aware source fingerprints used by KB frontmatter.
 - `tools/kb_impact.py` maps `--since` or `--files` changes to Manifest tasks, existing docs changes, and special KB artifact changes for diff-first maintenance.
 - `kb` is the installed CLI dispatcher for the deterministic tools; source checkouts may still call `python3 tools/kb_*.py` directly.
+- `kb self-check` is the release smoke boundary: it imports every released subcommand module and verifies that the installed dispatcher can reach each tool.
 
 ## Core Operating Contracts
 
