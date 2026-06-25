@@ -19,6 +19,7 @@ class KbCliTests(unittest.TestCase):
         self.assertIn("audit", proc.stdout)
         self.assertIn("impact", proc.stdout)
         self.assertIn("self-check", proc.stdout)
+        self.assertIn("update-plan", proc.stdout)
 
     def test_package_module_entrypoint_lists_commands(self):
         proc = run(PACKAGE_CLI + ["--help"], PROJECT_ROOT, check=False)
@@ -54,6 +55,7 @@ class KbCliTests(unittest.TestCase):
         commands = {item["command"]: item for item in data["commands"]}
         self.assertIn("audit", commands)
         self.assertIn("impact", commands)
+        self.assertIn("update-plan", commands)
         self.assertTrue(all(item["ok"] for item in commands.values()))
 
 

@@ -119,12 +119,30 @@ Default selection is `status planned, stale` with `slice 1`. `--only` may match 
 `tools/kb_impact.py` is the deterministic helper for diff-first maintenance:
 
 ```text
+kb impact --repo /path/to/project --staged --json
+kb impact --repo /path/to/project --worktree --json
+kb impact --repo /path/to/project --base main --json
 kb impact --repo /path/to/project --since HEAD~1 --json
 kb impact --repo /path/to/project --files src/cli/release.ts --json
 python3 tools/kb_impact.py --repo /path/to/project --files src/cli/release.ts --json
 ```
 
+Exactly one scope option must be provided: `--staged`, `--worktree`, `--base`, `--since`, or `--files`. JSON output includes top-level `scopeMode` plus a `scope` object so automation can distinguish index changes, dirty worktree changes, branch-base changes, explicit commitish diffs, and manually supplied file lists.
+
 It maps changed files to Manifest tasks through `Sources`, KB paths, and KB frontmatter fingerprints. It also reports existing docs changes from `docs.existing`, special artifact changes such as `KB_PLAN.md` and `.agent/kb/config.yaml`, unmatched files, and a bounded `selectedTasks` slice. It does not read changed file contents or rewrite KB prose.
+
+### Update Planning
+
+`tools/kb_update_plan.py` is the deterministic dry-run planner for `kb-update`:
+
+```text
+kb update-plan --repo /path/to/project --staged --json
+kb update-plan --repo /path/to/project --worktree --draft --json
+kb update-plan --repo /path/to/project --base main --slice 2 --json
+python3 tools/kb_update_plan.py --repo /path/to/project --since HEAD~1 --json
+```
+
+It reuses the same mutually exclusive scope options as `kb impact`, then adds dirty-source gates and bounded update actions. JSON output includes `actions`, `blocked`, `docsActions`, `newKbCandidates`, `specialActions`, `releaseExcludedChanges`, and `policy`. It is read-only: it does not read changed file contents, rewrite KB prose, mutate `KB_PLAN.md`, or refresh fingerprints.
 
 ## KB Frontmatter
 

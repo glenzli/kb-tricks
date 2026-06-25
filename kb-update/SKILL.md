@@ -13,10 +13,13 @@ description: "一个增量知识库维护技能，通过 diff-first 范围分析
 - 如果存在 `.agent/kb/config.yaml`，必须遵守 include / exclude / releaseExcluded / docs.existing。
 
 # 调用契约 (Invocation Contract)
-由于本项目当前是 skill 套件而非完整 CLI，下列参数以用户自然语言或 Agent 指令形式生效：
+下列参数以用户自然语言或 Agent 指令形式生效；当 released `kb` CLI 可用时，优先通过 `kb update-plan` 计算影响面和写入门控：
 
 | 参数 | 含义 |
 |---|---|
+| `staged` | 从 Git index 计算 changed files，例如准备提交前更新 KB。 |
+| `worktree` | 从未暂存 tracked 改动和 untracked 文件计算 changed files，默认只作为 draft/impact 候选。 |
+| `base <commitish>` | 从 `base...HEAD` 计算 changed files，例如分支相对 main 的影响面。 |
 | `since <commitish>` | 从指定 Git 范围计算 changed files，例如 `since HEAD~1`。 |
 | `files <path...>` | 只更新与这些源码或文档路径相关的 KB。 |
 | `slice N` | 本轮最多处理 N 个受影响 KB 文档。默认 `slice 1`。 |
@@ -26,19 +29,21 @@ description: "一个增量知识库维护技能，通过 diff-first 范围分析
 | `allow-dirty` | 显式允许基于 dirty/untracked 源码写正式 KB；必须标记 `notAuthoritative: true`。 |
 | `full-scan` | 用户明确要求全量 Manifest + fingerprint 扫描。未声明时不默认扫全仓。 |
 
-**默认行为**：如果用户提供 `since` 或 `files`，只处理该范围；否则执行 Manifest + fingerprint 扫描，但仍默认 `slice 1`。
+**默认行为**：如果用户提供 `staged`、`worktree`、`base`、`since` 或 `files`，只处理该范围；这些 scope 互斥。否则执行 Manifest + fingerprint 扫描，但仍默认 `slice 1`。
 
 # 操作指令 (Instructions)
 
 ### 第 1 步：变更范围入口 (Diff-First Scope)
-1. 如果用户提供 `files <path...>` 或 `since <commitish>`，优先调用 released CLI：`kb impact --repo . --files <path...> --slice <N> --json` 或 `kb impact --repo . --since <commitish> --slice <N> --json`。如果 CLI 不可用但仓库中存在 `tools/kb_impact.py`，使用 `python3 tools/kb_impact.py ...` 作为 fallback。
-2. `kb impact` 的 `selectedTasks` 是本轮允许处理的最大任务集；不要自行扩大范围。`docsChanges` 和 `specialChanges` 只说明影响面，是否改现有 docs 仍需要用户或技能判断。
-3. 如果没有 impact 工具，才手动按 Manifest 的 `Sources`、KB path 和 KB frontmatter `fingerprint.file` 反查相关 KB；必要时再用 `tools/kb_manifest.py` 对候选任务做 bounded selection。
-4. 如果用户未提供范围：
+1. 如果用户提供 `staged`、`worktree`、`base <commitish>`、`since <commitish>` 或 `files <path...>`，优先调用 released CLI：`kb update-plan --repo . --staged --slice <N> --json`、`kb update-plan --repo . --worktree --slice <N> --json`、`kb update-plan --repo . --base <commitish> --slice <N> --json`、`kb update-plan --repo . --since <commitish> --slice <N> --json` 或 `kb update-plan --repo . --files <path...> --slice <N> --json`。如果用户声明 `draft`，传入 `--draft`；如果用户声明 `allow-dirty`，传入 `--allow-dirty`。如果 CLI 不可用但仓库中存在 `tools/kb_update_plan.py`，使用 `python3 tools/kb_update_plan.py ...` 作为 fallback。
+2. 这些 scope 互斥；如果用户同时给出多个 scope，先要求收敛，不能合并扩大范围。
+3. `kb update-plan` 的 `scopeMode` 记录入口类型，`actions` 是本轮允许处理的最大正式 KB 任务集，`blocked` 是必须停止或转 draft 的任务，`newKbCandidates` 是可能需要新增 KB 的候选；不要自行扩大范围。`docsActions` 和 `specialActions` 只说明影响面，是否改现有 docs 仍需要用户或技能判断。
+4. 如果只有 `kb impact` 可用，才退化为 `kb impact ... --json`，并由技能手动执行 dirty-source gate；不要把 impact 的 `selectedTasks` 直接等同于可写任务。
+5. 如果没有 deterministic 工具，才手动按 Manifest 的 `Sources`、KB path 和 KB frontmatter `fingerprint.file` 反查相关 KB；必要时再用 `tools/kb_manifest.py` 对候选任务做 bounded selection。
+6. 如果用户未提供范围：
    - 若用户明确提供 `full-scan`，进入第 2 步扫描全量 Manifest 和 KB 指纹。
    - 若用户未提供 `full-scan`，允许执行低成本的 Manifest + fingerprint 扫描，但仍受默认 `slice 1` 限制；报告这是 fallback 行为。
-5. 对 `releaseExcluded` 路径的变更单独标注：它们可能影响 Agent 上下文，但不一定影响发布语义。
-6. 如果 `dry-run`，在识别影响面后输出候选 KB、候选状态变化和需要的验证文件，然后停止。
+7. 对 `releaseExcludedChanges` 单独标注：它们可能影响 Agent 上下文，但不一定影响发布语义。
+8. 如果 `dry-run`，在识别影响面和门控结果后输出 `actions`、`blocked`、`docsActions`、`newKbCandidates`、候选状态变化和需要的验证文件，然后停止。
 
 ### 第 2 步：dirty-aware 指纹差异对比 (Dirty-Aware Fingerprint Diff)
 1. 扫描候选 KB 文件中 YAML Frontmatter 头部的 `fingerprint` 区块。

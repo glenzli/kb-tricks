@@ -66,6 +66,32 @@ def changed_files_since(repo: Path, since: str) -> tuple[list[str], str | None]:
     return unique(stdout.splitlines()), None
 
 
+def changed_files_staged(repo: Path) -> tuple[list[str], str | None]:
+    code, stdout, stderr = run_git(repo, ["diff", "--name-only", "--cached", "--"])
+    if code != 0:
+        return [], stderr or "git staged diff failed"
+    return unique(stdout.splitlines()), None
+
+
+def changed_files_worktree(repo: Path) -> tuple[list[str], str | None]:
+    code, stdout, stderr = run_git(repo, ["diff", "--name-only", "--"])
+    if code != 0:
+        return [], stderr or "git worktree diff failed"
+    code_untracked, stdout_untracked, stderr_untracked = run_git(
+        repo, ["ls-files", "--others", "--exclude-standard"]
+    )
+    if code_untracked != 0:
+        return [], stderr_untracked or "git untracked file scan failed"
+    return unique(stdout.splitlines() + stdout_untracked.splitlines()), None
+
+
+def changed_files_base(repo: Path, base: str) -> tuple[list[str], str | None]:
+    code, stdout, stderr = run_git(repo, ["diff", "--name-only", f"{base}...HEAD", "--"])
+    if code != 0:
+        return [], stderr or f"git base diff failed for {base}"
+    return unique(stdout.splitlines()), None
+
+
 def task_fingerprint_files(repo: Path, task: ManifestTask) -> list[str]:
     if not task.kb:
         return []
@@ -144,8 +170,7 @@ def build_impact_data(
     manifest_path: Path,
     config_path: Path,
     changed_files: list[str],
-    since: str | None,
-    files: list[str],
+    scope: dict[str, Any],
     slice_size: int,
     warnings: list[str],
 ) -> dict[str, Any]:
@@ -175,10 +200,8 @@ def build_impact_data(
         "repo": str(repo),
         "manifest": relpath(manifest_path, repo),
         "config": relpath(config_path, repo),
-        "scope": {
-            "since": since,
-            "files": files,
-        },
+        "scopeMode": scope["mode"],
+        "scope": scope,
         "changedFiles": changed_files,
         "impactedTasks": [impact_to_dict(impact) for impact in impacts],
         "selectedTasks": [impact_to_dict(impact) for impact in impacts[:slice_size]],
@@ -193,6 +216,7 @@ def build_impact_data(
 def print_markdown(data: dict[str, Any]) -> None:
     print("# KB Impact Report")
     print()
+    print(f"- Scope: {data['scopeMode']}")
     print(f"- Changed files: {len(data['changedFiles'])}")
     print(f"- Impacted tasks: {len(data['impactedTasks'])}")
     print(f"- Selected tasks: {len(data['selectedTasks'])} (slice {data['slice']})")
@@ -227,6 +251,13 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--manifest", default="KB_PLAN.md", help="Manifest path.")
     parser.add_argument("--config", default=".agent/kb/config.yaml", help="Boundary config path.")
     parser.add_argument("--since", help="Git commitish to diff against.")
+    parser.add_argument("--staged", action="store_true", help="Map staged changes.")
+    parser.add_argument(
+        "--worktree",
+        action="store_true",
+        help="Map unstaged tracked changes plus untracked files.",
+    )
+    parser.add_argument("--base", help="Git base commitish or branch for base...HEAD diff.")
     parser.add_argument(
         "--files",
         action="append",
@@ -237,6 +268,41 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--slice", type=int, default=1, help="Maximum selected impacted tasks.")
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")
     return parser.parse_args(argv)
+
+
+def resolve_scope(
+    repo: Path, args: argparse.Namespace, explicit_files: list[str]
+) -> tuple[list[str], dict[str, Any] | None, str | None]:
+    requested = []
+    if args.since:
+        requested.append("since")
+    if explicit_files:
+        requested.append("files")
+    if args.staged:
+        requested.append("staged")
+    if args.worktree:
+        requested.append("worktree")
+    if args.base:
+        requested.append("base")
+
+    if len(requested) != 1:
+        return [], None, "pass exactly one scope option: --since, --files, --staged, --worktree, or --base"
+
+    mode = requested[0]
+    if mode == "files":
+        return explicit_files, {"mode": "files", "files": explicit_files}, None
+    if mode == "since":
+        changed, error = changed_files_since(repo, args.since)
+        return changed, {"mode": "since", "since": args.since, "files": []}, error
+    if mode == "staged":
+        changed, error = changed_files_staged(repo)
+        return changed, {"mode": "staged", "staged": True, "files": []}, error
+    if mode == "worktree":
+        changed, error = changed_files_worktree(repo)
+        return changed, {"mode": "worktree", "worktree": True, "files": []}, error
+
+    changed, error = changed_files_base(repo, args.base)
+    return changed, {"mode": "base", "base": args.base, "files": []}, error
 
 
 def main(argv: list[str]) -> int:
@@ -250,15 +316,9 @@ def main(argv: list[str]) -> int:
         return 2
     explicit_files = flatten_files(args.files)
     warnings: list[str] = []
-    changed_files = list(explicit_files)
-    if args.since:
-        diff_files, error = changed_files_since(repo, args.since)
-        if error:
-            print(error, file=sys.stderr)
-            return 2
-        changed_files = unique(changed_files + diff_files)
-    if not args.since and not explicit_files:
-        print("pass --since or --files", file=sys.stderr)
+    changed_files, scope, error = resolve_scope(repo, args, explicit_files)
+    if error:
+        print(error, file=sys.stderr)
         return 2
     manifest = (repo / args.manifest).resolve()
     config = (repo / args.config).resolve()
@@ -272,8 +332,7 @@ def main(argv: list[str]) -> int:
         manifest,
         config,
         changed_files,
-        args.since,
-        explicit_files,
+        scope,
         args.slice,
         warnings,
     )

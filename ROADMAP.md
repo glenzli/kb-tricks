@@ -29,7 +29,8 @@ Current repository support:
 - `tools/kb_docs.py` inventories existing docs from `docs.existing`, checks Manifest `Docs Comparison` coverage, and emits duplicate hints without judging prose quality.
 - `tools/kb_audit.py` provides the first deterministic Tool Layer helper. It audits existing artifacts and can write `.agent/kb/index.json`; it does not generate KB prose.
 - `tools/kb_fingerprint.py` generates and checks dirty-aware source fingerprints used by KB frontmatter.
-- `tools/kb_impact.py` maps `--since` or `--files` changes to Manifest tasks, existing docs changes, and special KB artifact changes for diff-first maintenance.
+- `tools/kb_impact.py` maps `--staged`, `--worktree`, `--base`, `--since`, or `--files` changes to Manifest tasks, existing docs changes, and special KB artifact changes for diff-first maintenance.
+- `tools/kb_update_plan.py` turns impact results into read-only bounded update actions, blockers, existing-docs reviews, special artifact reviews, and new KB candidates.
 - `kb` is the installed CLI dispatcher for the deterministic tools; source checkouts may still call `python3 tools/kb_*.py` directly.
 - `kb self-check` is the release smoke boundary: it imports every released subcommand module and verifies that the installed dispatcher can reach each tool.
 
@@ -162,11 +163,14 @@ Inference must be isolated in an uncertainty section and must not be presented a
 
 `kb-update` should start from the change scope whenever possible:
 
+- `staged`: use changed files from the Git index.
+- `worktree`: use unstaged tracked changes plus untracked files.
+- `base <commitish>`: use changed files from `base...HEAD`.
 - `since <commitish>`: use changed files from the diff.
 - `files <path...>`: update only KB entries related to those files.
 - No scope: fall back to full manifest and fingerprint scan.
 
-`kb impact --since <commitish>` and `kb impact --files <path...>` provide the deterministic changed-file to Manifest mapping for this workflow.
+`kb impact --staged`, `kb impact --worktree`, `kb impact --base <commitish>`, `kb impact --since <commitish>`, and `kb impact --files <path...>` provide the deterministic changed-file to Manifest mapping for this workflow. `kb update-plan` uses the same mutually exclusive scope options and adds dirty-source gates plus bounded update actions before any skill reads source or writes KB prose.
 
 ### 9. Validation artifacts
 

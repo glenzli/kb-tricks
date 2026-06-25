@@ -29,6 +29,7 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [tools/kb_audit.py](./tools/kb_audit.py): dependency-free deterministic audit helper for hashes, dirty-state checks, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py): dependency-free helper for generating and checking dirty-aware source fingerprints.
 - [tools/kb_impact.py](./tools/kb_impact.py): dependency-free diff-first changed-file to Manifest task mapper for `kb-update`.
+- [tools/kb_update_plan.py](./tools/kb_update_plan.py): dependency-free read-only planner that turns impact data into bounded update actions, blockers, docs reviews, and new KB candidates.
 
 Installed CLI example:
 
@@ -37,7 +38,12 @@ kb self-check --json
 kb scaffold --repo /path/to/project --dry-run
 kb manifest --repo /path/to/project --slice 1 --json
 kb docs --repo /path/to/project --check-manifest
+kb impact --repo /path/to/project --staged --json
+kb impact --repo /path/to/project --worktree --json
+kb impact --repo /path/to/project --base main --json
 kb impact --repo /path/to/project --since HEAD~1 --json
+kb update-plan --repo /path/to/project --staged --json
+kb update-plan --repo /path/to/project --worktree --draft --json
 kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
 kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```
@@ -47,6 +53,7 @@ Source checkout fallback:
 ```bash
 python3 tools/kb_audit.py --repo /path/to/project --write-index .agent/kb/index.json
 python3 tools/kb_impact.py --repo /path/to/project --files src/cli/release.ts --json
+python3 tools/kb_update_plan.py --repo /path/to/project --since HEAD~1 --json
 ```
 
 Minimal CI smoke chain:
@@ -91,7 +98,7 @@ Executes the `KB_PLAN.md` manifest in bounded slices to build a high-signal know
 
 Keeps an existing KB fresh via fingerprint diffing and chunked scoped rewrites.
 
-- **Diff-First Scope**: Starts from `since` or `files` scopes when provided, then falls back to full fingerprint scan
+- **Diff-First Scope**: Starts from staged, worktree, base, since, or files scopes when provided, then falls back to full fingerprint scan
 - **Fingerprint Diff**: Detects stale/orphaned KB files by comparing recorded Git state and content hashes
 - **Impact Analysis**: Classifies changes as Patch / Breaking / New Module
 - **Cascade Check**: Traces SSOT links to find ripple effects
@@ -238,14 +245,21 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - [tools/kb_audit.py](./tools/kb_audit.py)：无依赖的确定性审计辅助工具，负责 hash、dirty 状态、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py)：无依赖的 dirty-aware source fingerprint 生成与检查工具。
 - [tools/kb_impact.py](./tools/kb_impact.py)：无依赖的 diff-first changed files 到 Manifest 任务影响面映射工具，供 `kb-update` 使用。
+- [tools/kb_update_plan.py](./tools/kb_update_plan.py)：无依赖的只读更新规划工具，把 impact 结果转换为 bounded actions、阻塞项、docs review 和新 KB 候选。
 
 安装后的 CLI 示例：
 
 ```bash
+kb self-check --json
 kb scaffold --repo /path/to/project --dry-run
 kb manifest --repo /path/to/project --slice 1 --json
 kb docs --repo /path/to/project --check-manifest
+kb impact --repo /path/to/project --staged --json
+kb impact --repo /path/to/project --worktree --json
+kb impact --repo /path/to/project --base main --json
 kb impact --repo /path/to/project --since HEAD~1 --json
+kb update-plan --repo /path/to/project --staged --json
+kb update-plan --repo /path/to/project --worktree --draft --json
 kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
 kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```
@@ -255,11 +269,13 @@ kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```bash
 python3 tools/kb_audit.py --repo /path/to/project --write-index .agent/kb/index.json
 python3 tools/kb_impact.py --repo /path/to/project --files src/cli/release.ts --json
+python3 tools/kb_update_plan.py --repo /path/to/project --since HEAD~1 --json
 ```
 
 最小 CI smoke chain：
 
 ```bash
+kb self-check --json
 kb manifest --repo /path/to/project --slice 1 --json
 kb docs --repo /path/to/project --check-manifest
 kb fingerprint --repo /path/to/project --check .agent/kb/<topic>.md
@@ -298,7 +314,7 @@ kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --fail-on 
 
 通过指纹比对和分块范围性重写，保持知识库的时效性。
 
-- **差异优先范围**：优先从 `since` 或 `files` 范围入口计算影响面，再回退到全量指纹扫描
+- **差异优先范围**：优先从 staged、worktree、base、since 或 files 范围入口计算影响面，再回退到全量指纹扫描
 - **指纹比对**：通过 Git 状态和内容哈希检测过期/孤立的 KB 文件
 - **影响分析**：将变更分类为 补丁型 / 破坏型 / 新模块
 - **级联检查**：追踪 SSOT 链接发现连锁影响
