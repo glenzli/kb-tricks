@@ -107,7 +107,8 @@ description: "一个增量知识库维护技能，通过 diff-first 范围分析
 1. 用当前 Git 状态和内容哈希更新**每一个**被修改或新创建的正式 KB 文件 Frontmatter 中的 `fingerprint` 区块。
 2. 对每个 source 记录 `file`、`commit`、`tracked`、`worktree`、`contentHash`。
 3. 如果 `allow-dirty` 被使用，设置或保留 `notAuthoritative: true`。
-4. 确认所有 Frontmatter 字段（`id`, `title`, `status`, `notAuthoritative`, `fingerprint`, `tags`）符合标准模板规范。
+4. 如果仓库中存在 `tools/kb_fingerprint.py`，优先使用 `python3 tools/kb_fingerprint.py --check <kb-doc>` 验证刷新结果。
+5. 确认所有 Frontmatter 字段（`id`, `title`, `status`, `notAuthoritative`, `fingerprint`, `tags`）符合标准模板规范。
 
 ### 第 9 步：进度推进与停止条件 (Advance & Stop)
 1. 当本次认领的 slice 处理完毕后停止，输出更新摘要（包括：多少文件被更新、多少被新建、多少被标记为 orphaned/deprecated/merged-into-docs，是否存在 dirty 阻塞）。

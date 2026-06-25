@@ -21,6 +21,18 @@ The KB is not the repository authority. Source code, configuration, tests, relea
 
 Reserved directories under `.agent/kb/` are `_draft/`, `_impact/`, and `_validation/`. Documents in reserved directories must not be treated as authoritative KB.
 
+## Scaffolding
+
+`tools/kb_scaffold.py` installs the starter artifacts defined by this spec into a target repository:
+
+```text
+python3 tools/kb_scaffold.py --repo /path/to/project --dry-run
+python3 tools/kb_scaffold.py --repo /path/to/project
+python3 tools/kb_scaffold.py --repo /path/to/project --force
+```
+
+It creates `.agent/kb/config.yaml`, `KB_PLAN.md`, and reserved directories for `_draft/`, `_impact/`, and `_validation/`. It does not generate KB prose, run repository analysis, or overwrite existing scaffold files unless `--force` is supplied. `--dry-run` prints the planned writes without touching the target repository.
+
 ## `.agent/kb/config.yaml`
 
 Minimal schema:
@@ -114,6 +126,17 @@ Fingerprint rules:
 - Freshness checks compare `contentHash` first, then Git commit.
 
 `notAuthoritative: true` means query and review skills must warn before using the document for decisions.
+
+`tools/kb_fingerprint.py` is the deterministic helper for this section:
+
+```text
+python3 tools/kb_fingerprint.py src/cli/release.ts
+python3 tools/kb_fingerprint.py --json src/cli/release.ts
+python3 tools/kb_fingerprint.py --allow-dirty src/cli/release.ts
+python3 tools/kb_fingerprint.py --check .agent/kb/release/packaging.md
+```
+
+Exit code `0` means generation/check passed. Exit code `1` means a policy or fingerprint check failed, such as dirty source without override or stale recorded metadata. Exit code `2` means the tool could not run the requested operation, such as a missing source file.
 
 ## Validation Artifacts
 

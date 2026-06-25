@@ -70,6 +70,7 @@ description: "一个高级执行技能，它按小切片读取并执行 KB_PLAN.
    - clean tracked 文件：`tracked: true`, `worktree: clean`, `commit` 为当前文件最后提交，`contentHash` 为当前内容哈希。
    - dirty tracked 文件：`tracked: true`, `worktree: dirty`, `contentHash` 为当前脏内容哈希；正式 KB 默认禁止，除非 `allow-dirty`。
    - untracked 文件：`tracked: false`, `worktree: untracked`, `commit: null`；正式 KB 默认禁止。
+   - 如果仓库中存在 `tools/kb_fingerprint.py`，优先使用它生成或检查 fingerprint，避免手工拼写元数据。
 2. **高度聚焦 (High Signal)**：重点回答模块间的“交互契约”和“设计权衡”，忽略在阅读代码时可以直接一目了然的琐碎调用栈。
 3. **可视化交互 (Visual Interaction)**：如果内容涉及多组件联动或状态流转，必须手写 Mermaid 时序图或状态图。
 4. **内部链接 (SSOT)**：使用相对链接指向已有的其他 KB 文档，不抄写重复定义。

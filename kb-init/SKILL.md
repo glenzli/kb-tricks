@@ -12,8 +12,9 @@ description: "初始化项目的高级编排技能。它会自动驱动 kb-plan 
 
 ### 第 1 阶段：自主规划 (Autonomous Planning)
 1. 向用户输出状态提示：“正在进行项目架构的宏观扫描与文档规划，请稍候...”
-2. **静默调用 `kb-plan` 技能**：遵循 `kb-plan/SKILL.md` 中的指令，先识别 `.agent/kb/config.yaml` 或 Proposed Artifact Boundary，不深入代码细节地分析整个仓库，并生成 `KB_PLAN.md` Manifest。
-3. 等待 `KB_PLAN.md` 文件在文件系统中成功生成并落盘。
+2. 如果当前环境可访问 `kb-tricks/tools/kb_scaffold.py`，先执行或建议执行 `python3 tools/kb_scaffold.py --repo <target> --dry-run`，展示将创建的 `.agent/kb/config.yaml`、`KB_PLAN.md` 和保留目录。只有在用户确认初始化空白结构时，才执行非 dry-run；不要用 `--force` 覆盖已有文件，除非用户明确要求。
+3. **静默调用 `kb-plan` 技能**：遵循 `kb-plan/SKILL.md` 中的指令，先识别 `.agent/kb/config.yaml` 或 Proposed Artifact Boundary，不深入代码细节地分析整个仓库，并生成 `KB_PLAN.md` Manifest。
+4. 等待 `KB_PLAN.md` 文件在文件系统中成功生成并落盘。
 
 ### 第 2 阶段：交互式确认 (Interactive Confirmation)
 1. 规划书生成完毕后，**暂停当前执行流**。
