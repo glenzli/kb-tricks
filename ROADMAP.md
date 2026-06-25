@@ -18,12 +18,15 @@ The knowledge base is not the source of truth. Source code, configuration, tests
 
 The first implementation stage should strengthen the Skill and Spec layers without pretending that a full CLI already exists. CLI-shaped options such as `slice 2` or `dry-run` are interpreted as skill invocation contracts until a real tool layer is added.
 
+Distribution model: deterministic tools should ship through normal releases and eventually a stable CLI. Skills may call that released CLI directly when available; when operating inside a target repository, they may copy the released tool bundle or reference it through an external mechanism such as `vasmc`. The target repository should own KB artifacts, not the kb-tricks tool implementation.
+
 Current repository support:
 
 - `spec/KB_SPEC.md` defines the artifact schema.
 - `templates/` provides starter artifacts for target repositories.
 - `tools/kb_scaffold.py` installs starter config, manifest, and reserved KB directories into a target repository without generating KB prose.
 - `tools/kb_manifest.py` selects bounded `KB_PLAN.md` tasks by status, ID/tag/path filters, and slice size; it does not execute or generate KB prose.
+- `tools/kb_docs.py` inventories existing docs from `docs.existing`, checks Manifest `Docs Comparison` coverage, and emits duplicate hints without judging prose quality.
 - `tools/kb_audit.py` provides the first deterministic Tool Layer helper. It audits existing artifacts and can write `.agent/kb/index.json`; it does not generate KB prose.
 - `tools/kb_fingerprint.py` generates and checks dirty-aware source fingerprints used by KB frontmatter.
 

@@ -29,7 +29,13 @@ description: "一个轻量级、低 Token 消耗的知识库健康体检技能�
 python3 tools/kb_audit.py --repo . --fail-on dead-links --write-index .agent/kb/index.json
 ```
 
-该工具只检查结构、hash、Git 状态、链接、验证产物和策略 exit code；不要把它当成 KB 正文生成器。
+如果仓库中存在 `tools/kb_docs.py`，也运行或参考：
+
+```bash
+python3 tools/kb_docs.py --repo . --check-manifest
+```
+
+`kb_audit.py --write-index` 会把 existing docs inventory、Docs Comparison 覆盖率和重复线索写入 `index.json`。这些工具只检查结构、hash、Git 状态、链接、验证产物和策略 exit code；不要把它们当成 KB 正文生成器。
 
 ### 第 1 步：Manifest 覆盖率检查 (Manifest Coverage Check)
 1. 读取 `KB_PLAN.md`，统计 Manifest 任务状态：

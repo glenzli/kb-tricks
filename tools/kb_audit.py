@@ -546,7 +546,7 @@ def grade_from_metrics(metrics: dict[str, float], dead_links: int, dirty_docs: i
 
 
 def build_index(result: AuditResult) -> dict[str, Any]:
-    return {
+    data = {
         "schemaVersion": 1,
         "generatedAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "repo": result.repo,
@@ -605,6 +605,20 @@ def build_index(result: AuditResult) -> dict[str, Any]:
             "failures": result.failures,
         },
     }
+    try:
+        from kb_docs import collect_docs_data
+
+        docs_data = collect_docs_data(
+            Path(result.repo),
+            Path(result.repo) / result.config_path,
+            Path(result.repo) / result.manifest_path,
+        )
+        data["existingDocs"] = docs_data["existingDocs"]
+        data["docsComparison"] = docs_data["docsComparison"]
+        data["docsDuplicateHints"] = docs_data["duplicateHints"]
+    except Exception as exc:  # pragma: no cover - defensive optional index enrichment
+        data["existingDocsError"] = str(exc)
+    return data
 
 
 def audit(repo: Path, kb_root: Path, manifest: Path, config_path: Path) -> AuditResult:

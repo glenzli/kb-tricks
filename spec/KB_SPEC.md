@@ -60,6 +60,17 @@ Rules:
 - `docs.existing` tells planning/query flows where human-facing docs already exist.
 - Missing config is allowed, but `kb-plan` should propose one before creating detailed manifest entries.
 
+## Existing Docs Inventory
+
+`tools/kb_docs.py` is the deterministic helper for existing human-facing docs:
+
+```text
+python3 tools/kb_docs.py --repo /path/to/project --json
+python3 tools/kb_docs.py --repo /path/to/project --check-manifest
+```
+
+It reads `.agent/kb/config.yaml` `docs.existing`, expands matching Markdown documents, extracts headings, content hashes, local links, unmatched patterns, Manifest `Docs Comparison` coverage, and low-cost duplicate hints. It does not decide whether prose is sufficient; that remains a skill-layer judgment. `--check-manifest` exits `1` when active Manifest tasks lack `Docs Comparison`, and exits `2` when the requested check cannot run.
+
 ## `KB_PLAN.md` Manifest
 
 Manifest entries use a status marker and stable task ID:
@@ -207,6 +218,9 @@ The generated index should be deterministic JSON:
   "schemaVersion": 1,
   "generatedAt": "2026-06-26T00:00:00Z",
   "documents": [],
+  "existingDocs": [],
+  "docsComparison": {},
+  "docsDuplicateHints": [],
   "manifest": [],
   "terms": [],
   "links": [],
@@ -214,7 +228,7 @@ The generated index should be deterministic JSON:
 }
 ```
 
-`tools/kb_audit.py --write-index .agent/kb/index.json` may generate this file from existing artifacts. Skills may read it as a fast routing index, but should fall back to source KB/docs when the index is missing or stale.
+`tools/kb_audit.py --write-index .agent/kb/index.json` may generate this file from existing artifacts and enrich it with `tools/kb_docs.py` inventory data. Skills may read it as a fast routing index, but should fall back to source KB/docs when the index is missing or stale.
 
 ## Audit Exit Semantics
 

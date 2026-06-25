@@ -220,6 +220,8 @@ class KbToolchainTests(unittest.TestCase):
             )
             self.assertEqual(index["summary"]["grade"], "A")
             self.assertEqual(index["terms"][0]["term"], "Release packaging")
+            self.assertEqual(index["existingDocs"][0]["path"], "README.md")
+            self.assertEqual(index["docsComparison"]["missing"], ["release-packaging"])
 
 
 if __name__ == "__main__":

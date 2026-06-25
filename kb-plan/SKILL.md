@@ -50,7 +50,7 @@ description: "一个用于探索代码库并生成长期知识库 Manifest (KB_P
 3. 对 `releaseExcluded` 中的路径单独标注：它们可以帮助 Agent 理解开发上下文，但不应被描述为面向用户或发布产物的事实来源。
 
 ### 第 3 步：已有文档对比 (Existing Docs Comparison)
-1. 按 `.agent/kb/config.yaml` 的 `docs.existing` 读取现有文档的标题、目录和高层摘要。不要深度重写现有文档。
+1. 如果仓库中存在 `tools/kb_docs.py`，先运行 `python3 tools/kb_docs.py --repo . --json` 获取现有文档清单、标题、目录、hash、链接和疑似重复线索；否则按 `.agent/kb/config.yaml` 的 `docs.existing` 手动读取现有文档的标题、目录和高层摘要。不要深度重写现有文档。
 2. 对每个候选 KB 主题判断：
    - **已有文档已充分覆盖**：标记为 `merged-into-docs` 或不创建 KB 任务。
    - **KB 有新增价值**：例如跨模块契约、设计权衡、隐式边界、Agent 检索锚点。
@@ -61,6 +61,7 @@ description: "一个用于探索代码库并生成长期知识库 Manifest (KB_P
    - KB 相比现有 docs 多了什么。
    - 哪些 KB 主题应合并回 docs。
    - 哪些候选 KB 是重复噪音。
+4. 生成或更新 Manifest 后，如果可用，运行 `python3 tools/kb_docs.py --repo . --check-manifest`；若失败，补齐缺失任务的 `Docs Comparison` 字段或明确解释为什么该任务不需要独立比较。
 
 ### 第 4 步：生成长期 Manifest (Generate Long-Lived Manifest)
 在**项目的根目录**（与 `README.md` 同级）生成或更新 `KB_PLAN.md`。`KB_PLAN.md` 不应放入 `.agent/kb/` 知识库内容目录中。知识库正文内容统一存放在 `.agent/kb/` 目录下。

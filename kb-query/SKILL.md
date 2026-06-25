@@ -25,7 +25,7 @@ description: "一个知识库查询技能，利用语义触发词和知识图谱
 3. 如果匹配命中：进入第 2 步，开始阅读对应的 KB 文档。
 4. 如果未匹配：
    - 先尝试在 `KB_PLAN.md` 的施工任务清单中按关键词搜索相关的 `Sources` 和 `Focus` 字段，以此定位可能相关的源码文件路径。如果定位成功，直接跳到第 3 步进行源码回退。
-   - 再尝试在 `.agent/kb/config.yaml` 的 `docs.existing` 范围中按标题和关键词定位现有文档。
+   - 再优先读取 `.agent/kb/index.json` 中的 `existingDocs`；如果 index 缺失或过期且仓库中存在 `tools/kb_docs.py`，运行 `python3 tools/kb_docs.py --repo . --json`。按标题、heading、路径和 duplicate hints 定位现有文档。最后才手动按 `.agent/kb/config.yaml` 的 `docs.existing` 范围搜索。
    - 如果 `KB_PLAN.md` 和现有 docs 中都无法定位，告知用户"当前知识库中没有覆盖该主题"，并建议考虑将其纳入下一次 `kb-plan` 规划。
 
 ### 第 2 步：知识图谱遍历与回答 (Graph Walk & Answer)
@@ -56,7 +56,7 @@ description: "一个知识库查询技能，利用语义触发词和知识图谱
    - 如果所有信息都有明确的 KB 或现有 docs 出处，则可以直接输出回答，但仍要标注来源类型。
 
 3. **现有 docs 回退流程 (Existing Docs Fallback)**：
-   - 从 `.agent/kb/config.yaml` 的 `docs.existing` 或 `KB_PLAN.md` 的 Docs Comparison 中定位相关 docs。
+   - 从 `.agent/kb/index.json` 的 `existingDocs`、`tools/kb_docs.py --json` 输出、`.agent/kb/config.yaml` 的 `docs.existing` 或 `KB_PLAN.md` 的 Docs Comparison 中定位相关 docs。
    - 精准阅读相关段落，不要全量阅读无关 docs。
    - 若 docs 与 KB 或源码冲突，明确列出冲突，不要自动调和。
 

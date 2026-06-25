@@ -182,6 +182,8 @@ class KbAuditTests(unittest.TestCase):
             self.assertEqual(data["summary"]["grade"], "A")
             self.assertEqual(data["manifest"][0]["id"], "release-packaging")
             self.assertEqual(data["documents"][0]["path"], ".agent/kb/GLOSSARY.md")
+            self.assertEqual(data["existingDocs"][0]["path"], "README.md")
+            self.assertEqual(data["docsComparison"]["missing"], ["release-packaging"])
 
     def test_missing_manifest_policy_failure(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -3,4 +3,5 @@ __pycache__/
 .pytest_cache/
 .coverage
 .agent/kb/index.json
+**/.agent/kb/index.json
 tmp/
