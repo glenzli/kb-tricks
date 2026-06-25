@@ -114,6 +114,18 @@ python3 tools/kb_manifest.py --repo /path/to/project --status any --slice 10
 
 Default selection is `status planned, stale` with `slice 1`. `--only` may match task ID, task name, tag, KB path, or source path. The tool is read-only: it never reads source content, writes KB prose, mutates `KB_PLAN.md`, or updates status. Skills must treat the JSON `selected` array as the maximum task set they are allowed to process in the current bounded turn.
 
+### Impact Mapping
+
+`tools/kb_impact.py` is the deterministic helper for diff-first maintenance:
+
+```text
+kb impact --repo /path/to/project --since HEAD~1 --json
+kb impact --repo /path/to/project --files src/cli/release.ts --json
+python3 tools/kb_impact.py --repo /path/to/project --files src/cli/release.ts --json
+```
+
+It maps changed files to Manifest tasks through `Sources`, KB paths, and KB frontmatter fingerprints. It also reports existing docs changes from `docs.existing`, special artifact changes such as `KB_PLAN.md` and `.agent/kb/config.yaml`, unmatched files, and a bounded `selectedTasks` slice. It does not read changed file contents or rewrite KB prose.
+
 ## KB Frontmatter
 
 Every authoritative KB document must start with YAML-like frontmatter:

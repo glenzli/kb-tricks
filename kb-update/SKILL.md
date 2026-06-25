@@ -31,9 +31,9 @@ description: "一个增量知识库维护技能，通过 diff-first 范围分析
 # 操作指令 (Instructions)
 
 ### 第 1 步：变更范围入口 (Diff-First Scope)
-1. 如果用户提供 `files <path...>`，将这些路径作为唯一入口，按 Manifest 的 `Sources` 和 KB frontmatter `fingerprint.file` 反查相关 KB。
-2. 如果用户提供 `since <commitish>`，运行 Git diff 获取 changed files，并按 Manifest 和 fingerprint 反查相关 KB。
-3. 如果仓库中存在 `tools/kb_manifest.py`，用它对 Manifest 候选任务做最终 bounded selection：对 diff 命中的路径传入 `--only <path> --status any --slice <N> --json`，先选中相关任务，再由第 2 步 fingerprint diff 判定是否真的 stale。只有在全量扫描已经确认 Manifest 状态为 stale 时，才使用 `--status stale`；若用户明确要求新建缺失 KB，可额外选择 `planned`。
+1. 如果用户提供 `files <path...>` 或 `since <commitish>`，优先调用 released CLI：`kb impact --repo . --files <path...> --slice <N> --json` 或 `kb impact --repo . --since <commitish> --slice <N> --json`。如果 CLI 不可用但仓库中存在 `tools/kb_impact.py`，使用 `python3 tools/kb_impact.py ...` 作为 fallback。
+2. `kb impact` 的 `selectedTasks` 是本轮允许处理的最大任务集；不要自行扩大范围。`docsChanges` 和 `specialChanges` 只说明影响面，是否改现有 docs 仍需要用户或技能判断。
+3. 如果没有 impact 工具，才手动按 Manifest 的 `Sources`、KB path 和 KB frontmatter `fingerprint.file` 反查相关 KB；必要时再用 `tools/kb_manifest.py` 对候选任务做 bounded selection。
 4. 如果用户未提供范围：
    - 若用户明确提供 `full-scan`，进入第 2 步扫描全量 Manifest 和 KB 指纹。
    - 若用户未提供 `full-scan`，允许执行低成本的 Manifest + fingerprint 扫描，但仍受默认 `slice 1` 限制；报告这是 fallback 行为。

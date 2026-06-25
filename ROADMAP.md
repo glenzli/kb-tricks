@@ -18,7 +18,7 @@ The knowledge base is not the source of truth. Source code, configuration, tests
 
 The first implementation stage should strengthen the Skill and Spec layers without pretending that a full CLI already exists. CLI-shaped options such as `slice 2` or `dry-run` are interpreted as skill invocation contracts until a real tool layer is added.
 
-Distribution model: deterministic tools should ship through normal releases and eventually a stable CLI. Skills may call that released CLI directly when available; when operating inside a target repository, they may copy the released tool bundle or reference it through an external mechanism such as `vasmc`. The target repository should own KB artifacts, not the kb-tricks tool implementation.
+Distribution model: deterministic tools should ship through normal releases and the stable `kb` CLI. Skills may call that released CLI directly when available; when operating inside a target repository, they may copy the released tool bundle or reference it through an external mechanism such as `vasmc`. The target repository should own KB artifacts, not the kb-tricks tool implementation.
 
 Current repository support:
 
@@ -29,6 +29,8 @@ Current repository support:
 - `tools/kb_docs.py` inventories existing docs from `docs.existing`, checks Manifest `Docs Comparison` coverage, and emits duplicate hints without judging prose quality.
 - `tools/kb_audit.py` provides the first deterministic Tool Layer helper. It audits existing artifacts and can write `.agent/kb/index.json`; it does not generate KB prose.
 - `tools/kb_fingerprint.py` generates and checks dirty-aware source fingerprints used by KB frontmatter.
+- `tools/kb_impact.py` maps `--since` or `--files` changes to Manifest tasks, existing docs changes, and special KB artifact changes for diff-first maintenance.
+- `kb` is the installed CLI dispatcher for the deterministic tools; source checkouts may still call `python3 tools/kb_*.py` directly.
 
 ## Core Operating Contracts
 
@@ -162,6 +164,8 @@ Inference must be isolated in an uncertainty section and must not be presented a
 - `since <commitish>`: use changed files from the diff.
 - `files <path...>`: update only KB entries related to those files.
 - No scope: fall back to full manifest and fingerprint scan.
+
+`kb impact --since <commitish>` and `kb impact --files <path...>` provide the deterministic changed-file to Manifest mapping for this workflow.
 
 ### 9. Validation artifacts
 
