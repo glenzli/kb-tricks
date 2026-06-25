@@ -1,13 +1,13 @@
 ---
 name: kb-migrate
-description: "一个大规模架构迁移规划技能，分析知识库全量文档以评估迁移影响面，并生成安全的分阶段迁移蓝图。"
+description: "一个大规模架构迁移规划技能，分析知识库 Manifest 和相关文档以评估迁移影响面，并生成安全的分阶段迁移蓝图。"
 ---
 
 # 知识库迁移规划目标 (KB Migrate Goal)
-当项目面临架构级迁移（如框架替换、单体拆分、语言迁移）时，通过分析现有知识库来评估每个模块的迁移影响等级，生成一份带有安全执行顺序的分阶段迁移蓝图 (`MIGRATION_PLAN.md`)，并在迁移完成后驱动 KB 全量刷新。
+当项目面临架构级迁移（如框架替换、单体拆分、语言迁移）时，通过分析现有知识库 Manifest 和相关 KB 文档来评估每个模块的迁移影响等级，生成一份带有安全执行顺序的分阶段迁移蓝图 (`MIGRATION_PLAN.md`)，并在迁移完成后驱动 diff-first 的 KB 刷新。
 
 # 前置条件 (Prerequisites)
-- 项目中存在由 `kb-build` 构建的知识库。
+- 项目中存在由 `kb-build` 构建的知识库和 `KB_PLAN.md` Manifest。
 - 用户提供了明确的**迁移目标描述**（如："将 REST API 从 Express 迁移到 Fastify"、"把单体服务拆分为 3 个微服务"）。
 
 # 操作指令 (Instructions)
@@ -74,12 +74,12 @@ description: "一个大规模架构迁移规划技能，分析知识库全量文
 
 ### 阶段 4: 清理与废弃
 - [ ] 移除 <废弃模块>
-- [ ] 运行 `kb-update` 全量刷新知识库
+   - [ ] 运行 `kb-update since <migration-start-commit>` 或 `kb-update files <changed-paths>` 刷新受影响知识库
 ```
 
 ### 第 5 步：后续联动指引 (Post-Migration Guidance)
 在蓝图末尾明确说明迁移完成后需要执行的技能操作：
-1. 运行 `kb-update` 全量刷新所有受影响的 KB 文档指纹。
+1. 运行 `kb-update since <migration-start-commit>` 或 `kb-update files <changed-paths>` 刷新所有受影响的 KB 文档指纹。
 2. 运行 `kb-audit` 验证迁移后的知识库健康度。
 3. 对迁移涉及的核心模块运行 `moe-test` 验证测试覆盖。
 4. 更新 `GLOSSARY.md` 中的旧术语为新术语（保留旧名作为同义词）。
@@ -93,15 +93,14 @@ description: "一个大规模架构迁移规划技能，分析知识库全量文
    - `auth-flow.md` (auth.ts, rbac.ts) → 🟠 需重写（中间件签名和装饰器模式不同）。
    - `error-handler.md` (errorMiddleware.ts) → 🔴 需废弃（Express `(err, req, res, next)` 模式，Fastify 使用 `setErrorHandler`）。
    - `rate-limiter.md` (rateLimiter.ts) → 🟡 可适配（换用 `@fastify/rate-limit` 插件）。
-3. **安全执行顺序**：阶段 1: rate-limiter（叶子，可适配）→ 阶段 2: auth-flow（中间层，需重写）→ 阶段 3: error-handler（废弃旧版 + 新建 Fastify 版）→ 阶段 4: `kb-update` 全量刷新。
+3. **安全执行顺序**：阶段 1: rate-limiter（叶子，可适配）→ 阶段 2: auth-flow（中间层，需重写）→ 阶段 3: error-handler（废弃旧版 + 新建 Fastify 版）→ 阶段 4: `kb-update since <migration-start-commit>` 刷新受影响 KB。
 
 # 联动触发 (Cross-Skill Triggers)
 > 以下建议在对应技能已安装时可选触发。调用时使用技能名称，Agent 会自动查找对应的 SKILL.md。如果技能未安装，在结果中告知用户并建议手动执行对应操作。
 
 | 触发条件 | 建议调用技能 | 目的 |
 |---|---|---|
-| 迁移蓝图全部执行完毕 | `kb-update` | 全量刷新所有受影响的 KB 文档指纹 |
+| 迁移蓝图全部执行完毕 | `kb-update` | 基于迁移 diff 刷新所有受影响的 KB 文档指纹 |
 | `kb-update` 完成后 | `kb-audit` | 验证迁移后的知识库健康度 |
 | 迁移涉及核心模块 | `moe-test` | 验证核心模块的测试覆盖未因迁移而劣化 |
 | `kb-update` 完成后 | `kb-changelog` | 记录本次迁移导致的知识库变更 |
-

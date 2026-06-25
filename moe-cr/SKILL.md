@@ -94,15 +94,15 @@ Suggestion/建议: <可执行的修复方案>
 
 #### 4.0 KB 新鲜度硬性门控 (KB Freshness Hard Gate)
 在执行任何交叉检查之前，**先验证 KB 的新鲜度**：
-1. 读取与本次 diff 相关的 KB 文件的 `fingerprint` Commit ID。
-2. 将每个 Commit ID 与当前 Git 记录进行对比。
+1. 读取与本次 diff 相关的 KB 文件 frontmatter。
+2. 将每个 `fingerprint.contentHash`、`fingerprint.commit`、`fingerprint.worktree`、`tracked` 和 `notAuthoritative` 与当前源码状态进行对比。
 3. **判定规则**：
-   - 如果所有相关 KB 文件的指纹**均为新鲜 (Fresh)**：正常执行后续的交叉检查流程。
-   - 如果存在**过期 (Stale)** 的 KB 文件：**直接跳过 Layer 3 的交叉检查**。在最终报告中输出一条警告：
+   - 如果所有相关 KB 文件的指纹**均为新鲜 (Fresh)**，且不是 draft / notAuthoritative：正常执行后续的交叉检查流程。
+   - 如果存在**过期 (Stale)**、dirty、draft 或 notAuthoritative 的 KB 文件：**直接跳过 Layer 3 的交叉检查**。在最终报告中输出一条警告：
      ```
-     ⚠️ KB 专家已跳过：以下知识库文档的源码指纹已过期，交叉检查结果不可信。
-     建议先运行 kb-update 刷新知识库后再重新审查。
-     过期文档: [列出过期的 KB 文件路径]
+     ⚠️ KB 专家已跳过：以下知识库文档过期、来自 dirty worktree，或不是正式权威 KB，交叉检查结果不可信。
+     建议先基于 clean commit 运行 kb-update 刷新知识库后再重新审查。
+     受影响文档: [列出 KB 文件路径和原因]
      ```
 
 #### 4.1 指纹查找与链路追踪 (Fingerprint Lookup & Chain Tracing)
@@ -206,4 +206,3 @@ KB-Action: REVIEW api/auth-flow.md (间接影响: rbac 依赖链)
 |---|---|---|
 | Diff 中包含测试文件（如 `*.test.ts`, `*_test.go`） | `moe-test` | 对变更涉及的测试文件进行质量审查，形成代码 + 测试闭环 |
 | 报告中存在 `KB-Action: UPDATE` 条目 | `kb-update` | 立即刷新被标记为过期的知识库文档 |
-

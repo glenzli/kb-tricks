@@ -64,7 +64,7 @@ Suggestion/建议: <具体的测试用例建议或修复方案>
 > 如果项目不存在 KB，请完全跳过此步骤。
 
 #### 4.0 KB 新鲜度门控 (KB Freshness Gate)
-与 `moe-cr` 和 `moe-design` 一致：读取相关 KB 文件的 fingerprint，如果过期则跳过 Layer 3，在最终报告中输出警告。
+与 `moe-cr` 和 `moe-design` 一致：读取相关 KB 文件 frontmatter，检查 `fingerprint.contentHash`、`fingerprint.commit`、`fingerprint.worktree`、`tracked` 和 `notAuthoritative`。如果 KB 过期、dirty、draft 或不是正式权威 KB，则跳过 Layer 3，并在最终报告中输出警告。
 
 #### 4.1 契约提取 (Contract Extraction)
 *(仅在通过新鲜度门控后执行)*
@@ -145,4 +145,3 @@ KB-Ref: .agent/kb/api/auth.md#签名流程
 | 触发条件 | 建议调用技能 | 目的 |
 |---|---|---|
 | 发现 ⚠️ 契约偏移（测试与 KB 描述不匹配） | `kb-update` | KB 可能已过期，刷新后重新验证 |
-

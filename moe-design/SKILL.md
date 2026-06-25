@@ -70,11 +70,11 @@ Recommendation/建议: <可执行的改进建议或替代方案>
 
 #### 4.0 KB 新鲜度门控 (KB Freshness Gate)
 在执行一致性审查之前，**先验证 KB 的新鲜度**：
-1. 读取与设计提案相关的 KB 文件的 `fingerprint` Commit ID，与当前 Git 记录对比。
-2. 如果存在**过期 (Stale)** 的 KB 文件：**直接跳过 Layer 3**。在最终报告中输出警告：
+1. 读取与设计提案相关的 KB 文件 frontmatter，检查 `fingerprint.commit`、`fingerprint.contentHash`、`fingerprint.worktree` 和 `notAuthoritative`。
+2. 如果存在**过期 (Stale)**、dirty、draft 或 `notAuthoritative: true` 的 KB 文件：**直接跳过 Layer 3**。在最终报告中输出警告：
    ```
-   ⚠️ KB 一致性专家已跳过：相关知识库文档的源码指纹已过期，一致性审查结果不可信。
-   建议先运行 kb-update 刷新知识库后再重新审查。
+   ⚠️ KB 一致性专家已跳过：相关知识库文档过期、来自 dirty worktree，或不是正式权威 KB，一致性审查结果不可信。
+   建议先基于 clean commit 运行 kb-update 刷新知识库后再重新审查。
    ```
 
 #### 4.1 现有架构提取与一致性审查
@@ -148,4 +148,3 @@ Recommendation/建议: <可执行的改进建议或替代方案>
 | 触发条件 | 建议调用技能 | 目的 |
 |---|---|---|
 | 设计就绪度为 🟢 Ready 或 ✅ Excellent，且后续代码已提交 | `moe-cr` | 验证实现是否忠实于审查通过的设计方案 |
-

@@ -8,17 +8,18 @@ description: "一个利用现有知识库的认知地图自动生成新人引导
 
 # 前置条件 (Prerequisites)
 - 项目中存在由 `kb-build` 技能构建的知识库（含 `GLOSSARY.md`）。
-- 项目中存在 `KB_PLAN.md` 蓝图（用于理解模块划分）。
+- 项目中存在 `KB_PLAN.md` Manifest（用于理解模块划分和生命周期状态）。
 
 # 操作指令 (Instructions)
 
 ### 第 0 步：新鲜度预检 (Freshness Pre-check)
-1. 快速扫描所有 KB 文件的 Frontmatter `fingerprint`，与当前 Git 记录对比，统计过期率。
-2. 如果过期率 **≥ 30%**：在后续生成的 `ONBOARDING.md` 头部插入醒目警告：
+1. 快速扫描所有 KB 文件的 Frontmatter `fingerprint`，对比 `contentHash`、`commit`、`worktree`、`tracked` 和 `notAuthoritative`，统计过期率、dirty/draft 率。
+2. 跳过 `KB_PLAN.md` 中标记为 `deprecated` 或 `merged-into-docs` 的正式 KB 主题；如果需要引用已合并内容，优先链接目标 docs。
+3. 如果过期率 **≥ 30%** 或 dirty/draft 率较高：在后续生成的 `ONBOARDING.md` 头部插入醒目警告：
    ```
-   ⚠️ 警告：当前知识库有超过 30% 的文档已过期。建议先运行 kb-update 刷新知识库后再生成入门指南，以避免新人接收到过时信息。
+   ⚠️ 警告：当前知识库有较多文档过期、来自 dirty worktree，或不是正式权威 KB。建议先基于 clean commit 运行 kb-update 刷新知识库后再生成入门指南，以避免新人接收到过时信息。
    ```
-3. 无论是否过期，继续执行后续步骤（但确保警告被保留在最终输出中）。
+4. 无论是否过期，继续执行后续步骤（但确保警告被保留在最终输出中）。
 
 ### 第 1 步：知识图谱拓扑分析 (Knowledge Graph Topology Analysis)
 1. 扫描所有 KB 文件中的 SSOT 内部链接（`[text](path)` 模式），构建一张**有向引用图**。

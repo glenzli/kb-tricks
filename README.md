@@ -4,40 +4,59 @@
 
 A collection of composable AI skills designed around **Cognitive Mapping**, **Adversarial Validation**, and **Mixture-of-Experts** patterns. These skills cover the full knowledge lifecycle: plan → build → maintain → query → audit → review design → review code → review tests → incident postmortem → migrate → changelog → onboard.
 
+## Design Direction
+
+`kb-tricks` is evolving from a "KB generation" skill suite into a controllable, auditable, incrementally maintainable AI development context system.
+
+The KB is an auxiliary context layer, not the authority for a repository. Source code, configuration, tests, release artifacts, and maintained human-facing docs remain authoritative. The KB should route questions, compress context, explain cross-module contracts, and expose uncertainty.
+
+The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most important operating contracts are:
+
+- **Bounded by default**: `kb-build` and `kb-update` process small slices unless the user explicitly requests full execution.
+- **Clean source for authoritative KB**: dirty or untracked source content is blocked from formal KB writes by default and belongs in draft or impact artifacts.
+- **Artifact boundaries**: projects can declare include/exclude/release-excluded paths through `.agent/kb/config.yaml`.
+- **Dirty-aware fingerprints**: KB metadata records Git state and content hashes, not only commit IDs.
+- **Existing docs comparison**: KB planning should compare existing docs before creating a parallel documentation island.
+- **Provenance-first answers**: query results distinguish KB, source fallback, existing docs, and inference.
+
 ## Skills
 
 ### 🚀 [kb-init](./kb-init/SKILL.md) — One-Click Orchestration Pipeline
 
 An orchestrator meta-skill that autonomously drives the `kb-plan` -> `Human Confirmation` -> `kb-build` pipeline, providing a seamless "Plan & Execute" experience.
 
-### 🗺️ [kb-plan](./kb-plan/SKILL.md) — Knowledge Base Blueprinting
+### 🗺️ [kb-plan](./kb-plan/SKILL.md) — Knowledge Base Manifest Planning
 
-Scans the repository to identify high-signal boundaries and generates a structured `KB_PLAN.md` blueprint.
+Scans the repository to identify high-signal boundaries and generates a structured long-lived `KB_PLAN.md` manifest.
 
 - **Macro Discovery**: Reads manifest files and directory trees without deep-diving into code
+- **Artifact Boundary Config**: Respects `.agent/kb/config.yaml` include/exclude/releaseExcluded rules
+- **Existing Docs Comparison**: Compares existing docs before creating a parallel KB topic
 - **Signal-to-Noise Isolation**: Explicitly filters out boilerplate, tests, and dependencies
 - **Task Chunking**: Breaks down the documentation process into manageable, file-by-file tasks
 
-### 🧠 [kb-build](./kb-build/SKILL.md) — Blueprint Execution & KB Construction
+### 🧠 [kb-build](./kb-build/SKILL.md) — Manifest Execution & KB Construction
 
-Executes the `KB_PLAN.md` blueprint chunk by chunk to build a high-signal knowledge base.
+Executes the `KB_PLAN.md` manifest in bounded slices to build a high-signal knowledge base.
 
-- **Plan Execution**: Iteratively processes tasks from the blueprint ensuring no loss of context
+- **Bounded Execution**: Defaults to `slice 1`; full execution requires explicit `until-complete`
+- **Manifest Execution**: Iteratively processes tasks from the manifest ensuring no loss of context
 - **Cognitive Mapping**: Captures cross-module contracts and design trade-offs, not boilerplate
 - **Mermaid Diagrams**: Mandatory for complex API interaction chains
 - **Semantic Glossary**: Terms + synonyms as retrieval anchors for RAG
 - **Context-Cleared Validation**: 3-D adversarial questions scored against KB-only access to prevent hallucination
-- **Source Fingerprinting**: Git Commit IDs for rot detection
+- **Dirty-Aware Fingerprinting**: Git state + content hashes for rot detection
 
 ### 🔄 [kb-update](./kb-update/SKILL.md) — Incremental Knowledge Maintenance
 
 Keeps an existing KB fresh via fingerprint diffing and chunked scoped rewrites.
 
-- **Fingerprint Diff**: Detects stale/orphaned KB files by comparing recorded Commit IDs
+- **Diff-First Scope**: Starts from `since` or `files` scopes when provided, then falls back to full fingerprint scan
+- **Fingerprint Diff**: Detects stale/orphaned KB files by comparing recorded Git state and content hashes
 - **Impact Analysis**: Classifies changes as Patch / Breaking / New Module
 - **Cascade Check**: Traces SSOT links to find ripple effects
 - **Chunked Execution**: Processes 1-2 stale docs per iteration to prevent context overflow
-- **Blueprint Sync**: Keeps `KB_PLAN.md` in sync when files are added or removed
+- **Manifest Sync**: Keeps `KB_PLAN.md` lifecycle state in sync when files are added, updated, merged, or deprecated
 - **Context-Cleared Validation**: Reduced-scope self-evaluation (1-2 questions per changed doc)
 
 ### 🔎 [kb-query](./kb-query/SKILL.md) — Knowledge Base Query & Source Fallback
@@ -55,7 +74,7 @@ Anti-hallucination knowledge retrieval with automatic source code verification.
 Token-efficient KB health dashboard using metadata-only scanning.
 
 - **Coverage Check**: Cross-references `KB_PLAN.md` tasks against actual KB files
-- **Freshness Check**: Batch fingerprint validation via `git log` — reads only Frontmatter, never body
+- **Freshness Check**: Batch dirty-aware fingerprint validation via Frontmatter, Git state, and content hashes
 - **Link Integrity**: Validates all SSOT internal links for dead references
 - **Glossary Coverage**: Checks glossary entries point to existing files
 - **Health Report**: A/B/C/D/F scoring with actionable recommendations
@@ -131,7 +150,7 @@ Auto-generates human-readable KB change summaries after updates.
                       │
 kb-init (Orchestrator) ──drives──┐
                                  ▼
-kb-plan ──blueprint──→ kb-build ──fingerprints──→ kb-update ──→ kb-changelog
+kb-plan ──manifest──→ kb-build ──fingerprints──→ kb-update ──→ kb-changelog
                            │                          ↑
                            ├──── KB ────→ moe-cr ─────┘ (KB-Action: UPDATE)
                            ├──── KB ────→ moe-test (契约 ↔ 测试交叉验证)
@@ -154,40 +173,59 @@ kb-plan ──blueprint──→ kb-build ──fingerprints──→ kb-update 
 
 一组可组合的 AI 技能，围绕**认知地图（Cognitive Mapping）**、**对抗性验证（Adversarial Validation）**和**混合专家（Mixture-of-Experts）**模式设计。覆盖知识全生命周期：规划 → 构建 → 维护 → 查询 → 体检 → 设计审查 → 代码审查 → 测试审查 → 事故复盘 → 迁移规划 → 变更日志 → 新人入门。
 
+## 设计方向
+
+`kb-tricks` 正在从“生成 KB 的 skill 套件”演进为一个可控、可审计、可增量维护的 AI 开发上下文系统。
+
+KB 不是代码仓库的权威来源。源码、配置、测试、发布产物和面向人的维护文档仍然是权威。KB 的职责是路由问题、压缩上下文、解释跨模块契约，并显式暴露不确定性。
+
+下一阶段设计记录在 [ROADMAP.md](./ROADMAP.md)。最重要的运行契约是：
+
+- **默认小步执行**：`kb-build` 和 `kb-update` 只处理小切片，除非用户明确要求全量执行。
+- **正式 KB 只基于干净源码**：dirty 或 untracked 源码默认不能写入正式 KB，只能进入草稿或影响分析产物。
+- **产物边界配置**：项目可以通过 `.agent/kb/config.yaml` 声明 include、exclude 和 releaseExcluded 路径。
+- **dirty-aware 指纹**：KB 元数据记录 Git 状态和内容哈希，而不只是 commit ID。
+- **已有文档对比**：规划 KB 前先比较现有文档，避免制造第二套文档孤岛。
+- **来源优先回答**：查询结果必须区分 KB、源码回退、现有文档和推断。
+
 ## 技能一览
 
 ### 🚀 [kb-init](./kb-init/SKILL.md) — 一键编排流水线
 
 一个"元技能 (Meta-Skill)"，它负责自主编排 `kb-plan` -> `人类确认` -> `kb-build` 这一完整的"规划与执行 (Plan & Execute)"流水线，提供顺滑的交互体验。
 
-### 🗺️ [kb-plan](./kb-plan/SKILL.md) — 知识库蓝图规划
+### 🗺️ [kb-plan](./kb-plan/SKILL.md) — 知识库 Manifest 规划
 
-通过宏观扫描代码库，区分高信噪比边界，并生成结构化的 `KB_PLAN.md` 施工计划书。
+通过宏观扫描代码库，区分高信噪比边界，并生成结构化、可长期维护的 `KB_PLAN.md` Manifest。
 
 - **宏观探索**：阅读配置和目录树，不深陷具体代码细节
+- **产物边界配置**：遵守 `.agent/kb/config.yaml` 的 include/exclude/releaseExcluded 规则
+- **已有文档对比**：创建 KB 主题前先比较现有 docs，避免文档孤岛
 - **信噪比隔离**：显式过滤样板代码、测试文件和外部依赖
 - **任务分块**：将文档化过程拆解为可管理、防上下文溢出的逐文件任务
 
-### 🧠 [kb-build](./kb-build/SKILL.md) — 蓝图执行与知识库构建
+### 🧠 [kb-build](./kb-build/SKILL.md) — Manifest 执行与知识库构建
 
-按块执行 `KB_PLAN.md` 计划书，构建高信噪比、低维护成本的知识库。
+按小切片执行 `KB_PLAN.md` Manifest，构建高信噪比、低维护成本的知识库。
 
-- **计划执行**：迭代式处理蓝图中的任务，确保不丢失上下文
+- **默认小步执行**：默认 `slice 1`；全量执行必须显式声明 `until-complete`
+- **Manifest 执行**：迭代式处理 Manifest 中的任务，确保不丢失上下文
 - **认知地图**：记录跨模块契约和设计权衡，而非样板代码
 - **Mermaid 图谱**：复杂 API 交互链路强制要求可视化
 - **语义触发词典**：术语 + 同义词，作为 RAG 检索锚点
 - **清空上下文验证**：架构/设计意图/边界三维提问，仅允许基于 KB 作答以防幻觉
-- **源码指纹**：Git Commit ID 用于知识腐烂检测
+- **dirty-aware 源码指纹**：Git 状态 + 内容哈希用于知识腐烂检测
 
 ### 🔄 [kb-update](./kb-update/SKILL.md) — 增量知识维护
 
 通过指纹比对和分块范围性重写，保持知识库的时效性。
 
-- **指纹比对**：通过 Commit ID 检测过期/孤立的 KB 文件
+- **差异优先范围**：优先从 `since` 或 `files` 范围入口计算影响面，再回退到全量指纹扫描
+- **指纹比对**：通过 Git 状态和内容哈希检测过期/孤立的 KB 文件
 - **影响分析**：将变更分类为 补丁型 / 破坏型 / 新模块
 - **级联检查**：追踪 SSOT 链接发现连锁影响
 - **分块执行**：每次仅处理 1~2 个过期文档，防止上下文溢出
-- **蓝图同步**：新增/删除文件时同步更新 `KB_PLAN.md` 索引
+- **Manifest 同步**：新增、更新、合并或废弃文件时同步更新 `KB_PLAN.md` 生命周期状态
 - **清空上下文验证**：缩小范围的自我评估（每个变更文档 1-2 个问题）
 
 ### 🔎 [kb-query](./kb-query/SKILL.md) — 知识库查询与源码回退
@@ -205,7 +243,7 @@ kb-plan ──blueprint──→ kb-build ──fingerprints──→ kb-update 
 省 Token 的元数据扫描式健康仪表盘。
 
 - **覆盖率检查**：交叉对比 `KB_PLAN.md` 任务与实际 KB 文件
-- **新鲜度检查**：仅读取 Frontmatter 的批量指纹校验——从不精读正文
+- **新鲜度检查**：基于 Frontmatter、Git 状态和内容哈希的 dirty-aware 批量指纹校验
 - **链接完整性**：验证所有 SSOT 内部链接是否存在死链
 - **词汇表覆盖**：检查词汇表条目是否指向存在的文件
 - **健康报告**：A/B/C/D/F 评级 + 可操作的改进建议
@@ -281,7 +319,7 @@ kb-plan ──blueprint──→ kb-build ──fingerprints──→ kb-update 
                     │
 kb-init (编排器) ──驱动──┐
                         ▼
-kb-plan ──蓝图──→ kb-build ──指纹──→ kb-update ──→ kb-changelog
+kb-plan ──Manifest──→ kb-build ──指纹──→ kb-update ──→ kb-changelog
                       │                    ↑
                       ├──── KB ────→ moe-cr ─┘ (KB-Action: UPDATE)
                       ├──── KB ────→ moe-test (契约 ↔ 测试交叉验证)

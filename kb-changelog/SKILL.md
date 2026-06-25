@@ -28,7 +28,7 @@ description: "一个知识库变更日志技能，在 kb-update 执行后自动�
 | 🆕 **新增文档 (Added)** | 文件为新创建 |
 | 🗑️ **废弃/删除 (Removed)** | 文件被删除或标记为废弃 |
 | 📖 **词汇表变更 (Glossary)** | `GLOSSARY.md` 被修改 |
-| 📋 **蓝图变更 (Blueprint)** | `KB_PLAN.md` 被修改 |
+| 📋 **Manifest 变更 (Manifest)** | `KB_PLAN.md` 被修改 |
 
 ### 第 3 步：生成语义摘要 (Generate Semantic Summary)
 对每个 📝 **内容更新**的文件（最消耗 Token 的部分），采用**差异优先**策略：
@@ -61,8 +61,8 @@ description: "一个知识库变更日志技能，在 kb-update 执行后自动�
 - 新增: `RS256`, `非对称签名`
 - 废弃: `HS256` (保留为同义词)
 
-### 📋 蓝图变更
-- `KB_PLAN.md`: 新增 `rate-limiter.md` 条目 [x]
+### 📋 Manifest 变更
+- `KB_PLAN.md`: 新增 `rate-limiter.md` 条目 `[built]`
 ```
 
 ### 第 5 步：增量追加策略 (Incremental Append)
