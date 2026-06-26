@@ -1,0 +1,10 @@
+include README.md
+include ROADMAP.md
+include RELEASE.md
+include LICENSE
+include pyproject.toml
+recursive-include templates *
+recursive-include spec *.md
+recursive-include kb-* *
+recursive-include moe-* *
+recursive-include kb_tricks/templates *

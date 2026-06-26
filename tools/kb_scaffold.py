@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from importlib import resources
 import shutil
 import sys
 from dataclasses import dataclass
@@ -12,6 +13,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 TEMPLATES = PROJECT_ROOT / "templates"
+PACKAGE_TEMPLATES = "kb_tricks"
 
 
 @dataclass
@@ -38,8 +40,23 @@ def existing_docs_entries(repo: Path) -> list[str]:
     return entries
 
 
+def template_text(name: str) -> str:
+    source = TEMPLATES / name
+    if source.exists():
+        return source.read_text(encoding="utf-8")
+    try:
+        return (
+            resources.files(PACKAGE_TEMPLATES)
+            .joinpath("templates")
+            .joinpath(name)
+            .read_text(encoding="utf-8")
+        )
+    except (FileNotFoundError, ModuleNotFoundError) as exc:
+        raise FileNotFoundError(f"template not found: {name}") from exc
+
+
 def render_config(repo: Path) -> str:
-    template = (TEMPLATES / "config.yaml").read_text(encoding="utf-8")
+    template = template_text("config.yaml")
     entries = existing_docs_entries(repo)
     if not entries:
         return template
@@ -70,7 +87,7 @@ def render_config(repo: Path) -> str:
 def plan_writes(repo: Path, force: bool) -> list[PlannedWrite]:
     writes = [
         PlannedWrite(None, repo / ".agent" / "kb" / "config.yaml", "write", render_config(repo)),
-        PlannedWrite(TEMPLATES / "KB_PLAN.md", repo / "KB_PLAN.md", "copy"),
+        PlannedWrite(None, repo / "KB_PLAN.md", "write", template_text("KB_PLAN.md")),
         PlannedWrite(None, repo / ".agent" / "kb" / "_draft" / ".gitkeep", "touch", ""),
         PlannedWrite(None, repo / ".agent" / "kb" / "_impact" / ".gitkeep", "touch", ""),
         PlannedWrite(None, repo / ".agent" / "kb" / "_validation" / ".gitkeep", "touch", ""),
@@ -119,10 +136,11 @@ def main(argv: list[str]) -> int:
     if not repo.exists() or not repo.is_dir():
         print(f"repo does not exist: {repo}", file=sys.stderr)
         return 2
-    if not TEMPLATES.exists():
-        print(f"templates directory missing: {TEMPLATES}", file=sys.stderr)
+    try:
+        writes = plan_writes(repo, args.force)
+    except FileNotFoundError as exc:
+        print(str(exc), file=sys.stderr)
         return 2
-    writes = plan_writes(repo, args.force)
     print_plan(repo, writes)
     if args.dry_run:
         return 0

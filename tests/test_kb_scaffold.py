@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 
 from test_kb_audit import PROJECT_ROOT, run
+from tools import kb_scaffold
 
 SCAFFOLD = PROJECT_ROOT / "tools" / "kb_scaffold.py"
 AUDIT = PROJECT_ROOT / "tools" / "kb_audit.py"
@@ -36,6 +37,25 @@ class KbScaffoldTests(unittest.TestCase):
             config = (repo / ".agent" / "kb" / "config.yaml").read_text(encoding="utf-8")
             self.assertIn("README.md", config)
             self.assertIn("docs/**", config)
+
+    def test_scaffold_can_read_packaged_templates_without_source_templates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            original_templates = kb_scaffold.TEMPLATES
+            try:
+                kb_scaffold.TEMPLATES = Path(tmp) / "missing-templates"
+                writes = kb_scaffold.plan_writes(repo, force=False)
+                for write in writes:
+                    kb_scaffold.apply_write(write)
+            finally:
+                kb_scaffold.TEMPLATES = original_templates
+
+            self.assertTrue((repo / ".agent" / "kb" / "config.yaml").exists())
+            self.assertIn(
+                "Knowledge Base Manifest",
+                (repo / "KB_PLAN.md").read_text(encoding="utf-8"),
+            )
 
     def test_dry_run_does_not_write(self):
         with tempfile.TemporaryDirectory() as tmp:

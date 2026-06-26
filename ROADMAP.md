@@ -24,6 +24,7 @@ Current repository support:
 
 - `spec/KB_SPEC.md` defines the artifact schema.
 - `templates/` provides starter artifacts for target repositories.
+- `kb_tricks/templates/` packages those starter artifacts so installed `kb scaffold` does not depend on a source checkout.
 - `tools/kb_scaffold.py` installs starter config, manifest, and reserved KB directories into a target repository without generating KB prose.
 - `tools/kb_manifest.py` selects bounded `KB_PLAN.md` tasks by status, ID/tag/path filters, and slice size; it does not execute or generate KB prose.
 - `tools/kb_docs.py` inventories existing docs from `docs.existing`, checks Manifest `Docs Comparison` coverage, and emits duplicate hints without judging prose quality.

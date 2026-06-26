@@ -2,6 +2,10 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
+.venv/
+build/
+dist/
+*.egg-info/
 .agent/kb/index.json
 **/.agent/kb/index.json
 tmp/

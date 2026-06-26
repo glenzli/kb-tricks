@@ -22,6 +22,7 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 ## Specs And Tooling
 
 - [spec/KB_SPEC.md](./spec/KB_SPEC.md): stable artifact schema for `.agent/kb/config.yaml`, `KB_PLAN.md`, KB frontmatter, validation files, glossary, and `index.json`.
+- [RELEASE.md](./RELEASE.md): release boundary, install smoke, and packaging verification notes.
 - [templates/](./templates): starter templates for config, manifest, KB docs, validation artifacts, and query answers.
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py): dependency-free scaffold helper for installing starter config, manifest, and reserved KB directories into a target repository.
 - [tools/kb_manifest.py](./tools/kb_manifest.py): dependency-free selector for bounded `KB_PLAN.md` task execution.
@@ -241,6 +242,7 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 ## 规范与工具
 
 - [spec/KB_SPEC.md](./spec/KB_SPEC.md)：定义 `.agent/kb/config.yaml`、`KB_PLAN.md`、KB frontmatter、验证文件、词汇表和 `index.json` 的稳定结构。
+- [RELEASE.md](./RELEASE.md)：记录 release 边界、安装 smoke 和打包验证流程。
 - [templates/](./templates)：提供 config、Manifest、KB 文档、验证产物和查询回答模板。
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py)：无依赖的初始化辅助工具，用于把 starter config、Manifest 和 KB 保留目录安装到目标仓库。
 - [tools/kb_manifest.py](./tools/kb_manifest.py)：无依赖的 `KB_PLAN.md` 小步任务选择器，用于落实 bounded execution。
