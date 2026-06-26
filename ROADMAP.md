@@ -188,37 +188,49 @@ Each validation file should record questions, KB-only answers, citations, pass/f
 
 ### 10. Machine-readable index and CI
 
-After the core schemas stabilize, `kb-tricks` should generate `.agent/kb/index.json` with document paths, terms, source files, fingerprints, links, tags, status, and staleness.
+`kb-tricks` can generate `.agent/kb/index.json` with document paths, terms, source files, fingerprints, links, tags, status, and staleness through `kb audit --write-index`.
 
-The deterministic tool layer should support CI-friendly checks such as:
+The deterministic tool layer supports CI-friendly checks such as:
 
 ```text
 python3 tools/kb_audit.py --fail-on stale
 python3 tools/kb_audit.py --fail-on dead-links
 python3 tools/kb_audit.py --min-score B
+python3 tools/release_smoke.py
 ```
 
-## Delivery Phases
+## Implementation Status
 
-### P0: Make it controllable and trustworthy
+### Completed
 
-- Bounded execution defaults.
-- Authoritative vs draft KB split.
-- Artifact boundary config.
-- Dirty-aware fingerprints.
-- Existing docs comparison in planning.
+- Bounded Manifest selection through `kb manifest`.
+- Authoritative vs draft KB contracts in specs and skills.
+- Artifact boundary config through `.agent/kb/config.yaml`.
+- Dirty-aware fingerprints through `kb fingerprint` and `kb audit`.
+- Existing docs inventory and Manifest comparison through `kb docs`.
+- Long-lived `KB_PLAN.md` lifecycle states.
+- Persisted validation artifact schema and audit checks.
+- Machine-readable `.agent/kb/index.json` generation through `kb audit --write-index`.
+- CI-friendly audit exit codes through `--fail-on` and `--min-score`.
+- Diff-first maintenance scope through `kb impact`.
+- Read-only update planning through `kb update-plan`.
+- Hard provenance for `kb-query` through `templates/query-answer.md` and `kb query-lint`.
+- Installed CLI dispatcher, package templates, release smoke script, and GitHub Actions CI workflow.
 
-### P1: Make it maintainable
+### In Progress
 
-- Long-lived `KB_PLAN.md` manifest states.
-- Hard provenance in `kb-query` with lintable answer drafts.
-- Diff-first `kb-update`.
-- Persisted validation artifacts.
-- Audit awareness of draft, dirty, stale, orphaned, merged, and deprecated states.
+- Release packaging polish around local venv workflows, source distributions, and installed CLI smoke.
+- Keeping root templates and packaged templates synchronized through tests.
+- Aligning skill instructions with the deterministic tool layer as the CLI surface stabilizes.
 
-### P2: Make it an engineering component
+### Next
 
-- `.agent/kb/index.json`.
-- Deterministic audit tool with exit codes.
-- CI policies.
+- Dogfood the released CLI against a real repository, starting with scaffold/docs/impact/update-plan/audit.
+- Add a concise `CONTRIBUTING.md` or developer quickstart that points contributors to `tools/release_smoke.py`.
+- Decide whether to publish a first tagged release or keep iterating as source-only package installs.
+
+### Deferred
+
+- Automated KB prose generation as a deterministic tool. KB synthesis should remain a skill/Agent responsibility for now.
+- Deeper natural-language quality scoring for existing docs; current tools intentionally limit themselves to deterministic inventory and coverage signals.
 - Stronger MoE review integration through `KB-Action` outputs without letting review skills directly rewrite KB.

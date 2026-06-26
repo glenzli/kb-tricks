@@ -5,6 +5,7 @@ import unittest
 from test_kb_audit import PROJECT_ROOT
 
 from kb_tricks import __version__
+from tools import release_smoke
 
 try:
     import tomllib
@@ -58,6 +59,29 @@ class PackagingTests(unittest.TestCase):
         self.assertIn("recursive-include kb-* *", manifest)
         self.assertIn("recursive-include moe-* *", manifest)
         self.assertIn("recursive-include kb_tricks/templates *", manifest)
+
+    def test_release_smoke_commands_cover_source_checks(self):
+        commands = release_smoke.smoke_commands(
+            installed=False,
+            include_tests=True,
+            include_git_check=True,
+        )
+        rendered = [" ".join(command) for command in commands]
+        self.assertTrue(any("unittest discover tests" in item for item in rendered))
+        self.assertTrue(any("kb_tricks.cli self-check --json" in item for item in rendered))
+        self.assertTrue(any("query-lint --json templates/query-answer.md" in item for item in rendered))
+        self.assertIn("git diff --check", rendered)
+
+    def test_ci_workflow_uses_release_smoke(self):
+        workflow = (PROJECT_ROOT / ".github" / "workflows" / "ci.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("python -B tools/release_smoke.py", workflow)
+        self.assertIn("python -m pip install .", workflow)
+        self.assertIn(
+            "python -B tools/release_smoke.py --installed --skip-tests --skip-git-check",
+            workflow,
+        )
 
     def test_supported_runtime_is_inside_declared_range(self):
         self.assertGreaterEqual(sys.version_info, (3, 10))

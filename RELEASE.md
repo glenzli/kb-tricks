@@ -39,10 +39,15 @@ python3 tools/kb_query_lint.py templates/query-answer.md
 Before publishing, run:
 
 ```bash
-python3 -B -m unittest discover tests
-python3 -B -m kb_tricks.cli self-check --json
-python3 -B -m kb_tricks.cli query-lint --json templates/query-answer.md
-git diff --check
+python3 -B tools/release_smoke.py
+```
+
+After installing into a virtual environment, run the installed CLI smoke:
+
+```bash
+python3 -B tools/release_smoke.py --installed --skip-tests --skip-git-check
+# or, when the installed CLI is not on PATH:
+python3 -B tools/release_smoke.py --installed --kb .venv/bin/kb --skip-tests --skip-git-check
 ```
 
 The install smoke should be run in an environment with standard Python packaging support. The repository tests avoid network access and do not require building an isolated wheel.

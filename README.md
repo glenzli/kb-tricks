@@ -32,6 +32,7 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [tools/kb_impact.py](./tools/kb_impact.py): dependency-free diff-first changed-file to Manifest task mapper for `kb-update`.
 - [tools/kb_update_plan.py](./tools/kb_update_plan.py): dependency-free read-only planner that turns impact data into bounded update actions, blockers, docs reviews, and new KB candidates.
 - [tools/kb_query_lint.py](./tools/kb_query_lint.py): dependency-free provenance linter for `kb-query` answers.
+- [tools/release_smoke.py](./tools/release_smoke.py): local/CI release smoke runner for tests, CLI import checks, scaffold dry-run, query lint, and whitespace checks.
 
 Installed CLI example:
 
@@ -63,11 +64,7 @@ python3 tools/kb_query_lint.py templates/query-answer.md
 Minimal CI smoke chain:
 
 ```bash
-kb self-check --json
-kb manifest --repo /path/to/project --slice 1 --json
-kb docs --repo /path/to/project --check-manifest
-kb fingerprint --repo /path/to/project --check .agent/kb/<topic>.md
-kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --fail-on missing-validation --min-score B
+python3 -B tools/release_smoke.py
 ```
 
 ## Skills
@@ -252,6 +249,7 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - [tools/kb_impact.py](./tools/kb_impact.py)：无依赖的 diff-first changed files 到 Manifest 任务影响面映射工具，供 `kb-update` 使用。
 - [tools/kb_update_plan.py](./tools/kb_update_plan.py)：无依赖的只读更新规划工具，把 impact 结果转换为 bounded actions、阻塞项、docs review 和新 KB 候选。
 - [tools/kb_query_lint.py](./tools/kb_query_lint.py)：无依赖的 `kb-query` 回答来源类型与推断隔离检查工具。
+- [tools/release_smoke.py](./tools/release_smoke.py)：本地/CI release smoke 入口，统一运行测试、CLI import 检查、scaffold dry-run、query lint 和 whitespace 检查。
 
 安装后的 CLI 示例：
 
@@ -283,11 +281,7 @@ python3 tools/kb_query_lint.py templates/query-answer.md
 最小 CI smoke chain：
 
 ```bash
-kb self-check --json
-kb manifest --repo /path/to/project --slice 1 --json
-kb docs --repo /path/to/project --check-manifest
-kb fingerprint --repo /path/to/project --check .agent/kb/<topic>.md
-kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --fail-on missing-validation --min-score B
+python3 -B tools/release_smoke.py
 ```
 
 ## 技能一览
