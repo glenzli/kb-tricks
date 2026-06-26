@@ -60,6 +60,30 @@ class KbQueryLintTests(unittest.TestCase):
                 ["docs", "kb", "source"],
             )
 
+    def test_repo_resolves_relative_answer_paths(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            answers = repo / "answers"
+            answers.mkdir(parents=True)
+            (answers / "answer.md").write_text(GOOD_ANSWER, encoding="utf-8")
+
+            proc = run(
+                [
+                    sys.executable,
+                    "-B",
+                    str(TOOL),
+                    "--repo",
+                    str(repo),
+                    "--json",
+                    "answers/answer.md",
+                ],
+                PROJECT_ROOT,
+                check=False,
+            )
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            data = json.loads(proc.stdout)
+            self.assertEqual(data["results"][0]["path"], "answers/answer.md")
+
     def test_answer_line_requires_source_marker(self):
         with tempfile.TemporaryDirectory() as tmp:
             answer = Path(tmp) / "answer.md"

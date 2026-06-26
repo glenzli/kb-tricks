@@ -1,0 +1,63 @@
+# kb-tricks Knowledge Base Manifest
+
+## Overall Approach
+
+This repository is both the implementation of deterministic `kb` tooling and
+the source of the kb-tricks skills/templates. The KB is intentionally small:
+it routes agents to the right source files, explains cross-file contracts, and
+records validation questions. It is not authoritative. Source code, tests,
+packaging metadata, and release outputs remain the source of truth.
+
+## Artifact Boundary
+
+- Config: `.agent/kb/config.yaml`
+- Include: `kb_tricks/**`, `tools/**`, `templates/**`, `kb-*/SKILL.md`, `moe-*/SKILL.md`, `spec/**`, `tests/**`, `.github/workflows/**`, `pyproject.toml`, `MANIFEST.in`, `README.md`, `RELEASE.md`, `ROADMAP.md`
+- Exclude: `dist/**`, `out/**`, `node_modules/**`, `vendor/**`, `build/**`, `*.egg-info/**`, `.venv/**`
+- Release Excluded: `.agent/**`, `KB_PLAN.md`
+
+## Existing Docs Comparison
+
+- `README.md`: User-facing install, command list, quickstart, and release checks.
+- `RELEASE.md`: Release packaging and verification procedure.
+- `ROADMAP.md`: Product direction and implementation status.
+- `spec/KB_SPEC.md`: Structural contract for KB artifacts.
+- KB docs should add retrieval routing, source boundaries, and validation results
+  that are too operational or agent-specific for the public docs.
+
+## Ignored Targets
+
+- `dist/`, `build/`, `*.egg-info/`, `.venv/`: Build or local environment output.
+- `.agent/`: Dogfood KB artifacts. They must not define release semantics.
+- Tests are included only when they define released behavior or release gates.
+
+## Task Manifest
+
+- [built] deterministic-toolchain
+  - **ID**: `deterministic-toolchain`
+  - **KB**: `.agent/kb/toolchain/deterministic-tools.md`
+  - **Sources**: `kb_tricks/cli.py`, `tools/kb_audit.py`, `tools/kb_manifest.py`, `tools/kb_update_plan.py`, `tools/kb_impact.py`, `tools/kb_fingerprint.py`, `tools/kb_docs.py`, `tools/kb_query_lint.py`, `tools/kb_scaffold.py`
+  - **Focus**: CLI dispatch, deterministic audit/manifest/update planning, dirty-aware fingerprints, docs inventory, query provenance linting, and scaffold boundaries.
+  - **Tags**: `cli`, `audit`, `bounded`, `fingerprint`, `impact`
+  - **Docs Comparison**: README lists commands, but the KB records how the tools compose and where source authority lives.
+  - **Status**: `built`
+  - **LastValidated**: `2026-06-26`
+
+- [built] skill-template-contract
+  - **ID**: `skill-template-contract`
+  - **KB**: `.agent/kb/skills/templates-and-skills.md`
+  - **Sources**: `kb-build/SKILL.md`, `kb-audit/SKILL.md`, `kb-query/SKILL.md`, `kb-update/SKILL.md`, `kb-plan/SKILL.md`, `kb-init/SKILL.md`, `templates/KB_PLAN.md`, `templates/config.yaml`, `templates/kb-doc.md`, `templates/query-answer.md`, `templates/validation.md`, `spec/KB_SPEC.md`
+  - **Focus**: Skill responsibilities, template shape, provenance requirements, and the boundary between generated KB prose and deterministic CLI checks.
+  - **Tags**: `skills`, `templates`, `spec`, `provenance`
+  - **Docs Comparison**: spec/KB_SPEC.md defines structure; KB adds agent routing and practical maintenance guidance.
+  - **Status**: `built`
+  - **LastValidated**: `2026-06-26`
+
+- [built] release-packaging
+  - **ID**: `release-packaging`
+  - **KB**: `.agent/kb/release/packaging.md`
+  - **Sources**: `pyproject.toml`, `MANIFEST.in`, `kb_tricks/templates/KB_PLAN.md`, `kb_tricks/templates/config.yaml`, `kb_tricks/templates/kb-doc.md`, `kb_tricks/templates/query-answer.md`, `kb_tricks/templates/validation.md`, `tools/release_smoke.py`, `tests/test_packaging.py`, `.github/workflows/ci.yml`, `README.md`, `RELEASE.md`, `ROADMAP.md`
+  - **Focus**: Package data, installed CLI smoke testing, CI release checks, and which dogfood artifacts stay out of release semantics.
+  - **Tags**: `release`, `packaging`, `ci`, `templates`
+  - **Docs Comparison**: README and RELEASE document commands; KB explains why package resources, source templates, and CI smoke checks must move together.
+  - **Status**: `built`
+  - **LastValidated**: `2026-06-26`

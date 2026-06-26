@@ -180,6 +180,19 @@ def duplicate_hints(repo: Path, docs: list[ExistingDoc], tasks: list[ManifestTas
     return hints
 
 
+def dead_links(docs: list[ExistingDoc]) -> list[dict[str, Any]]:
+    return [
+        {
+            "source": doc.path,
+            "target": link.target,
+            "line": link.line,
+        }
+        for doc in docs
+        for link in doc.links
+        if not link.ok
+    ]
+
+
 def doc_to_dict(doc: ExistingDoc) -> dict[str, Any]:
     return {
         "path": doc.path,
@@ -203,6 +216,7 @@ def collect_docs_data(repo: Path, config_path: Path, manifest_path: Path) -> dic
     patterns = config.get("docs.existing", [])
     docs, unmatched = collect_existing_docs(repo, patterns)
     tasks = parse_manifest(manifest_path)
+    hints = duplicate_hints(repo, docs, tasks)
     return {
         "schemaVersion": 1,
         "repo": str(repo),
@@ -212,7 +226,9 @@ def collect_docs_data(repo: Path, config_path: Path, manifest_path: Path) -> dic
         "unmatchedPatterns": unmatched,
         "existingDocs": [doc_to_dict(doc) for doc in docs],
         "docsComparison": docs_comparison_summary(tasks),
-        "duplicateHints": duplicate_hints(repo, docs, tasks),
+        "duplicateHints": hints,
+        "duplicateHintCount": len(hints),
+        "deadLinks": dead_links(docs),
         "warnings": warnings(config_path, manifest_path, patterns),
     }
 
@@ -228,7 +244,7 @@ def warnings(config_path: Path, manifest_path: Path, patterns: list[str]) -> lis
     return result
 
 
-def print_markdown(data: dict[str, Any]) -> None:
+def print_markdown(data: dict[str, Any], duplicate_limit: int) -> None:
     print("# KB Existing Docs Report")
     print()
     print(f"- Config: `{data['config']}`")
@@ -247,11 +263,21 @@ def print_markdown(data: dict[str, Any]) -> None:
         print("## Missing Docs Comparison")
         for task_id in comparison["missing"]:
             print(f"- {task_id}")
+    if data["deadLinks"]:
+        print()
+        print("## Dead Links")
+        for link in data["deadLinks"]:
+            print(f"- {link['source']}:{link['line']} -> {link['target']}")
     if data["duplicateHints"]:
         print()
-        print("## Duplicate Hints")
-        for hint in data["duplicateHints"]:
+        total = len(data["duplicateHints"])
+        visible = data["duplicateHints"] if duplicate_limit < 0 else data["duplicateHints"][:duplicate_limit]
+        print(f"## Duplicate Hints ({len(visible)}/{total})")
+        for hint in visible:
             print(f"- {hint['taskId']} <-> {hint['doc']}: {'; '.join(hint['reasons'])}")
+        omitted = total - len(visible)
+        if omitted > 0:
+            print(f"- ... {omitted} more omitted; use --json or --duplicate-limit -1 for the full list.")
     if data["warnings"]:
         print()
         print("## Warnings")
@@ -266,9 +292,20 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--manifest", default="KB_PLAN.md", help="Manifest path.")
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")
     parser.add_argument(
+        "--duplicate-limit",
+        type=int,
+        default=5,
+        help="Maximum duplicate hints to print in text output. Use -1 for all.",
+    )
+    parser.add_argument(
         "--check-manifest",
         action="store_true",
         help="Exit 1 when active manifest tasks lack Docs Comparison.",
+    )
+    parser.add_argument(
+        "--check-links",
+        action="store_true",
+        help="Exit 1 when existing docs contain dead local links.",
     )
     return parser.parse_args(argv)
 
@@ -279,16 +316,21 @@ def main(argv: list[str]) -> int:
     if not repo.exists() or not repo.is_dir():
         print(f"repo does not exist: {repo}", file=sys.stderr)
         return 2
+    if args.duplicate_limit < -1:
+        print("--duplicate-limit must be -1 or greater", file=sys.stderr)
+        return 2
     config = (repo / args.config).resolve()
     manifest = (repo / args.manifest).resolve()
     data = collect_docs_data(repo, config, manifest)
     if args.json:
         print(json.dumps(data, indent=2, sort_keys=True))
     else:
-        print_markdown(data)
+        print_markdown(data, args.duplicate_limit)
     if args.check_manifest and not manifest.exists():
         return 2
     if args.check_manifest and data["docsComparison"]["missing"]:
+        return 1
+    if args.check_links and data["deadLinks"]:
         return 1
     return 0
 

@@ -103,7 +103,9 @@ class KbDocsTests(unittest.TestCase):
             self.assertEqual(data["unmatchedPatterns"], ["missing/**"])
             self.assertEqual(data["docsComparison"]["coverage"], 50.0)
             self.assertEqual(data["docsComparison"]["missing"], ["api-auth-flow"])
+            self.assertEqual(data["deadLinks"], [])
             hints = data["duplicateHints"]
+            self.assertEqual(data["duplicateHintCount"], len(hints))
             self.assertTrue(
                 any(
                     hint["taskId"] == "release-packaging"
@@ -133,6 +135,37 @@ class KbDocsTests(unittest.TestCase):
             proc, data = docs_json(repo, "--check-manifest")
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
             self.assertEqual(data["docsComparison"]["missing"], [])
+
+    def test_dead_links_are_reported_and_checkable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            write_docs_repo(repo, include_all_comparisons=True)
+            release_doc = repo / "docs" / "release.md"
+            release_doc.write_text(
+                release_doc.read_text(encoding="utf-8")
+                + "\nSee [missing](missing.md).\n"
+                + "\n```markdown\n[example only](ignored.md)\n```\n",
+                encoding="utf-8",
+            )
+
+            proc, data = docs_json(repo, "--check-links")
+            self.assertEqual(proc.returncode, 1)
+            self.assertEqual(
+                data["deadLinks"],
+                [{"line": 9, "source": "docs/release.md", "target": "missing.md"}],
+            )
+
+            text_proc = run(
+                [sys.executable, "-B", str(TOOL), "--repo", str(repo), "--duplicate-limit", "1"],
+                PROJECT_ROOT,
+                check=False,
+            )
+            self.assertEqual(text_proc.returncode, 0, text_proc.stdout + text_proc.stderr)
+            self.assertIn("## Dead Links", text_proc.stdout)
+            self.assertIn("docs/release.md:9 -> missing.md", text_proc.stdout)
+            self.assertIn("## Duplicate Hints (1/", text_proc.stdout)
+            self.assertIn("more omitted", text_proc.stdout)
 
     def test_missing_repo_exits_two(self):
         with tempfile.TemporaryDirectory() as tmp:

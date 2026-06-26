@@ -67,9 +67,11 @@ Rules:
 ```text
 python3 tools/kb_docs.py --repo /path/to/project --json
 python3 tools/kb_docs.py --repo /path/to/project --check-manifest
+python3 tools/kb_docs.py --repo /path/to/project --check-links
+python3 tools/kb_docs.py --repo /path/to/project --duplicate-limit 5
 ```
 
-It reads `.agent/kb/config.yaml` `docs.existing`, expands matching Markdown documents, extracts headings, content hashes, local links, unmatched patterns, Manifest `Docs Comparison` coverage, and low-cost duplicate hints. It does not decide whether prose is sufficient; that remains a skill-layer judgment. `--check-manifest` exits `1` when active Manifest tasks lack `Docs Comparison`, and exits `2` when the requested check cannot run.
+It reads `.agent/kb/config.yaml` `docs.existing`, expands matching Markdown documents, extracts headings, content hashes, local links, unmatched patterns, Manifest `Docs Comparison` coverage, dead local links, and low-cost duplicate hints. It does not decide whether prose is sufficient; that remains a skill-layer judgment. Text output limits duplicate hints by default so dead links and missing comparison work stay visible; JSON output keeps the complete `duplicateHints` list. `--check-manifest` exits `1` when active Manifest tasks lack `Docs Comparison`, `--check-links` exits `1` when existing docs contain dead local links, and both exit `2` when the requested check cannot run.
 
 ## `KB_PLAN.md` Manifest
 
@@ -181,11 +183,12 @@ Required sections:
 
 ```text
 kb query-lint answer.md
+kb query-lint --repo /path/to/project docs/answer.md
 kb query-lint --json answer.md
 python3 tools/kb_query_lint.py templates/query-answer.md
 ```
 
-Exit code `0` means the answer contract passed. Exit code `1` means the linter found provenance or structure failures. Exit code `2` means the linter could not read the requested input.
+`--repo` resolves relative answer paths against a target repository and reports paths relative to that repository. Exit code `0` means the answer contract passed. Exit code `1` means the linter found provenance or structure failures. Exit code `2` means the linter could not read the requested input.
 
 ## KB Frontmatter
 
@@ -317,5 +320,7 @@ Deterministic audit tools should support:
 --fail-on missing-validation
 --min-score B
 ```
+
+Missing `KB_PLAN.md` or `.agent/kb/config.yaml` must affect the audit grade even when the caller does not pass `--fail-on`: the `setup` metric is `0` until both files exist. Policy exit codes remain explicit through `--fail-on` and `--min-score`.
 
 Exit code `0` means policy passed. Exit code `1` means the audit completed but policy failed. Exit code `2` means the audit itself could not run.

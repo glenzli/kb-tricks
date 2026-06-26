@@ -190,6 +190,11 @@ class KbAuditTests(unittest.TestCase):
             repo = Path(tmp) / "empty"
             repo.mkdir()
             run(["git", "init"], repo)
+            default_proc, default_data = audit_json(repo)
+            self.assertEqual(default_proc.returncode, 0, default_proc.stdout + default_proc.stderr)
+            self.assertEqual(default_data["summary"]["grade"], "F")
+            self.assertEqual(default_data["summary"]["metrics"]["setup"], 0.0)
+
             proc = run(
                 [
                     sys.executable,

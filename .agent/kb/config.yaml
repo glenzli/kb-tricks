@@ -1,0 +1,40 @@
+# kb-tricks artifact boundary config
+#
+# This repository dogfoods kb-tricks. The KB artifacts explain routing and
+# operational contracts, but source, tests, packaging metadata, and release
+# outputs remain authoritative.
+
+include:
+  - kb_tricks/**
+  - tools/**
+  - templates/**
+  - kb-*/SKILL.md
+  - moe-*/SKILL.md
+  - spec/**
+  - tests/**
+  - .github/workflows/**
+  - pyproject.toml
+  - MANIFEST.in
+  - README.md
+  - RELEASE.md
+  - ROADMAP.md
+
+exclude:
+  - dist/**
+  - out/**
+  - node_modules/**
+  - vendor/**
+  - build/**
+  - "*.egg-info/**"
+  - .venv/**
+
+releaseExcluded:
+  - .agent/**
+  - KB_PLAN.md
+
+docs:
+  existing:
+    - README.md
+    - RELEASE.md
+    - ROADMAP.md
+    - spec/**

@@ -90,6 +90,13 @@ class LintResult:
     violations: list[LintViolation] = field(default_factory=list)
 
 
+def relpath(path: Path, root: Path) -> str:
+    try:
+        return path.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
 def normalize_heading(value: str) -> str:
     value = value.strip().strip("#").strip()
     value = re.sub(r"\s+", " ", value)
@@ -274,16 +281,17 @@ def print_text(results: list[LintResult]) -> None:
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--repo", default=".", help="Resolve answer paths relative to this repository.")
+    parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")
     parser.add_argument(
         "answers",
         nargs="*",
         help="Markdown answer drafts to lint. Use '-' or no files to read stdin.",
     )
-    parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")
     return parser.parse_args(argv)
 
 
-def read_inputs(paths: list[str]) -> tuple[list[tuple[str, str]], list[str]]:
+def read_inputs(paths: list[str], repo: Path) -> tuple[list[tuple[str, str]], list[str]]:
     if not paths:
         return [("<stdin>", sys.stdin.read())], []
     inputs: list[tuple[str, str]] = []
@@ -293,16 +301,22 @@ def read_inputs(paths: list[str]) -> tuple[list[tuple[str, str]], list[str]]:
             inputs.append(("<stdin>", sys.stdin.read()))
             continue
         path = Path(value)
+        if not path.is_absolute():
+            path = repo / path
         if not path.exists() or not path.is_file():
             errors.append(f"{value}: file does not exist")
             continue
-        inputs.append((value, path.read_text(encoding="utf-8")))
+        inputs.append((relpath(path, repo), path.read_text(encoding="utf-8")))
     return inputs, errors
 
 
 def main(argv: list[str]) -> int:
     args = parse_args(argv)
-    inputs, errors = read_inputs(args.answers)
+    repo = Path(args.repo).resolve()
+    if not repo.exists() or not repo.is_dir():
+        print(f"repo does not exist: {repo}", file=sys.stderr)
+        return 2
+    inputs, errors = read_inputs(args.answers, repo)
     if errors:
         for error in errors:
             print(error, file=sys.stderr)

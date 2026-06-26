@@ -26,8 +26,8 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [templates/](./templates): starter templates for config, manifest, KB docs, validation artifacts, and query answers.
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py): dependency-free scaffold helper for installing starter config, manifest, and reserved KB directories into a target repository.
 - [tools/kb_manifest.py](./tools/kb_manifest.py): dependency-free selector for bounded `KB_PLAN.md` task execution.
-- [tools/kb_docs.py](./tools/kb_docs.py): dependency-free existing-docs inventory and manifest comparison coverage helper.
-- [tools/kb_audit.py](./tools/kb_audit.py): dependency-free deterministic audit helper for hashes, dirty-state checks, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
+- [tools/kb_docs.py](./tools/kb_docs.py): dependency-free existing-docs inventory, manifest comparison coverage, dead-link reporting, and duplicate-hint helper.
+- [tools/kb_audit.py](./tools/kb_audit.py): dependency-free deterministic audit helper for setup checks, hashes, dirty-state checks, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py): dependency-free helper for generating and checking dirty-aware source fingerprints.
 - [tools/kb_impact.py](./tools/kb_impact.py): dependency-free diff-first changed-file to Manifest task mapper for `kb-update`.
 - [tools/kb_update_plan.py](./tools/kb_update_plan.py): dependency-free read-only planner that turns impact data into bounded update actions, blockers, docs reviews, and new KB candidates.
@@ -40,14 +40,14 @@ Installed CLI example:
 kb self-check --json
 kb scaffold --repo /path/to/project --dry-run
 kb manifest --repo /path/to/project --slice 1 --json
-kb docs --repo /path/to/project --check-manifest
+kb docs --repo /path/to/project --check-manifest --check-links
 kb impact --repo /path/to/project --staged --json
 kb impact --repo /path/to/project --worktree --json
 kb impact --repo /path/to/project --base main --json
 kb impact --repo /path/to/project --since HEAD~1 --json
 kb update-plan --repo /path/to/project --staged --json
 kb update-plan --repo /path/to/project --worktree --draft --json
-kb query-lint templates/query-answer.md
+kb query-lint --repo /path/to/project templates/query-answer.md
 kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
 kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```

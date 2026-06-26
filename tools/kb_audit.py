@@ -324,7 +324,14 @@ def is_auxiliary_doc(path: Path) -> bool:
 def link_targets(text: str) -> list[tuple[int, str]]:
     results: list[tuple[int, str]] = []
     pattern = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
+    fence_pattern = re.compile(r"^\s*(```|~~~)")
+    in_fence = False
     for line_no, line in enumerate(text.splitlines(), 1):
+        if fence_pattern.match(line):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
         for match in pattern.finditer(line):
             target = match.group(1).strip()
             if target.startswith("<") and target.endswith(">"):
@@ -691,6 +698,7 @@ def audit(repo: Path, kb_root: Path, manifest: Path, config_path: Path) -> Audit
         len(built_tasks),
     )
     metrics = {
+        "setup": 100.0 if manifest.exists() and config_path.exists() else 0.0,
         "coverage": coverage,
         "freshness": freshness,
         "links": link_integrity,
