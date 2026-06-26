@@ -55,10 +55,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:6a42e1b9c8a575d8a67080adb5743355c02678380dca6af0ed77c42fef112c65"
   - file: "README.md"
-    commit: "95653ed4add23dcd17e68fd77148b694f0144c47"
+    commit: "06623c6dc07f1e33e041f8138b36d35328bafd9e"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:25f18ea170ebbabaf9cad3780ba58890bf6fda6a589e51d4926c53737b05528c"
+    contentHash: "sha256:04c3ca0bedd6f10105068a06d61450bdb0ce2830c9cfbdcf4a72a839d2613cf2"
   - file: "RELEASE.md"
     commit: "95653ed4add23dcd17e68fd77148b694f0144c47"
     tracked: true

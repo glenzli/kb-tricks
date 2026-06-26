@@ -10,10 +10,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:d6979644467e123da2532ba315f0b6256d2ec18f7c116379fd723917398226c2"
   - file: "tools/kb_audit.py"
-    commit: "63ec70532cbc23787518ad3d92896fe3de00e4df"
+    commit: "06623c6dc07f1e33e041f8138b36d35328bafd9e"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:9086bf4f4e36a9486dd70781df3d1399d0e369a99b431d0b61ba4f044b696c8a"
+    contentHash: "sha256:f47fa4c01bc18e3d4c49447294cef16e362e8c763235b2d6a202a117f487c5f2"
   - file: "tools/kb_manifest.py"
     commit: "7dce569328f5dff8a073cc9dd15ba2baba6e40b8"
     tracked: true
@@ -35,15 +35,15 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:c008a9837e5d87f96b5f6b4d2816b896c9b3f4b65b1ebbc96cd6ad1452ad20db"
   - file: "tools/kb_docs.py"
-    commit: "63ec70532cbc23787518ad3d92896fe3de00e4df"
+    commit: "06623c6dc07f1e33e041f8138b36d35328bafd9e"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:f3c797951a8d8f7e9db1330ca9ae6632d8890d9fd4a6dd41a2f002c339b50e07"
+    contentHash: "sha256:abfeb40ba634e39615e026fda7d6dc8edf60a6dbcdb8ad76a158a694b60f6722"
   - file: "tools/kb_query_lint.py"
-    commit: "e33e8ed2a2bd4b04de971df5d19816abf869e827"
+    commit: "06623c6dc07f1e33e041f8138b36d35328bafd9e"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:ff8fb857fdd780391f8f60ff5d0568c218aa399045f1d1269ffbe7e4819576c6"
+    contentHash: "sha256:b93b88fbdd2d55b86b15da5ef16078095d12816f3af85d992a4f28ffe2311083"
   - file: "tools/kb_scaffold.py"
     commit: "91c9b39bf8d8b1052632e9e139c0b3635cae1bcc"
     tracked: true

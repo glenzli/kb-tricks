@@ -60,10 +60,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:3f11169b1c453b30b559d7b3c826bca12c25a981b883de65f66f50d2f8252533"
   - file: "spec/KB_SPEC.md"
-    commit: "e33e8ed2a2bd4b04de971df5d19816abf869e827"
+    commit: "06623c6dc07f1e33e041f8138b36d35328bafd9e"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:ebda0ca2699339dc1f615c1bc0215c001786bb3973a44fe1c0a3bbc3a1b0649a"
+    contentHash: "sha256:0b2396d68a0f7ae2e4ce9ee2e0d666b6ae2f22c47be2ec9db50700f0b655f16e"
 tags: ["skills", "templates", "spec", "provenance"]
 ---
 
