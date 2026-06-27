@@ -78,11 +78,18 @@ def markdown_candidates(repo: Path) -> list[Path]:
     )
 
 
-def collect_existing_docs(repo: Path, patterns: list[str]) -> tuple[list[ExistingDoc], list[str]]:
+def collect_existing_docs(
+    repo: Path,
+    patterns: list[str],
+    exclude: list[str] | None = None,
+) -> tuple[list[ExistingDoc], list[str]]:
     docs: list[ExistingDoc] = []
     matched_patterns: set[str] = set()
+    exclude_patterns = exclude or []
     for path in markdown_candidates(repo):
         rel = relpath(path, repo)
+        if any(pattern_matches(rel, pattern) for pattern in exclude_patterns):
+            continue
         matches = [pattern for pattern in patterns if pattern_matches(rel, pattern)]
         if not matches:
             continue
@@ -214,7 +221,7 @@ def doc_to_dict(doc: ExistingDoc) -> dict[str, Any]:
 def collect_docs_data(repo: Path, config_path: Path, manifest_path: Path) -> dict[str, Any]:
     config = parse_config(config_path)
     patterns = config.get("docs.existing", [])
-    docs, unmatched = collect_existing_docs(repo, patterns)
+    docs, unmatched = collect_existing_docs(repo, patterns, config.get("exclude", []))
     tasks = parse_manifest(manifest_path)
     hints = duplicate_hints(repo, docs, tasks)
     return {

@@ -52,6 +52,8 @@ kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-scor
 kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```
 
+`kb docs` and `kb impact/update-plan` apply `.agent/kb/config.yaml` `exclude` rules when collecting existing docs, so broad patterns such as `docs.existing: ["*.md"]` can safely pair with exclusions like `.agent/**` and `KB_PLAN.md`.
+
 Source checkout fallback:
 
 ```bash
@@ -243,8 +245,8 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - [templates/](./templates)：提供 config、Manifest、KB 文档、验证产物和查询回答模板。
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py)：无依赖的初始化辅助工具，用于把 starter config、Manifest 和 KB 保留目录安装到目标仓库。
 - [tools/kb_manifest.py](./tools/kb_manifest.py)：无依赖的 `KB_PLAN.md` 小步任务选择器，用于落实 bounded execution。
-- [tools/kb_docs.py](./tools/kb_docs.py)：无依赖的现有文档清单与 Manifest Docs Comparison 覆盖率检查工具。
-- [tools/kb_audit.py](./tools/kb_audit.py)：无依赖的确定性审计辅助工具，负责 hash、dirty 状态、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
+- [tools/kb_docs.py](./tools/kb_docs.py)：无依赖的现有文档清单、Manifest Docs Comparison 覆盖率、死链报告和重复提示工具。
+- [tools/kb_audit.py](./tools/kb_audit.py)：无依赖的确定性审计辅助工具，负责 setup 检查、hash、dirty 状态、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py)：无依赖的 dirty-aware source fingerprint 生成与检查工具。
 - [tools/kb_impact.py](./tools/kb_impact.py)：无依赖的 diff-first changed files 到 Manifest 任务影响面映射工具，供 `kb-update` 使用。
 - [tools/kb_update_plan.py](./tools/kb_update_plan.py)：无依赖的只读更新规划工具，把 impact 结果转换为 bounded actions、阻塞项、docs review 和新 KB 候选。
@@ -257,17 +259,19 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 kb self-check --json
 kb scaffold --repo /path/to/project --dry-run
 kb manifest --repo /path/to/project --slice 1 --json
-kb docs --repo /path/to/project --check-manifest
+kb docs --repo /path/to/project --check-manifest --check-links
 kb impact --repo /path/to/project --staged --json
 kb impact --repo /path/to/project --worktree --json
 kb impact --repo /path/to/project --base main --json
 kb impact --repo /path/to/project --since HEAD~1 --json
 kb update-plan --repo /path/to/project --staged --json
 kb update-plan --repo /path/to/project --worktree --draft --json
-kb query-lint templates/query-answer.md
+kb query-lint --repo /path/to/project templates/query-answer.md
 kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
 kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```
+
+`kb docs` 和 `kb impact/update-plan` 收集现有文档时会应用 `.agent/kb/config.yaml` 的 `exclude` 规则，所以文档型仓库可以用 `docs.existing: ["*.md"]`，再排除 `.agent/**` 和 `KB_PLAN.md`。
 
 源码 checkout fallback：
 

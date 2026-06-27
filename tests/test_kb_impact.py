@@ -162,6 +162,36 @@ class KbImpactTests(unittest.TestCase):
             self.assertEqual(data["docsChanges"], ["docs/draft.md"])
             self.assertEqual(data["impactedTasks"][0]["id"], "release-packaging")
 
+    def test_docs_changes_respect_exclude_patterns(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            write_impact_repo(repo)
+            config = repo / ".agent" / "kb" / "config.yaml"
+            config.write_text(
+                """include:
+  - "*.md"
+exclude:
+  - .agent/**
+  - KB_PLAN.md
+docs:
+  existing:
+    - "*.md"
+""",
+                encoding="utf-8",
+            )
+            init_repo(repo)
+            (repo / "README.md").write_text("# Project\n\nUpdated.\n", encoding="utf-8")
+            (repo / "KB_PLAN.md").write_text("# Plan\n\nUpdated.\n", encoding="utf-8")
+            (repo / ".agent" / "kb" / "release" / "packaging.md").write_text(
+                "# Draft KB\n",
+                encoding="utf-8",
+            )
+
+            proc, data = impact_json(repo, "--worktree")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["docsChanges"], ["README.md"])
+
     def test_base_maps_branch_diff_against_base_commitish(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "project"

@@ -167,6 +167,31 @@ class KbDocsTests(unittest.TestCase):
             self.assertIn("## Duplicate Hints (1/", text_proc.stdout)
             self.assertIn("more omitted", text_proc.stdout)
 
+    def test_existing_docs_respect_exclude_patterns(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            (repo / ".agent" / "kb").mkdir(parents=True)
+            (repo / ".agent" / "kb" / "config.yaml").write_text(
+                """include:
+  - "*.md"
+exclude:
+  - .agent/**
+  - KB_PLAN.md
+docs:
+  existing:
+    - "*.md"
+""",
+                encoding="utf-8",
+            )
+            (repo / "README.md").write_text("# Project\n", encoding="utf-8")
+            (repo / "KB_PLAN.md").write_text("# Plan\n", encoding="utf-8")
+            (repo / ".agent" / "kb" / "draft.md").write_text("# Draft\n", encoding="utf-8")
+
+            proc, data = docs_json(repo)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual([doc["path"] for doc in data["existingDocs"]], ["README.md"])
+
     def test_missing_repo_exits_two(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "missing"

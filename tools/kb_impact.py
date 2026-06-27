@@ -142,7 +142,12 @@ def collect_impacts(repo: Path, tasks: list[ManifestTask], changed_files: list[s
 
 def collect_docs_changes(config: dict[str, list[str]], changed_files: list[str]) -> list[str]:
     patterns = config.get("docs.existing", [])
-    return [path for path in changed_files if in_patterns(path, patterns)]
+    exclude = config.get("exclude", [])
+    return [
+        path
+        for path in changed_files
+        if in_patterns(path, patterns) and not in_patterns(path, exclude)
+    ]
 
 
 def collect_special_changes(changed_files: list[str]) -> dict[str, bool]:
