@@ -1,1 +1,1 @@
-"""Source-checkout compatibility wrappers for dev-cycle commands."""
+"""Source-checkout wrappers for dev-cycle commands."""

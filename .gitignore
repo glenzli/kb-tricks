@@ -6,6 +6,6 @@ __pycache__/
 build/
 dist/
 *.egg-info/
-.agent/kb/index.json
-**/.agent/kb/index.json
+.dev-cycle/context/index.json
+**/.dev-cycle/context/index.json
 tmp/

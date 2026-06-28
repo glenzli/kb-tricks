@@ -7,4 +7,4 @@ recursive-include templates *
 recursive-include spec *.md
 recursive-include skills *
 recursive-include tools *.py
-recursive-include kb_tricks/templates *
+recursive-include dev_cycle/templates *

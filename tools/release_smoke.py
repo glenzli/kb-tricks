@@ -24,37 +24,44 @@ def run_command(cmd: list[str]) -> int:
     return proc.returncode
 
 
-def resolve_kb(value: str | None) -> str:
+def resolve_dev_cycle(value: str | None) -> str:
     if value:
         return value
-    kb = shutil.which("kb")
-    if kb is not None:
-        return kb
-    local = PROJECT_ROOT / ".venv" / "bin" / "kb"
+    executable = shutil.which("dev-cycle")
+    if executable is not None:
+        return executable
+    local = PROJECT_ROOT / ".venv" / "bin" / "dev-cycle"
     if local.exists():
         return str(local)
-    return "kb"
+    return "dev-cycle"
 
 
-def cli_command(installed: bool, kb: str | None, *args: str) -> list[str]:
+def cli_command(installed: bool, dev_cycle: str | None, *args: str) -> list[str]:
     if installed:
-        return [resolve_kb(kb), *args]
-    return [sys.executable, "-B", "-m", "kb_tricks.cli", *args]
+        return [resolve_dev_cycle(dev_cycle), *args]
+    return [sys.executable, "-B", "-m", "dev_cycle.cli", *args]
 
 
 def smoke_commands(
     installed: bool,
     include_tests: bool,
     include_git_check: bool,
-    kb: str | None = None,
+    dev_cycle: str | None = None,
 ) -> list[list[str]]:
     commands: list[list[str]] = []
     if include_tests:
         commands.append([sys.executable, "-B", "-m", "unittest", "discover", "tests"])
     commands.extend(
         [
-            cli_command(installed, kb, "self-check", "--json"),
-            cli_command(installed, kb, "query-lint", "--json", "templates/query-answer.md"),
+            cli_command(installed, dev_cycle, "self-check", "--json"),
+            cli_command(
+                installed,
+                dev_cycle,
+                "context",
+                "query-lint",
+                "--json",
+                "templates/context-query-answer.md",
+            ),
         ]
     )
     if include_git_check:
@@ -67,9 +74,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--installed",
         action="store_true",
-        help="Run CLI checks through an installed `kb` executable.",
+        help="Run CLI checks through an installed `dev-cycle` executable.",
     )
-    parser.add_argument("--kb", help="Path to an installed kb executable.")
+    parser.add_argument("--dev-cycle", help="Path to an installed dev-cycle executable.")
     parser.add_argument("--skip-tests", action="store_true", help="Skip unittest discovery.")
     parser.add_argument("--skip-git-check", action="store_true", help="Skip git diff --check.")
     return parser.parse_args(argv)
@@ -79,13 +86,21 @@ def main(argv: list[str]) -> int:
     args = parse_args(argv)
     include_tests = not args.skip_tests
     include_git_check = not args.skip_git_check
-    commands = smoke_commands(args.installed, include_tests, include_git_check, args.kb)
+    commands = smoke_commands(args.installed, include_tests, include_git_check, args.dev_cycle)
     with tempfile.TemporaryDirectory(prefix="dev-cycle-smoke-") as tmp:
         repo = Path(tmp) / "project"
         repo.mkdir()
         commands.insert(
             3 if include_tests else 2,
-            cli_command(args.installed, args.kb, "scaffold", "--repo", str(repo), "--dry-run"),
+            cli_command(
+                args.installed,
+                args.dev_cycle,
+                "context",
+                "scaffold",
+                "--repo",
+                str(repo),
+                "--dry-run",
+            ),
         )
         for cmd in commands:
             code = run_command(cmd)

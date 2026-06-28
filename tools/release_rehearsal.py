@@ -26,41 +26,41 @@ MIN_SETUPTOOLS = (77,)
 
 SDIST_REQUIRED = [
     "LICENSE",
-    "skills/kb-build/SKILL.md",
-    "tools/kb_audit.py",
-    "tools/kb_migrate_plan.py",
+    "skills/context-build/SKILL.md",
+    "tools/context_audit.py",
+    "tools/context_migrate_plan.py",
     "tools/release_smoke.py",
     "tools/release_rehearsal.py",
-    "spec/KB_SPEC.md",
+    "spec/CONTEXT_SPEC.md",
     "templates/AGENT_GUIDE.md",
-    "templates/query-answer.md",
-    "kb_tricks/commands/audit.py",
-    "kb_tricks/commands/migrate_plan.py",
-    "kb_tricks/templates/AGENT_GUIDE.md",
-    "kb_tricks/templates/config.yaml",
+    "templates/context-query-answer.md",
+    "dev_cycle/context/audit.py",
+    "dev_cycle/context/migrate_plan.py",
+    "dev_cycle/templates/AGENT_GUIDE.md",
+    "dev_cycle/templates/config.yaml",
 ]
 WHEEL_REQUIRED = [
-    "kb_tricks/commands/audit.py",
-    "kb_tricks/commands/migrate_plan.py",
-    "kb_tricks/commands/update_plan.py",
-    "kb_tricks/templates/AGENT_GUIDE.md",
-    "kb_tricks/templates/config.yaml",
-    "kb_tricks/cli.py",
+    "dev_cycle/context/audit.py",
+    "dev_cycle/context/migrate_plan.py",
+    "dev_cycle/context/update_plan.py",
+    "dev_cycle/templates/AGENT_GUIDE.md",
+    "dev_cycle/templates/config.yaml",
+    "dev_cycle/cli.py",
 ]
 WHEEL_FORBIDDEN = [
-    "tools/kb_audit.py",
-    "tools/kb_migrate_plan.py",
+    "tools/context_audit.py",
+    "tools/context_migrate_plan.py",
     "tools/release_smoke.py",
     "tools/release_rehearsal.py",
-    "skills/kb-build/SKILL.md",
-    "spec/KB_SPEC.md",
-    "templates/query-answer.md",
+    "skills/context-build/SKILL.md",
+    "spec/CONTEXT_SPEC.md",
+    "templates/context-query-answer.md",
 ]
 
 INSTALLED_PROBE = """
 import importlib.util
 import json
-import kb_tricks.commands.audit as audit
+import dev_cycle.context.audit as audit
 print(json.dumps({
     "audit_module": audit.__name__,
     "tools_importable": importlib.util.find_spec("tools") is not None,
@@ -243,7 +243,7 @@ def run_installed_checks(repo: Path, source_dir: Path, wheel: Path, root: Path) 
     install_venv = root / "install-venv"
     run_command([sys.executable, "-m", "venv", str(install_venv)], root)
     venv_python = install_venv / "bin" / "python"
-    kb = install_venv / "bin" / "kb"
+    dev_cycle = install_venv / "bin" / "dev-cycle"
     run_command(
         [str(venv_python), "-m", "pip", "install", "--no-index", "--no-cache-dir", str(wheel)],
         root,
@@ -252,16 +252,22 @@ def run_installed_checks(repo: Path, source_dir: Path, wheel: Path, root: Path) 
     smoke_repo = root / "smoke-repo"
     smoke_repo.mkdir()
     commands = [
-        [str(kb), "self-check", "--json"],
-        [str(kb), "scaffold", "--repo", str(smoke_repo), "--dry-run"],
-        [str(kb), "query-lint", "--json", str(source_dir / "templates" / "query-answer.md")],
+        [str(dev_cycle), "self-check", "--json"],
+        [str(dev_cycle), "context", "scaffold", "--repo", str(smoke_repo), "--dry-run"],
+        [
+            str(dev_cycle),
+            "context",
+            "query-lint",
+            "--json",
+            str(source_dir / "templates" / "context-query-answer.md"),
+        ],
         [str(venv_python), "-c", INSTALLED_PROBE],
         [
             sys.executable,
             str(source_dir / "tools" / "release_smoke.py"),
             "--installed",
-            "--kb",
-            str(kb),
+            "--dev-cycle",
+            str(dev_cycle),
             "--skip-tests",
             "--skip-git-check",
         ],

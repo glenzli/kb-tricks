@@ -7,15 +7,15 @@ repositories.
 ## Context Layer
 
 The context layer builds and maintains repository understanding. These skills
-own KB planning, construction, maintenance, querying, and health checks.
+own Context planning, construction, maintenance, querying, and health checks.
 
 | Skill | Purpose |
 |---|---|
-| `kb-plan` | Plan long-lived KB manifest entries and artifact boundaries. |
-| `kb-build` | Build bounded KB slices from clean source. |
-| `kb-update` | Refresh KB from diff-first impact scopes. |
-| `kb-query` | Answer with KB/docs/source provenance. |
-| `kb-audit` | Check KB health with metadata-first scans. |
+| `context-plan` | Plan long-lived Context manifest entries and artifact boundaries. |
+| `context-build` | Build bounded Context slices from clean source. |
+| `context-update` | Refresh Context from diff-first impact scopes. |
+| `context-query` | Answer with Context/docs/source provenance. |
+| `context-audit` | Check Context health with metadata-first scans. |
 
 ## Review Layer
 
@@ -27,14 +27,14 @@ action.
 |---|---|
 | `review-design` | Review architecture proposals before implementation. |
 | `review-code` | Review code diffs with dimension-specific checks. |
-| `review-test` | Review tests and compare coverage against KB contracts. |
+| `review-test` | Review tests and compare coverage against Context contracts. |
 
 Review skills must follow [`REVIEW_PROTOCOL.md`](./REVIEW_PROTOCOL.md).
 
 ## Evolution Layer
 
 The evolution layer handles project changes that extend beyond one local diff.
-These skills may use KB as context, but source, tests, release artifacts, and
+These skills may use Context as context, but source, tests, release artifacts, and
 maintained docs remain authoritative.
 
 | Skill | Purpose |
@@ -42,7 +42,7 @@ maintained docs remain authoritative.
 | `cycle-migrate` | Plan large architectural or platform migrations. |
 | `cycle-postmortem` | Analyze incidents and produce action-oriented postmortems. |
 | `cycle-onboard` | Generate onboarding paths from fresh project context. |
-| `cycle-changelog` | Summarize KB/context changes after updates. |
+| `cycle-changelog` | Summarize Context/context changes after updates. |
 
 ## Recipes
 

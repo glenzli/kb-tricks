@@ -2,9 +2,9 @@ from importlib import resources
 import sys
 import unittest
 
-from test_kb_audit import PROJECT_ROOT
+from test_context_audit import PROJECT_ROOT
 
-from kb_tricks import __version__
+from dev_cycle import __version__
 from tools import release_rehearsal, release_smoke
 
 try:
@@ -17,10 +17,10 @@ class PackagingTests(unittest.TestCase):
     template_names = [
         "config.yaml",
         "AGENT_GUIDE.md",
-        "KB_PLAN.md",
-        "kb-doc.md",
-        "validation.md",
-        "query-answer.md",
+        "CONTEXT_PLAN.md",
+        "context-doc.md",
+        "context-validation.md",
+        "context-query-answer.md",
     ]
 
     @unittest.skipIf(tomllib is None, "tomllib is unavailable")
@@ -33,19 +33,19 @@ class PackagingTests(unittest.TestCase):
         self.assertEqual(data["project"]["requires-python"], ">=3.10")
         self.assertEqual(data["project"]["license"], "MIT")
         self.assertEqual(data["project"]["license-files"], ["LICENSE"])
-        self.assertEqual(data["project"]["scripts"]["kb"], "kb_tricks.cli:main")
+        self.assertEqual(data["project"]["scripts"]["dev-cycle"], "dev_cycle.cli:main")
 
         include = set(data["tool"]["setuptools"]["packages"]["find"]["include"])
-        self.assertIn("kb_tricks", include)
-        self.assertIn("kb_tricks.*", include)
+        self.assertIn("dev_cycle", include)
+        self.assertIn("dev_cycle.*", include)
         self.assertNotIn("tools", include)
         self.assertNotIn("tools.*", include)
 
-        package_data = data["tool"]["setuptools"]["package-data"]["kb_tricks"]
+        package_data = data["tool"]["setuptools"]["package-data"]["dev_cycle"]
         self.assertIn("templates/*", package_data)
 
     def test_package_templates_match_source_templates(self):
-        package_root = resources.files("kb_tricks").joinpath("templates")
+        package_root = resources.files("dev_cycle").joinpath("templates")
         for name in self.template_names:
             source = PROJECT_ROOT / "templates" / name
             packaged = package_root.joinpath(name)
@@ -62,7 +62,7 @@ class PackagingTests(unittest.TestCase):
         self.assertIn("recursive-include spec *.md", manifest)
         self.assertIn("recursive-include skills *", manifest)
         self.assertIn("recursive-include tools *.py", manifest)
-        self.assertIn("recursive-include kb_tricks/templates *", manifest)
+        self.assertIn("recursive-include dev_cycle/templates *", manifest)
 
     def test_release_rehearsal_defaults_to_committed_source(self):
         args = release_rehearsal.parse_args([])
@@ -71,15 +71,15 @@ class PackagingTests(unittest.TestCase):
 
     def test_release_rehearsal_checks_artifact_boundaries(self):
         self.assertIn("tools/release_rehearsal.py", release_rehearsal.SDIST_REQUIRED)
-        self.assertIn("tools/kb_migrate_plan.py", release_rehearsal.SDIST_REQUIRED)
+        self.assertIn("tools/context_migrate_plan.py", release_rehearsal.SDIST_REQUIRED)
         self.assertIn("tools/release_rehearsal.py", release_rehearsal.WHEEL_FORBIDDEN)
-        self.assertIn("tools/kb_migrate_plan.py", release_rehearsal.WHEEL_FORBIDDEN)
-        self.assertIn("skills/kb-build/SKILL.md", release_rehearsal.SDIST_REQUIRED)
-        self.assertIn("skills/kb-build/SKILL.md", release_rehearsal.WHEEL_FORBIDDEN)
-        self.assertIn("kb_tricks/commands/audit.py", release_rehearsal.WHEEL_REQUIRED)
-        self.assertIn("kb_tricks/commands/migrate_plan.py", release_rehearsal.WHEEL_REQUIRED)
-        self.assertIn("kb_tricks/templates/AGENT_GUIDE.md", release_rehearsal.WHEEL_REQUIRED)
-        self.assertIn("kb_tricks/templates/config.yaml", release_rehearsal.WHEEL_REQUIRED)
+        self.assertIn("tools/context_migrate_plan.py", release_rehearsal.WHEEL_FORBIDDEN)
+        self.assertIn("skills/context-build/SKILL.md", release_rehearsal.SDIST_REQUIRED)
+        self.assertIn("skills/context-build/SKILL.md", release_rehearsal.WHEEL_FORBIDDEN)
+        self.assertIn("dev_cycle/context/audit.py", release_rehearsal.WHEEL_REQUIRED)
+        self.assertIn("dev_cycle/context/migrate_plan.py", release_rehearsal.WHEEL_REQUIRED)
+        self.assertIn("dev_cycle/templates/AGENT_GUIDE.md", release_rehearsal.WHEEL_REQUIRED)
+        self.assertIn("dev_cycle/templates/config.yaml", release_rehearsal.WHEEL_REQUIRED)
 
     def test_release_smoke_commands_cover_source_checks(self):
         commands = release_smoke.smoke_commands(
@@ -89,17 +89,22 @@ class PackagingTests(unittest.TestCase):
         )
         rendered = [" ".join(command) for command in commands]
         self.assertTrue(any("unittest discover tests" in item for item in rendered))
-        self.assertTrue(any("kb_tricks.cli self-check --json" in item for item in rendered))
-        self.assertTrue(any("query-lint --json templates/query-answer.md" in item for item in rendered))
+        self.assertTrue(any("dev_cycle.cli self-check --json" in item for item in rendered))
+        self.assertTrue(
+            any("context query-lint --json templates/context-query-answer.md" in item for item in rendered)
+        )
         self.assertIn("git diff --check", rendered)
 
     def test_release_docs_create_scaffold_target_before_smoke(self):
         release_notes = (PROJECT_ROOT / "RELEASE.md").read_text(encoding="utf-8")
 
-        self.assertIn("mkdir -p /tmp/kb-smoke", release_notes)
-        self.assertIn("kb scaffold --repo /tmp/kb-smoke --dry-run", release_notes)
+        self.assertIn("mkdir -p /tmp/dev-cycle-smoke", release_notes)
         self.assertIn(
-            "python3 tools/kb_scaffold.py --repo /tmp/kb-smoke --dry-run",
+            "dev-cycle context scaffold --repo /tmp/dev-cycle-smoke --dry-run",
+            release_notes,
+        )
+        self.assertIn(
+            "python3 tools/context_scaffold.py --repo /tmp/dev-cycle-smoke --dry-run",
             release_notes,
         )
 

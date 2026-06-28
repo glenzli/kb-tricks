@@ -9,15 +9,15 @@ Use when a new contributor, maintainer, or AI agent needs a guided entry path.
 
 ## Hard Rules
 
-- Warn if KB is stale, dirty, draft-only, or missing important areas.
+- Warn if Context is stale, dirty, draft-only, or missing important areas.
 - Prefer maintained docs when they already explain user-facing behavior.
-- Do not present KB as authority.
+- Do not present Context as authority.
 - Keep the result short enough to be useful.
 
 ## Steps
 
-1. Run or consult `kb-audit` summary if available.
-2. Read `KB_PLAN.md`, `GLOSSARY.md`, fresh KB docs, and existing docs listed in config.
+1. Run or consult `context-audit` summary if available.
+2. Read `CONTEXT_PLAN.md`, `GLOSSARY.md`, fresh Context docs, and existing docs listed in config.
 3. Skip `deprecated` tasks and prefer docs targets for `merged-into-docs`.
 4. Order reading from foundations to dependent modules.
 5. Summarize each topic in 2-3 sentences.
@@ -25,9 +25,9 @@ Use when a new contributor, maintainer, or AI agent needs a guided entry path.
 
 ## Output
 
-Create or propose `.agent/kb/ONBOARDING.md`:
+Create or propose `.dev-cycle/context/ONBOARDING.md`:
 
-- KB/docs freshness warning.
+- Context/docs freshness warning.
 - Recommended reading order.
 - Key concepts.
 - Role-specific notes when requested.

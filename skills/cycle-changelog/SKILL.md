@@ -1,11 +1,11 @@
 ---
 name: cycle-changelog
-description: "Summarize KB/context changes after kb-update or related lifecycle work."
+description: "Summarize Context/context changes after context-update or related lifecycle work."
 ---
 
 # Cycle Changelog
 
-Use after `kb-update`, context refreshes, migration work, or manual KB edits.
+Use after `context-update`, context refreshes, migration work, or manual Context edits.
 
 ## Hard Rules
 
@@ -18,23 +18,23 @@ Use after `kb-update`, context refreshes, migration work, or manual KB edits.
 Default:
 
 ```bash
-git diff HEAD -- .agent/kb KB_PLAN.md
+git diff HEAD -- .dev-cycle/context CONTEXT_PLAN.md
 ```
 
 If the user provides commits, compare that range instead.
 
 ## Classify
 
-- Updated KB docs.
-- New KB docs.
-- Removed or deprecated KB docs.
+- Updated Context docs.
+- New Context docs.
+- Removed or deprecated Context docs.
 - `GLOSSARY.md` changes.
-- `KB_PLAN.md` lifecycle changes.
+- `CONTEXT_PLAN.md` lifecycle changes.
 - Validation or index changes.
 
 ## Output
 
-Write or propose a new top entry in `.agent/kb/CHANGELOG.md`:
+Write or propose a new top entry in `.dev-cycle/context/CHANGELOG.md`:
 
 ```markdown
 ## YYYY-MM-DD - <short theme>

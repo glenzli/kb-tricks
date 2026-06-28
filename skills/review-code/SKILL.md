@@ -1,6 +1,6 @@
 ---
 name: review-code
-description: "Review code diffs with focused expert dimensions, source authority, and optional KB cross-checks."
+description: "Review code diffs with focused expert dimensions, source authority, and optional Context cross-checks."
 ---
 
 # Review Code
@@ -14,8 +14,8 @@ Follow `../REVIEW_PROTOCOL.md`.
 - Findings first, ordered by severity.
 - Cite file and line where possible.
 - Do not comment on unrelated code.
-- Skip KB cross-check if relevant KB is stale, dirty, draft-only, or not authoritative.
-- Treat tests and source as stronger evidence than KB.
+- Skip Context cross-check if relevant Context is stale, dirty, draft-only, or not authoritative.
+- Treat tests and source as stronger evidence than Context.
 
 ## Triage
 
@@ -38,15 +38,15 @@ Check:
 - Testability.
 - Maintainability.
 - Domain-specific risks.
-- KB direct or indirect impact, only after freshness passes.
+- Context direct or indirect impact, only after freshness passes.
 
 ## Output
 
 - Findings with severity, file/line, issue, and fix suggestion.
 - Triage summary.
 - Test gaps.
-- KB action items:
-  - `KB-Action: UPDATE <path>` for direct contract drift.
-  - `KB-Action: REVIEW <path>` for possible indirect impact.
+- Context action items:
+  - `Context-Action: UPDATE <path>` for direct contract drift.
+  - `Context-Action: REVIEW <path>` for possible indirect impact.
 - Residual risks and open questions.
 

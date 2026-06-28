@@ -11,8 +11,8 @@ Follow `../REVIEW_PROTOCOL.md`.
 
 ## Hard Rules
 
-- Review the proposal against source, config, tests, maintained docs, and fresh KB.
-- If relevant KB is stale or dirty, skip KB consistency checks and say why.
+- Review the proposal against source, config, tests, maintained docs, and fresh Context.
+- If relevant Context is stale or dirty, skip Context consistency checks and say why.
 - Do not turn review into implementation.
 - Prefer specific risks and changes over broad advice.
 
@@ -27,7 +27,7 @@ Follow `../REVIEW_PROTOCOL.md`.
    - Security and compliance.
    - Operational cost.
 4. Add one domain-specific check when useful.
-5. If KB freshness passes, compare against existing architecture and contracts.
+5. If Context freshness passes, compare against existing architecture and contracts.
 6. Aggregate findings and assign readiness.
 
 ## Output
@@ -36,5 +36,5 @@ Follow `../REVIEW_PROTOCOL.md`.
 - Findings ordered by severity.
 - Concrete recommendations.
 - Open questions.
-- KB freshness note when KB was used or skipped.
+- Context freshness note when Context was used or skipped.
 

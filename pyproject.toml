@@ -15,10 +15,10 @@ authors = [
 ]
 
 [project.scripts]
-kb = "kb_tricks.cli:main"
+dev-cycle = "dev_cycle.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["kb_tricks", "kb_tricks.*"]
+include = ["dev_cycle", "dev_cycle.*"]
 
 [tool.setuptools.package-data]
-kb_tricks = ["templates/*"]
+dev_cycle = ["templates/*"]

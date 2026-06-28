@@ -1,9 +1,0 @@
-include:
-  - src/**
-exclude:
-  - dist/**
-releaseExcluded:
-  - .agent/**
-docs:
-  existing:
-    - README.md
