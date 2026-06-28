@@ -22,6 +22,8 @@ The KB is not the repository authority. Source code, configuration, tests, relea
 
 Reserved directories under `.agent/kb/` are `_draft/`, `_impact/`, and `_validation/`. Documents in reserved directories must not be treated as authoritative KB. Auxiliary files such as `AGENT_GUIDE.md`, `GLOSSARY.md`, `CHANGELOG.md`, and `ONBOARDING.md` support routing or agent behavior and do not need Manifest entries.
 
+Audit/index tooling classifies KB Markdown as `kind: authoritative`, `kind: support`, or `kind: reserved`. Only authoritative documents participate in Manifest coverage, stale/dirty/orphaned health scoring, and untracked-KB checks.
+
 ## Scaffolding
 
 `tools/kb_scaffold.py` installs the starter artifacts defined by this spec into a target repository:
@@ -67,12 +69,16 @@ Rules:
 
 ```text
 python3 tools/kb_docs.py --repo /path/to/project --json
+python3 tools/kb_docs.py --repo /path/to/project --summary-json
+python3 tools/kb_docs.py --repo /path/to/project --full-json
 python3 tools/kb_docs.py --repo /path/to/project --check-manifest
 python3 tools/kb_docs.py --repo /path/to/project --check-links
 python3 tools/kb_docs.py --repo /path/to/project --duplicate-limit 5
 ```
 
-It reads `.agent/kb/config.yaml` `docs.existing`, expands matching Markdown documents, extracts headings, content hashes, local links, unmatched patterns, Manifest `Docs Comparison` coverage, dead local links, and low-cost duplicate hints. It does not decide whether prose is sufficient; that remains a skill-layer judgment. Text output limits duplicate hints by default so dead links and missing comparison work stay visible; JSON output keeps the complete `duplicateHints` list. `--check-manifest` exits `1` when active Manifest tasks lack `Docs Comparison`, `--check-links` exits `1` when existing docs contain dead local links, and both exit `2` when the requested check cannot run.
+It reads `.agent/kb/config.yaml` `docs.existing`, expands matching Markdown documents, extracts headings, content hashes, local links, unmatched patterns, Manifest `Docs Comparison` coverage, dead local links, and low-cost duplicate hints. Duplicate hints include `severity` (`high`, `medium`, `low`) and `score`; direct source mentions are high severity, shared title/slug matches are medium, and tag-only matches are low. Generic tags such as `api`, `cli`, `docs`, `release`, and `test` are ignored when they are the only match signal.
+
+It does not decide whether prose is sufficient; that remains a skill-layer judgment. Text output limits duplicate hints by default so dead links and missing comparison work stay visible. `--json` and `--full-json` keep the complete `duplicateHints` list; `--summary-json` emits counts, top duplicate hints, dead-link counts, and Docs Comparison status without the full heading inventory. `--check-manifest` exits `1` when active Manifest tasks lack `Docs Comparison`, `--check-links` exits `1` when existing docs contain dead local links, and both exit `2` when the requested check cannot run.
 
 ## `KB_PLAN.md` Manifest
 
@@ -145,7 +151,9 @@ kb update-plan --repo /path/to/project --base main --slice 2 --json
 python3 tools/kb_update_plan.py --repo /path/to/project --since HEAD~1 --json
 ```
 
-It reuses the same mutually exclusive scope options as `kb impact`, then adds dirty-source gates and bounded update actions. JSON output includes `actions`, `blocked`, `docsActions`, `newKbCandidates`, `specialActions`, `releaseExcludedChanges`, and `policy`. It is read-only: it does not read changed file contents, rewrite KB prose, mutate `KB_PLAN.md`, or refresh fingerprints.
+It reuses the same mutually exclusive scope options as `kb impact`, then adds dirty-source gates and bounded update actions. JSON output includes `actions`, `blocked`, `docsActions`, `newKbCandidates`, `specialActions`, `releaseExcludedChanges`, `setupWarnings`, and `policy`. Task actions include `targetKb`; draft task actions also include `draftTarget` under `.agent/kb/_draft/`. Draft new-KB candidates include `draftTarget` derived from the changed file stem.
+
+When `.agent/kb/config.yaml` is missing and changed `.agent/kb/**` files would otherwise appear as unmatched source candidates, the planner emits a `setupWarnings` entry with code `missing-config-kb-support-files` and removes those files from `newKbCandidates`. It is read-only: it does not read changed file contents, rewrite KB prose, mutate `KB_PLAN.md`, or refresh fingerprints.
 
 ### Query Answer Schema
 
@@ -305,7 +313,7 @@ The generated index should be deterministic JSON:
 }
 ```
 
-`tools/kb_audit.py --write-index .agent/kb/index.json` may generate this file from existing artifacts and enrich it with `tools/kb_docs.py` inventory data. Skills may read it as a fast routing index, but should fall back to source KB/docs when the index is missing or stale.
+Document records include `kind`, `support`, `reserved`, freshness fields, fingerprint metadata, and link checks. Existing-docs duplicate hints keep their severity fields. `tools/kb_audit.py --write-index .agent/kb/index.json` may generate this file from existing artifacts and enrich it with `tools/kb_docs.py` inventory data. Skills may read it as a fast routing index, but should fall back to source KB/docs when the index is missing or stale.
 
 ## Audit Exit Semantics
 
@@ -318,10 +326,20 @@ Deterministic audit tools should support:
 --fail-on missing-config
 --fail-on dirty
 --fail-on draft
+--fail-on missing
 --fail-on missing-validation
+--fail-on failed-validation
+--fail-on boundary
+--fail-on orphaned
+--fail-on untracked
+--fail-on not-authoritative
+--summary-json
+--full-json
 --min-score B
 ```
 
 Missing `KB_PLAN.md` or `.agent/kb/config.yaml` must affect the audit grade even when the caller does not pass `--fail-on`: the `setup` metric is `0` until both files exist. Policy exit codes remain explicit through `--fail-on` and `--min-score`.
+
+`--json` and `--full-json` emit the full index-shaped payload plus audit-only fields. `--summary-json` emits compact counts, top issues, support document links, and `releaseExcludedUses`. A release-excluded reference is reported with severity `context` and is not a health concern by itself; the review question is whether the prose wrongly treats that path as release authority.
 
 Exit code `0` means policy passed. Exit code `1` means the audit completed but policy failed. Exit code `2` means the audit itself could not run.

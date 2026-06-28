@@ -85,6 +85,17 @@ def audit_json(repo, *args):
     return proc, json.loads(proc.stdout)
 
 
+def audit_summary_json(repo, *args):
+    proc = run(
+        [sys.executable, "-B", str(TOOL), "--repo", str(repo), "--summary-json", *args],
+        PROJECT_ROOT,
+        check=False,
+    )
+    if proc.returncode not in {0, 1}:
+        raise AssertionError(proc.stderr)
+    return proc, json.loads(proc.stdout)
+
+
 class KbAuditTests(unittest.TestCase):
     def test_valid_fixture_passes(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -110,6 +121,30 @@ class KbAuditTests(unittest.TestCase):
             self.assertIn(".agent/kb/GLOSSARY.md", documents)
             self.assertIn(".agent/kb/_validation/release-packaging.md", documents)
             self.assertFalse(documents[".agent/kb/release/packaging.md"]["draft"])
+            self.assertEqual(
+                documents[".agent/kb/release/packaging.md"]["kind"], "authoritative"
+            )
+            self.assertEqual(documents[".agent/kb/GLOSSARY.md"]["kind"], "support")
+            self.assertEqual(
+                documents[".agent/kb/_validation/release-packaging.md"]["kind"],
+                "reserved",
+            )
+
+    def test_summary_json_is_compact_and_classifies_support_documents(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = materialize_fixture(tmp, "valid-kb")
+            proc, data = audit_summary_json(repo)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["summary"]["grade"], "A")
+            self.assertEqual(data["counts"]["authoritativeDocuments"], 1)
+            self.assertEqual(data["counts"]["supportDocuments"], 1)
+            self.assertEqual(data["counts"]["reservedDocuments"], 1)
+            self.assertEqual(data["supportDocuments"][0]["path"], ".agent/kb/GLOSSARY.md")
+            self.assertEqual(
+                data["supportDocuments"][0]["links"][0]["target"],
+                "./release/packaging.md",
+            )
+            self.assertNotIn("documents", data)
 
     def test_broken_fixture_reports_policy_failures(self):
         with tempfile.TemporaryDirectory() as tmp:

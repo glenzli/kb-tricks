@@ -60,6 +60,7 @@ class DocumentAudit:
     path: str
     reserved: bool
     auxiliary: bool
+    kind: str
     frontmatter: dict[str, Any] | None
     missing_frontmatter: bool = False
     not_authoritative: bool = False
@@ -422,11 +423,18 @@ def audit_document(path: Path, repo: Path, kb_root: Path) -> DocumentAudit:
     rel = relpath(path, repo)
     reserved = is_reserved_doc(path, kb_root)
     auxiliary = is_auxiliary_doc(path)
+    if auxiliary:
+        kind = "support"
+    elif reserved:
+        kind = "reserved"
+    else:
+        kind = "authoritative"
     frontmatter = parse_frontmatter(path)
     doc = DocumentAudit(
         path=rel,
         reserved=reserved,
         auxiliary=auxiliary,
+        kind=kind,
         frontmatter=frontmatter,
         missing_frontmatter=frontmatter is None and not auxiliary and not reserved,
         draft=reserved,
@@ -576,7 +584,9 @@ def build_index(result: AuditResult) -> dict[str, Any]:
                 "title": doc.frontmatter.get("title") if doc.frontmatter else None,
                 "status": doc.frontmatter.get("status") if doc.frontmatter else None,
                 "tags": doc.frontmatter.get("tags") if doc.frontmatter else [],
+                "kind": doc.kind,
                 "reserved": doc.reserved,
+                "support": doc.auxiliary,
                 "notAuthoritative": doc.not_authoritative,
                 "draft": doc.draft,
                 "fresh": doc.fresh,
@@ -776,7 +786,92 @@ def result_to_dict(result: AuditResult) -> dict[str, Any]:
     data["untrackedKb"] = result.untracked_kb
     data["boundaryViolations"] = result.boundary_violations
     data["releaseExcludedHits"] = result.release_excluded_hits
+    data["releaseExcludedUses"] = [
+        {
+            "path": path,
+            "severity": "context",
+            "healthConcern": False,
+            "reason": "releaseExcluded path is referenced as KB context; verify prose does not treat it as release authority",
+        }
+        for path in result.release_excluded_hits
+    ]
     return data
+
+
+def summary_to_dict(result: AuditResult) -> dict[str, Any]:
+    docs = result.documents
+    all_links = [link for doc in docs for link in doc.links] + result.glossary_links
+    dead_links = [
+        {
+            "source": link.source,
+            "target": link.target,
+            "line": link.line,
+        }
+        for link in all_links
+        if not link.ok
+    ]
+    stale = [doc.path for doc in docs if doc.kind == "authoritative" and doc.stale]
+    dirty = [doc.path for doc in docs if doc.kind == "authoritative" and doc.dirty]
+    orphaned = [doc.path for doc in docs if doc.kind == "authoritative" and doc.orphaned]
+    return {
+        "schemaVersion": 1,
+        "repo": result.repo,
+        "kbRoot": result.kb_root,
+        "manifest": result.manifest_path,
+        "config": result.config_path,
+        "summary": {
+            "grade": result.grade,
+            "metrics": result.metrics,
+            "failures": result.failures,
+        },
+        "counts": {
+            "tasks": len(result.tasks),
+            "documents": len(result.documents),
+            "authoritativeDocuments": len([doc for doc in docs if doc.kind == "authoritative"]),
+            "supportDocuments": len([doc for doc in docs if doc.kind == "support"]),
+            "reservedDocuments": len([doc for doc in docs if doc.kind == "reserved"]),
+            "missingKb": len(result.missing_kb),
+            "untrackedKb": len(result.untracked_kb),
+            "stale": len(stale),
+            "dirty": len(dirty),
+            "orphaned": len(orphaned),
+            "deadLinks": len(dead_links),
+            "missingValidation": len(result.validation_missing),
+            "failedValidation": len(result.validation_failed),
+            "boundaryViolations": len(result.boundary_violations),
+            "releaseExcludedHits": len(result.release_excluded_hits),
+        },
+        "topIssues": {
+            "stale": stale[:10],
+            "dirty": dirty[:10],
+            "orphaned": orphaned[:10],
+            "deadLinks": dead_links[:10],
+            "missingKb": result.missing_kb[:10],
+            "untrackedKb": result.untracked_kb[:10],
+            "missingValidation": result.validation_missing[:10],
+            "failedValidation": result.validation_failed[:10],
+            "boundaryViolations": result.boundary_violations[:10],
+        },
+        "supportDocuments": [
+            {
+                "path": doc.path,
+                "links": [
+                    {"target": link.target, "line": link.line, "ok": link.ok}
+                    for link in doc.links
+                ],
+            }
+            for doc in docs
+            if doc.kind == "support"
+        ],
+        "releaseExcludedUses": [
+            {
+                "path": path,
+                "severity": "context",
+                "healthConcern": False,
+            }
+            for path in result.release_excluded_hits[:10]
+        ],
+    }
 
 
 def print_markdown(result: AuditResult) -> None:
@@ -852,12 +947,17 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
     parser.add_argument("--min-score", choices=["A", "B", "C", "D", "F"])
     parser.add_argument("--json", action="store_true", help="Print JSON instead of Markdown.")
+    parser.add_argument("--full-json", action="store_true", help="Print full JSON payload.")
+    parser.add_argument("--summary-json", action="store_true", help="Print compact JSON summary.")
     parser.add_argument("--write-index", help="Write generated index JSON to this path.")
     return parser.parse_args(argv)
 
 
 def main(argv: list[str]) -> int:
     args = parse_args(argv)
+    if args.summary_json and (args.json or args.full_json):
+        print("choose only one JSON mode", file=sys.stderr)
+        return 2
     repo = Path(args.repo).resolve()
     kb_root = (repo / args.kb_root).resolve()
     manifest = (repo / args.manifest).resolve()
@@ -872,7 +972,9 @@ def main(argv: list[str]) -> int:
                 json.dumps(build_index(result), indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
             )
-        if args.json:
+        if args.summary_json:
+            print(json.dumps(summary_to_dict(result), indent=2, sort_keys=True))
+        elif args.json or args.full_json:
             print(json.dumps(result_to_dict(result), indent=2, sort_keys=True))
         else:
             print_markdown(result)

@@ -26,6 +26,22 @@ from .audit import (
 
 
 COMPARISON_STATES = {"planned", "built", "stale", "merged-into-docs"}
+GENERIC_TAGS = {
+    "api",
+    "audit",
+    "cache",
+    "ci",
+    "cli",
+    "config",
+    "docs",
+    "documentation",
+    "release",
+    "source",
+    "test",
+    "testing",
+    "verification",
+}
+SEVERITY_SCORE = {"high": 3, "medium": 2, "low": 1}
 
 
 @dataclass
@@ -149,10 +165,17 @@ def doc_slugs(doc: ExistingDoc) -> set[str]:
 
 def task_slugs(task: ManifestTask) -> set[str]:
     values = {task.task_id, task.name}
-    values.update(task.tags)
     if task.kb:
         values.add(Path(task.kb).stem)
     return {heading_slug(value) for value in values if heading_slug(value)}
+
+
+def duplicate_severity(reasons: list[str]) -> str:
+    if any(reason.startswith("source-mentioned:") for reason in reasons):
+        return "high"
+    if any(reason.startswith("shared-title-or-slug:") for reason in reasons):
+        return "medium"
+    return "low"
 
 
 def duplicate_hints(repo: Path, docs: list[ExistingDoc], tasks: list[ManifestTask]) -> list[dict[str, Any]]:
@@ -171,20 +194,30 @@ def duplicate_hints(repo: Path, docs: list[ExistingDoc], tasks: list[ManifestTas
             source_mentions = [source for source in task.sources if source.lower() in lower_text]
             if source_mentions:
                 reasons.append("source-mentioned: " + ", ".join(source_mentions))
-            tag_mentions = [tag for tag in task.tags if tag.lower() in lower_text]
+            tag_mentions = [
+                tag
+                for tag in task.tags
+                if tag.lower() in lower_text and heading_slug(tag) not in GENERIC_TAGS
+            ]
             if tag_mentions:
                 reasons.append("tag-mentioned: " + ", ".join(tag_mentions))
             if not reasons:
                 continue
+            severity = duplicate_severity(reasons)
             hints.append(
                 {
                     "taskId": task.task_id,
                     "taskStatus": task.status,
                     "doc": doc.path,
+                    "severity": severity,
+                    "score": SEVERITY_SCORE[severity],
                     "reasons": reasons,
                 }
             )
-    return hints
+    return sorted(
+        hints,
+        key=lambda item: (-item["score"], item["taskId"], item["doc"]),
+    )
 
 
 def dead_links(docs: list[ExistingDoc]) -> list[dict[str, Any]]:
@@ -235,6 +268,10 @@ def collect_docs_data(repo: Path, config_path: Path, manifest_path: Path) -> dic
         "docsComparison": docs_comparison_summary(tasks),
         "duplicateHints": hints,
         "duplicateHintCount": len(hints),
+        "duplicateHintSeverityCounts": {
+            severity: len([hint for hint in hints if hint["severity"] == severity])
+            for severity in ["high", "medium", "low"]
+        },
         "deadLinks": dead_links(docs),
         "warnings": warnings(config_path, manifest_path, patterns),
     }
@@ -281,10 +318,13 @@ def print_markdown(data: dict[str, Any], duplicate_limit: int) -> None:
         visible = data["duplicateHints"] if duplicate_limit < 0 else data["duplicateHints"][:duplicate_limit]
         print(f"## Duplicate Hints ({len(visible)}/{total})")
         for hint in visible:
-            print(f"- {hint['taskId']} <-> {hint['doc']}: {'; '.join(hint['reasons'])}")
+            print(
+                f"- [{hint['severity']}] {hint['taskId']} <-> {hint['doc']}: "
+                f"{'; '.join(hint['reasons'])}"
+            )
         omitted = total - len(visible)
         if omitted > 0:
-            print(f"- ... {omitted} more omitted; use --json or --duplicate-limit -1 for the full list.")
+            print(f"- ... {omitted} more omitted; use --summary-json, --json, or --duplicate-limit -1 for more.")
     if data["warnings"]:
         print()
         print("## Warnings")
@@ -292,12 +332,34 @@ def print_markdown(data: dict[str, Any], duplicate_limit: int) -> None:
             print(f"- {warning}")
 
 
+def summary_data(data: dict[str, Any], duplicate_limit: int = 5) -> dict[str, Any]:
+    visible_hints = data["duplicateHints"] if duplicate_limit < 0 else data["duplicateHints"][:duplicate_limit]
+    return {
+        "schemaVersion": data["schemaVersion"],
+        "repo": data["repo"],
+        "config": data["config"],
+        "manifest": data["manifest"],
+        "warnings": data["warnings"],
+        "patterns": data["patterns"],
+        "unmatchedPatterns": data["unmatchedPatterns"],
+        "existingDocsCount": len(data["existingDocs"]),
+        "docsComparison": data["docsComparison"],
+        "deadLinks": data["deadLinks"][:10],
+        "deadLinkCount": len(data["deadLinks"]),
+        "duplicateHintCount": data["duplicateHintCount"],
+        "duplicateHintSeverityCounts": data["duplicateHintSeverityCounts"],
+        "topDuplicateHints": visible_hints,
+    }
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", default=".", help="Target repository root.")
     parser.add_argument("--config", default=".agent/kb/config.yaml", help="Boundary config path.")
     parser.add_argument("--manifest", default="KB_PLAN.md", help="Manifest path.")
-    parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")
+    parser.add_argument("--json", action="store_true", help="Print full machine-readable JSON.")
+    parser.add_argument("--full-json", action="store_true", help="Print full machine-readable JSON.")
+    parser.add_argument("--summary-json", action="store_true", help="Print compact machine-readable JSON.")
     parser.add_argument(
         "--duplicate-limit",
         type=int,
@@ -319,6 +381,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 def main(argv: list[str]) -> int:
     args = parse_args(argv)
+    if args.summary_json and (args.json or args.full_json):
+        print("choose only one JSON mode", file=sys.stderr)
+        return 2
     repo = Path(args.repo).resolve()
     if not repo.exists() or not repo.is_dir():
         print(f"repo does not exist: {repo}", file=sys.stderr)
@@ -329,7 +394,9 @@ def main(argv: list[str]) -> int:
     config = (repo / args.config).resolve()
     manifest = (repo / args.manifest).resolve()
     data = collect_docs_data(repo, config, manifest)
-    if args.json:
+    if args.summary_json:
+        print(json.dumps(summary_data(data), indent=2, sort_keys=True))
+    elif args.json or args.full_json:
         print(json.dumps(data, indent=2, sort_keys=True))
     else:
         print_markdown(data, args.duplicate_limit)

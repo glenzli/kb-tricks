@@ -20,6 +20,17 @@ def docs_json(repo: Path, *args: str):
     return proc, json.loads(proc.stdout) if proc.stdout else {}
 
 
+def docs_summary_json(repo: Path, *args: str):
+    proc = run(
+        [sys.executable, "-B", str(TOOL), "--repo", str(repo), "--summary-json", *args],
+        PROJECT_ROOT,
+        check=False,
+    )
+    if proc.returncode not in {0, 1, 2}:
+        raise AssertionError(proc.stderr)
+    return proc, json.loads(proc.stdout) if proc.stdout else {}
+
+
 def write_docs_repo(repo: Path, include_all_comparisons: bool = False) -> None:
     (repo / ".agent" / "kb").mkdir(parents=True)
     (repo / "docs").mkdir()
@@ -106,15 +117,30 @@ class KbDocsTests(unittest.TestCase):
             self.assertEqual(data["deadLinks"], [])
             hints = data["duplicateHints"]
             self.assertEqual(data["duplicateHintCount"], len(hints))
+            self.assertEqual(data["duplicateHintSeverityCounts"]["high"], len(hints))
             self.assertTrue(
                 any(
                     hint["taskId"] == "release-packaging"
                     and hint["doc"] == "docs/release.md"
+                    and hint["severity"] == "high"
                     and any("source-mentioned" in reason for reason in hint["reasons"])
                     for hint in hints
                 ),
                 hints,
             )
+
+    def test_summary_json_omits_full_heading_inventory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            write_docs_repo(repo)
+
+            proc, data = docs_summary_json(repo)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["existingDocsCount"], 2)
+            self.assertEqual(data["docsComparison"]["missing"], ["api-auth-flow"])
+            self.assertIn("topDuplicateHints", data)
+            self.assertNotIn("existingDocs", data)
 
     def test_check_manifest_fails_when_comparison_is_missing(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -157,14 +183,14 @@ class KbDocsTests(unittest.TestCase):
             )
 
             text_proc = run(
-                [sys.executable, "-B", str(TOOL), "--repo", str(repo), "--duplicate-limit", "1"],
+                [sys.executable, "-B", str(TOOL), "--repo", str(repo), "--duplicate-limit", "0"],
                 PROJECT_ROOT,
                 check=False,
             )
             self.assertEqual(text_proc.returncode, 0, text_proc.stdout + text_proc.stderr)
             self.assertIn("## Dead Links", text_proc.stdout)
             self.assertIn("docs/release.md:9 -> missing.md", text_proc.stdout)
-            self.assertIn("## Duplicate Hints (1/", text_proc.stdout)
+            self.assertIn("## Duplicate Hints (0/", text_proc.stdout)
             self.assertIn("more omitted", text_proc.stdout)
 
     def test_existing_docs_respect_exclude_patterns(self):

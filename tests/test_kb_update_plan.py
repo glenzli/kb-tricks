@@ -71,8 +71,38 @@ class KbUpdatePlanTests(unittest.TestCase):
             action = data["actions"][0]
             self.assertTrue(action["allowed"])
             self.assertEqual(action["action"], "draft-update")
+            self.assertEqual(action["targetKb"], ".agent/kb/release/packaging.md")
+            self.assertEqual(action["draftTarget"], ".agent/kb/_draft/release-packaging.md")
             self.assertTrue(action["notAuthoritative"])
             self.assertEqual(data["blocked"], [])
+
+    def test_missing_config_groups_kb_support_files_as_setup_warnings(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            write_impact_repo(repo)
+            (repo / ".agent" / "kb" / "config.yaml").unlink()
+            init_repo(repo)
+            (repo / ".agent" / "kb" / "AGENT_GUIDE.md").write_text(
+                "# Agent Guide\n",
+                encoding="utf-8",
+            )
+
+            proc, data = plan_json(repo, "--worktree", "--draft")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["newKbCandidates"], [])
+            self.assertEqual(
+                data["setupWarnings"],
+                [
+                    {
+                        "code": "missing-config-kb-support-files",
+                        "files": [".agent/kb/AGENT_GUIDE.md"],
+                        "message": (
+                            "config missing; KB support files may be treated as source candidates"
+                        ),
+                    }
+                ],
+            )
 
     def test_unmatched_included_source_becomes_blocked_new_kb_candidate(self):
         with tempfile.TemporaryDirectory() as tmp:

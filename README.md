@@ -28,11 +28,11 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [kb_tricks/commands/](./kb_tricks/commands): released dependency-free command implementations used by the installed `kb` CLI.
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py): source-checkout wrapper for installing starter config, AI agent guidance, manifest, and reserved KB directories into a target repository.
 - [tools/kb_manifest.py](./tools/kb_manifest.py): source-checkout wrapper for bounded `KB_PLAN.md` task selection.
-- [tools/kb_docs.py](./tools/kb_docs.py): source-checkout wrapper for existing-docs inventory, manifest comparison coverage, dead-link reporting, and duplicate hints.
-- [tools/kb_audit.py](./tools/kb_audit.py): source-checkout wrapper for setup checks, hashes, dirty-state checks, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
+- [tools/kb_docs.py](./tools/kb_docs.py): source-checkout wrapper for existing-docs inventory, manifest comparison coverage, dead-link reporting, severity-ranked duplicate hints, and compact summary JSON.
+- [tools/kb_audit.py](./tools/kb_audit.py): source-checkout wrapper for setup checks, hashes, dirty-state checks, support/reserved KB classification, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py): source-checkout wrapper for generating and checking dirty-aware source fingerprints.
 - [tools/kb_impact.py](./tools/kb_impact.py): source-checkout wrapper for diff-first changed-file to Manifest task mapping.
-- [tools/kb_update_plan.py](./tools/kb_update_plan.py): source-checkout wrapper for read-only bounded update actions, blockers, docs reviews, and new KB candidates.
+- [tools/kb_update_plan.py](./tools/kb_update_plan.py): source-checkout wrapper for read-only bounded update actions, blockers, draft targets, setup warnings, docs reviews, and new KB candidates.
 - [tools/kb_query_lint.py](./tools/kb_query_lint.py): source-checkout wrapper for provenance linting of `kb-query` answers.
 - [tools/release_smoke.py](./tools/release_smoke.py): local/CI release smoke runner for tests, CLI import checks, scaffold dry-run, query lint, and whitespace checks.
 - [tools/release_rehearsal.py](./tools/release_rehearsal.py): full release rehearsal for sdist/wheel content boundaries, installed CLI checks, and packaging metadata warnings.
@@ -44,6 +44,7 @@ kb self-check --json
 kb scaffold --repo /path/to/project --dry-run
 kb manifest --repo /path/to/project --slice 1 --json
 kb docs --repo /path/to/project --check-manifest --check-links
+kb docs --repo /path/to/project --summary-json
 kb impact --repo /path/to/project --staged --json
 kb impact --repo /path/to/project --worktree --json
 kb impact --repo /path/to/project --base main --json
@@ -52,6 +53,7 @@ kb update-plan --repo /path/to/project --staged --json
 kb update-plan --repo /path/to/project --worktree --draft --json
 kb query-lint --repo /path/to/project templates/query-answer.md
 kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
+kb audit --repo /path/to/project --summary-json
 kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```
 
@@ -60,6 +62,8 @@ or equivalent AI instruction file at `.agent/kb/AGENT_GUIDE.md` so agents know
 how to use KB as auxiliary context rather than authority.
 
 `kb docs` and `kb impact/update-plan` apply `.agent/kb/config.yaml` `exclude` rules when collecting existing docs, so broad patterns such as `docs.existing: ["*.md"]` can safely pair with exclusions like `.agent/**` and `KB_PLAN.md`.
+
+`kb docs --json` and `kb audit --json` keep the full payload for detailed automation; `--summary-json` returns a compact top-issues view for agents and CI logs.
 
 Source checkout fallback:
 
@@ -260,11 +264,11 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - [kb_tricks/commands/](./kb_tricks/commands)：安装后的 `kb` CLI 使用的无依赖命令实现。
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py)：源码 checkout wrapper，用于把 starter config、AI agent 指引、Manifest 和 KB 保留目录安装到目标仓库。
 - [tools/kb_manifest.py](./tools/kb_manifest.py)：源码 checkout wrapper，用于 `KB_PLAN.md` 小步任务选择。
-- [tools/kb_docs.py](./tools/kb_docs.py)：源码 checkout wrapper，用于现有文档清单、Manifest Docs Comparison 覆盖率、死链报告和重复提示。
-- [tools/kb_audit.py](./tools/kb_audit.py)：源码 checkout wrapper，用于 setup 检查、hash、dirty 状态、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
+- [tools/kb_docs.py](./tools/kb_docs.py)：源码 checkout wrapper，用于现有文档清单、Manifest Docs Comparison 覆盖率、死链报告、按严重级别排序的重复提示和紧凑 summary JSON。
+- [tools/kb_audit.py](./tools/kb_audit.py)：源码 checkout wrapper，用于 setup 检查、hash、dirty 状态、support/reserved KB 分类、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py)：源码 checkout wrapper，用于 dirty-aware source fingerprint 生成与检查。
 - [tools/kb_impact.py](./tools/kb_impact.py)：源码 checkout wrapper，用于 diff-first changed files 到 Manifest 任务影响面映射。
-- [tools/kb_update_plan.py](./tools/kb_update_plan.py)：源码 checkout wrapper，用于只读 bounded actions、阻塞项、docs review 和新 KB 候选规划。
+- [tools/kb_update_plan.py](./tools/kb_update_plan.py)：源码 checkout wrapper，用于只读 bounded actions、阻塞项、draft target、setup warning、docs review 和新 KB 候选规划。
 - [tools/kb_query_lint.py](./tools/kb_query_lint.py)：源码 checkout wrapper，用于 `kb-query` 回答来源类型与推断隔离检查。
 - [tools/release_smoke.py](./tools/release_smoke.py)：本地/CI release smoke 入口，统一运行测试、CLI import 检查、scaffold dry-run、query lint 和 whitespace 检查。
 - [tools/release_rehearsal.py](./tools/release_rehearsal.py)：完整 release 预演入口，用于验证 sdist/wheel 内容边界、安装态 CLI 和 packaging metadata 警告。
@@ -276,6 +280,7 @@ kb self-check --json
 kb scaffold --repo /path/to/project --dry-run
 kb manifest --repo /path/to/project --slice 1 --json
 kb docs --repo /path/to/project --check-manifest --check-links
+kb docs --repo /path/to/project --summary-json
 kb impact --repo /path/to/project --staged --json
 kb impact --repo /path/to/project --worktree --json
 kb impact --repo /path/to/project --base main --json
@@ -284,6 +289,7 @@ kb update-plan --repo /path/to/project --staged --json
 kb update-plan --repo /path/to/project --worktree --draft --json
 kb query-lint --repo /path/to/project templates/query-answer.md
 kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
+kb audit --repo /path/to/project --summary-json
 kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```
 
@@ -291,6 +297,8 @@ kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 或同类 AI 指令文件里指向 `.agent/kb/AGENT_GUIDE.md`，让 agent 明确 KB 只是辅助上下文，不是权威来源。
 
 `kb docs` 和 `kb impact/update-plan` 收集现有文档时会应用 `.agent/kb/config.yaml` 的 `exclude` 规则，所以文档型仓库可以用 `docs.existing: ["*.md"]`，再排除 `.agent/**` 和 `KB_PLAN.md`。
+
+`kb docs --json` 和 `kb audit --json` 保留完整 payload，适合细粒度自动化；`--summary-json` 返回紧凑的 top issues 视图，更适合 agent 和 CI 日志。
 
 源码 checkout fallback：
 

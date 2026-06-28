@@ -156,6 +156,10 @@ def task_action(task: dict[str, Any], repo: Path, draft: bool) -> str:
     return base
 
 
+def draft_target(task_id: str) -> str:
+    return f".agent/kb/_draft/{task_id}.md"
+
+
 def task_by_id(tasks: list[ManifestTask]) -> dict[str, ManifestTask]:
     return {task.task_id: task for task in tasks}
 
@@ -183,9 +187,10 @@ def plan_task_action(
     reasons = match_reasons + stale_reasons
     if not reasons:
         reasons = ["selected"]
-    return {
+    result = {
         "task": manifest_task.task_id,
         "kb": manifest_task.kb,
+        "targetKb": manifest_task.kb,
         "status": manifest_task.status,
         "action": action,
         "allowed": allowed,
@@ -195,6 +200,9 @@ def plan_task_action(
         "matchedFiles": task.get("matchedFiles", []),
         "sourceStates": states,
     }
+    if action.startswith("draft-"):
+        result["draftTarget"] = draft_target(manifest_task.task_id)
+    return result
 
 
 def boundary_classification(config: dict[str, list[str]], path: str) -> dict[str, bool]:
@@ -224,7 +232,7 @@ def plan_new_candidate(
         return None
     blocked_reasons = gate_reasons([state], allow_dirty, allow_untracked, draft)
     action = "draft-create" if draft else "create"
-    return {
+    result = {
         "file": normalize_path(path),
         "action": action,
         "allowed": not blocked_reasons,
@@ -236,6 +244,9 @@ def plan_new_candidate(
         "sourceState": state,
         "boundary": boundary,
     }
+    if action.startswith("draft-"):
+        result["draftTarget"] = draft_target(Path(path).stem)
+    return result
 
 
 def docs_actions(docs_changes: list[str]) -> list[dict[str, Any]]:
@@ -277,6 +288,23 @@ def build_update_plan(
 ) -> dict[str, Any]:
     manifest_tasks = task_by_id(parse_manifest(manifest_path))
     config = parse_config(config_path)
+    config_present = config_path.exists()
+    setup_warnings: list[dict[str, Any]] = []
+    setup_candidate_files: set[str] = set()
+    if not config_present:
+        setup_candidate_files = {
+            path
+            for path in impact["unmatchedFiles"]
+            if path.startswith(".agent/kb/")
+        }
+        if setup_candidate_files:
+            setup_warnings.append(
+                {
+                    "code": "missing-config-kb-support-files",
+                    "message": "config missing; KB support files may be treated as source candidates",
+                    "files": sorted(setup_candidate_files),
+                }
+            )
     actions = [
         plan_task_action(
             repo,
@@ -297,6 +325,7 @@ def build_update_plan(
     candidates = [
         candidate
         for path in impact["unmatchedFiles"]
+        if path not in setup_candidate_files
         for candidate in [
             plan_new_candidate(
                 repo, path, config, allow_dirty, allow_untracked, draft
@@ -328,6 +357,7 @@ def build_update_plan(
         "specialChanges": impact["specialChanges"],
         "specialActions": special_actions(impact["specialChanges"]),
         "releaseExcludedChanges": release_excluded_changes,
+        "setupWarnings": setup_warnings,
         "unmatchedFiles": impact["unmatchedFiles"],
         "policy": {
             "draft": draft,
@@ -362,6 +392,13 @@ def print_markdown(data: dict[str, Any]) -> None:
             print(f"- {candidate['file']}: {candidate['action']} ({label})")
             for reason in candidate["blockedReasons"]:
                 print(f"  - {reason}")
+    if data["setupWarnings"]:
+        print()
+        print("## Setup Warnings")
+        for warning in data["setupWarnings"]:
+            print(f"- {warning['message']}")
+            for path in warning["files"]:
+                print(f"  - {path}")
     if data["docsActions"]:
         print()
         print("## Existing Docs")
