@@ -5,15 +5,15 @@ status: "built"
 notAuthoritative: false
 fingerprint:
   - file: "pyproject.toml"
-    commit: "91c9b39bf8d8b1052632e9e139c0b3635cae1bcc"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:98ce2c95d443c6ef82252ee0a9965ecb518a8b325e0cc203d25010761078c67f"
+    contentHash: "sha256:23fd65b3922618ab85ec41ab95423632f2543b687a1adc7a4cc7eed5845e49f7"
   - file: "MANIFEST.in"
-    commit: "91c9b39bf8d8b1052632e9e139c0b3635cae1bcc"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:67a5dad33a1a6419eb2096c291f87d65b0cd9d2b2ec012cb519c2177b337c2d6"
+    contentHash: "sha256:71b939f80c2f079c4be90f98545a611c941ea097b6eda1756af512c7e4130e42"
   - file: "kb_tricks/templates/KB_PLAN.md"
     commit: "91c9b39bf8d8b1052632e9e139c0b3635cae1bcc"
     tracked: true
@@ -45,30 +45,30 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:2a3ce16cd0ca1e923c6ef13b8443c8ab46996b6baa113f2bde608d7c02e14727"
   - file: "tests/test_packaging.py"
-    commit: "95653ed4add23dcd17e68fd77148b694f0144c47"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:8049413132bfdf8d42788af96e1d832255c1dd2b23ef784f5f789cced5be8e22"
+    contentHash: "sha256:7264e81b7eb9cb82c211ebf036be43b33e59e4f2d58bf77ee38eed8308defd49"
   - file: ".github/workflows/ci.yml"
     commit: "95653ed4add23dcd17e68fd77148b694f0144c47"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:6a42e1b9c8a575d8a67080adb5743355c02678380dca6af0ed77c42fef112c65"
   - file: "README.md"
-    commit: "06623c6dc07f1e33e041f8138b36d35328bafd9e"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:04c3ca0bedd6f10105068a06d61450bdb0ce2830c9cfbdcf4a72a839d2613cf2"
+    contentHash: "sha256:a9039d42138230425cab3b2f7f3ed0c5e13afe4dcdc3d692563766ac68251e1b"
   - file: "RELEASE.md"
-    commit: "95653ed4add23dcd17e68fd77148b694f0144c47"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:ac2385e68c3d1d30933e9b7c595491738d548589a5f5726ccabc0b8b853ec3af"
+    contentHash: "sha256:3ff57aef55c1aae56e9a072afb7df1931ac011d17cfb0f1b9ba129bf38465516"
   - file: "ROADMAP.md"
-    commit: "95653ed4add23dcd17e68fd77148b694f0144c47"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:a1a8de1d548e4603068dc1e7ec4552569edb99151a6c3b4a493850b209c84821"
+    contentHash: "sha256:f116b1a96f40c871843cc1cc12e3a06d6a1409acf410f08efb1cc5197d915af4"
 tags: ["release", "packaging", "ci", "templates"]
 ---
 
@@ -83,9 +83,10 @@ checkout.
 ## Contracts
 
 - [pyproject.toml](../../../pyproject.toml) defines the `kb` console script and
-  includes `kb_tricks/templates/*` as package data.
-- [MANIFEST.in](../../../MANIFEST.in) keeps template files in source
-  distributions.
+  includes `kb_tricks.commands` and `kb_tricks/templates/*` in the installed
+  package.
+- [MANIFEST.in](../../../MANIFEST.in) keeps templates, specs, skills, and
+  source-checkout wrappers in source distributions.
 - [release_smoke.py](../../../tools/release_smoke.py) runs the shared release
   smoke sequence for source checkouts and installed CLIs.
 - [ci.yml](../../../.github/workflows/ci.yml) verifies source smoke, package

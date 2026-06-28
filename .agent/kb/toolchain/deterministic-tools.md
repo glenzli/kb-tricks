@@ -5,50 +5,100 @@ status: "built"
 notAuthoritative: false
 fingerprint:
   - file: "kb_tricks/cli.py"
-    commit: "e33e8ed2a2bd4b04de971df5d19816abf869e827"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:d6979644467e123da2532ba315f0b6256d2ec18f7c116379fd723917398226c2"
-  - file: "tools/kb_audit.py"
-    commit: "06623c6dc07f1e33e041f8138b36d35328bafd9e"
+    contentHash: "sha256:e39dc3da8f031cc915418422f586184e781d6ab6f231c08629aca52eb4507422"
+  - file: "kb_tricks/commands/__init__.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:f47fa4c01bc18e3d4c49447294cef16e362e8c763235b2d6a202a117f487c5f2"
-  - file: "tools/kb_manifest.py"
-    commit: "7dce569328f5dff8a073cc9dd15ba2baba6e40b8"
+    contentHash: "sha256:f64d8314f5d077e70f2cddeb00618e5b8dbd65e06d8cd8b69748cbfa3ea58628"
+  - file: "kb_tricks/commands/audit.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:121287a785ebadf36d0019b1722e50c96b1f45d25b77552fa2b0a4563355ac1e"
-  - file: "tools/kb_update_plan.py"
-    commit: "704c01f14d1650d59d24ef01a7e3a68ff2be9e95"
+    contentHash: "sha256:e653a740b3ddf774974eaacaed20b4ea4381214a636ec2c0f9f7759c1402eb9f"
+  - file: "kb_tricks/commands/manifest.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:dd555a5db8675b3dc87b48eacb2b62caec04c06684a64abff77652f676c7a0d7"
-  - file: "tools/kb_impact.py"
-    commit: "704c01f14d1650d59d24ef01a7e3a68ff2be9e95"
+    contentHash: "sha256:8ba50351310cbb614fc89c069fdbcba55d925d859127b3c39f423e3661ab3482"
+  - file: "kb_tricks/commands/update_plan.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:5d2ff5d51fe9cae349e233cf944a12d4e1af03f5998e9304ebe45f2a130f8ec1"
-  - file: "tools/kb_fingerprint.py"
-    commit: "2d2ced5a833a4d57d84ee0452da7c3c98cbe7ace"
+    contentHash: "sha256:3849197abee22105659fbd1faa10093f3d84ce1cfeba9843b2ba7a7559ebfe8d"
+  - file: "kb_tricks/commands/impact.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:c008a9837e5d87f96b5f6b4d2816b896c9b3f4b65b1ebbc96cd6ad1452ad20db"
-  - file: "tools/kb_docs.py"
-    commit: "06623c6dc07f1e33e041f8138b36d35328bafd9e"
+    contentHash: "sha256:b935aa6da34dbcf0fb1991b557f3deec502af67fedfae34588e656501d0c5bdf"
+  - file: "kb_tricks/commands/fingerprint.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:abfeb40ba634e39615e026fda7d6dc8edf60a6dbcdb8ad76a158a694b60f6722"
-  - file: "tools/kb_query_lint.py"
-    commit: "06623c6dc07f1e33e041f8138b36d35328bafd9e"
+    contentHash: "sha256:d38da0319caf13489b3b5b9bb656aed4b6447a5cd4462c5091613a27e20ccba3"
+  - file: "kb_tricks/commands/docs.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:765f88338d5c6ece0d84f31c387eab857cbad89c7fa001c6514d1f88ccc3637a"
+  - file: "kb_tricks/commands/query_lint.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:b93b88fbdd2d55b86b15da5ef16078095d12816f3af85d992a4f28ffe2311083"
-  - file: "tools/kb_scaffold.py"
-    commit: "91c9b39bf8d8b1052632e9e139c0b3635cae1bcc"
+  - file: "kb_tricks/commands/scaffold.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:cbf1a7829ec8e8e276b87b98095d6927c140903d4b6f7ed631edc7f27a76916d"
+  - file: "tools/__init__.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:151bc526833e257880888fe58e5732545ce94b0a1717e8f6700d71fa37102135"
+  - file: "tools/kb_audit.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:ebf5158850449455ba39d69de1154e59797d7ad4934f02b6e331b9387d894586"
+  - file: "tools/kb_manifest.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:92e5b1743ac26e30ae7b32e760cd5c8a4cf7fd225f04ba57c7d8eb8999f00fdf"
+  - file: "tools/kb_update_plan.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:ddacac5607aab090a049a013d7d3222b85ddd22bd16ae610c52f6bb1db741fc5"
+  - file: "tools/kb_impact.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:56ad7c5ddef1e0df0d161b55f1e3b7cbddb02e1cc29fa55c2b07fb44e8a073db"
+  - file: "tools/kb_fingerprint.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:7233c6ea0a0ef374c9ab22876f0aba70fb24224e2112388308480e1d5efb8573"
+  - file: "tools/kb_docs.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:9780d96a03835da813e6ae681d0ee5bc0b3057e4843d1a87b582e17f79dba195"
+  - file: "tools/kb_query_lint.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:3dbde55ec3a1252ff48fb1c5785e5ab4c14f9184306f02160e31ca7fd2a3246a"
+  - file: "tools/kb_scaffold.py"
+    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:c5f9b52d014189300ca3053fe90c1a74071d5e84befb0c73f4f09c17692c15b7"
 tags: ["cli", "audit", "bounded", "fingerprint", "impact"]
 ---
 
@@ -57,7 +107,9 @@ tags: ["cli", "audit", "bounded", "fingerprint", "impact"]
 ## Role
 
 The released `kb` entry point in [cli.py](../../../kb_tricks/cli.py) is a thin
-dispatcher over deterministic tools in [tools/](../../../tools). The tools
+dispatcher over package command implementations in
+[kb_tricks/commands](../../../kb_tricks/commands). The `tools/` scripts are
+source-checkout compatibility wrappers over those commands. The commands
 validate, select, fingerprint, inventory, and plan KB work. They do not generate
 authoritative KB prose; skills and humans write or update the prose.
 
@@ -103,9 +155,11 @@ and limits text duplicate hints by default.
 ## SSOT Links
 
 - CLI dispatcher: [cli.py](../../../kb_tricks/cli.py)
-- Audit implementation: [kb_audit.py](../../../tools/kb_audit.py)
-- Update planner: [kb_update_plan.py](../../../tools/kb_update_plan.py)
-- Impact mapper: [kb_impact.py](../../../tools/kb_impact.py)
+- Command package: [kb_tricks/commands](../../../kb_tricks/commands)
+- Audit implementation: [audit.py](../../../kb_tricks/commands/audit.py)
+- Update planner: [update_plan.py](../../../kb_tricks/commands/update_plan.py)
+- Impact mapper: [impact.py](../../../kb_tricks/commands/impact.py)
+- Source wrappers: [tools](../../../tools)
 
 ## Blindspots
 
