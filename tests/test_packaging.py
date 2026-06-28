@@ -34,8 +34,8 @@ class PackagingTests(unittest.TestCase):
         include = set(data["tool"]["setuptools"]["packages"]["find"]["include"])
         self.assertIn("kb_tricks", include)
         self.assertIn("kb_tricks.*", include)
-        self.assertIn("tools", include)
-        self.assertIn("tools.*", include)
+        self.assertNotIn("tools", include)
+        self.assertNotIn("tools.*", include)
 
         package_data = data["tool"]["setuptools"]["package-data"]["kb_tricks"]
         self.assertIn("templates/*", package_data)
@@ -57,6 +57,7 @@ class PackagingTests(unittest.TestCase):
         self.assertIn("recursive-include templates *", manifest)
         self.assertIn("recursive-include spec *.md", manifest)
         self.assertIn("recursive-include skills *", manifest)
+        self.assertIn("recursive-include tools *.py", manifest)
         self.assertIn("recursive-include kb_tricks/templates *", manifest)
 
     def test_release_smoke_commands_cover_source_checks(self):

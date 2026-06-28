@@ -6,4 +6,5 @@ include pyproject.toml
 recursive-include templates *
 recursive-include spec *.md
 recursive-include skills *
+recursive-include tools *.py
 recursive-include kb_tricks/templates *

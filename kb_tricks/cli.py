@@ -5,34 +5,24 @@ from __future__ import annotations
 import importlib
 import json
 import sys
-from pathlib import Path
-
-import tools
 
 from . import __version__
 
 
 COMMANDS = {
-    "audit": "tools.kb_audit",
-    "docs": "tools.kb_docs",
-    "fingerprint": "tools.kb_fingerprint",
-    "impact": "tools.kb_impact",
-    "manifest": "tools.kb_manifest",
-    "query-lint": "tools.kb_query_lint",
-    "scaffold": "tools.kb_scaffold",
-    "update-plan": "tools.kb_update_plan",
+    "audit": "kb_tricks.commands.audit",
+    "docs": "kb_tricks.commands.docs",
+    "fingerprint": "kb_tricks.commands.fingerprint",
+    "impact": "kb_tricks.commands.impact",
+    "manifest": "kb_tricks.commands.manifest",
+    "query-lint": "kb_tricks.commands.query_lint",
+    "scaffold": "kb_tricks.commands.scaffold",
+    "update-plan": "kb_tricks.commands.update_plan",
 }
 
 
 def command_names() -> list[str]:
     return sorted([*COMMANDS, "self-check"])
-
-
-def ensure_legacy_tool_imports() -> None:
-    tools_dir = Path(tools.__file__).resolve().parent
-    tools_path = str(tools_dir)
-    if tools_path not in sys.path:
-        sys.path.insert(0, tools_path)
 
 
 def print_help() -> None:
@@ -60,7 +50,6 @@ def run_self_check(argv: list[str]) -> int:
             print(f"unknown self-check argument: {argv[0]}", file=sys.stderr)
             return 2
 
-    ensure_legacy_tool_imports()
     checks = []
     ok = True
     for name, module_name in sorted(COMMANDS.items()):
@@ -105,7 +94,6 @@ def main(argv: list[str] | None = None) -> int:
         print(f"unknown command: {command}", file=sys.stderr)
         print_help()
         return 2
-    ensure_legacy_tool_imports()
     module = importlib.import_module(COMMANDS[command])
     return int(module.main(argv[1:]))
 

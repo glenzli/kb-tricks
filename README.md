@@ -25,14 +25,15 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [RELEASE.md](./RELEASE.md): release boundary, install smoke, and packaging verification notes.
 - [skills/](./skills): copyable Agent skill prompts; each child directory keeps the released skill name and contains `SKILL.md`.
 - [templates/](./templates): starter templates for config, manifest, KB docs, validation artifacts, and query answers.
-- [tools/kb_scaffold.py](./tools/kb_scaffold.py): dependency-free scaffold helper for installing starter config, manifest, and reserved KB directories into a target repository.
-- [tools/kb_manifest.py](./tools/kb_manifest.py): dependency-free selector for bounded `KB_PLAN.md` task execution.
-- [tools/kb_docs.py](./tools/kb_docs.py): dependency-free existing-docs inventory, manifest comparison coverage, dead-link reporting, and duplicate-hint helper.
-- [tools/kb_audit.py](./tools/kb_audit.py): dependency-free deterministic audit helper for setup checks, hashes, dirty-state checks, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
-- [tools/kb_fingerprint.py](./tools/kb_fingerprint.py): dependency-free helper for generating and checking dirty-aware source fingerprints.
-- [tools/kb_impact.py](./tools/kb_impact.py): dependency-free diff-first changed-file to Manifest task mapper for `kb-update`.
-- [tools/kb_update_plan.py](./tools/kb_update_plan.py): dependency-free read-only planner that turns impact data into bounded update actions, blockers, docs reviews, and new KB candidates.
-- [tools/kb_query_lint.py](./tools/kb_query_lint.py): dependency-free provenance linter for `kb-query` answers.
+- [kb_tricks/commands/](./kb_tricks/commands): released dependency-free command implementations used by the installed `kb` CLI.
+- [tools/kb_scaffold.py](./tools/kb_scaffold.py): source-checkout wrapper for installing starter config, manifest, and reserved KB directories into a target repository.
+- [tools/kb_manifest.py](./tools/kb_manifest.py): source-checkout wrapper for bounded `KB_PLAN.md` task selection.
+- [tools/kb_docs.py](./tools/kb_docs.py): source-checkout wrapper for existing-docs inventory, manifest comparison coverage, dead-link reporting, and duplicate hints.
+- [tools/kb_audit.py](./tools/kb_audit.py): source-checkout wrapper for setup checks, hashes, dirty-state checks, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
+- [tools/kb_fingerprint.py](./tools/kb_fingerprint.py): source-checkout wrapper for generating and checking dirty-aware source fingerprints.
+- [tools/kb_impact.py](./tools/kb_impact.py): source-checkout wrapper for diff-first changed-file to Manifest task mapping.
+- [tools/kb_update_plan.py](./tools/kb_update_plan.py): source-checkout wrapper for read-only bounded update actions, blockers, docs reviews, and new KB candidates.
+- [tools/kb_query_lint.py](./tools/kb_query_lint.py): source-checkout wrapper for provenance linting of `kb-query` answers.
 - [tools/release_smoke.py](./tools/release_smoke.py): local/CI release smoke runner for tests, CLI import checks, scaffold dry-run, query lint, and whitespace checks.
 
 Installed CLI example:
@@ -245,14 +246,15 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - [RELEASE.md](./RELEASE.md)：记录 release 边界、安装 smoke 和打包验证流程。
 - [skills/](./skills)：可复制的 Agent skill prompt；每个子目录保留发布后的 skill 名称，并包含 `SKILL.md`。
 - [templates/](./templates)：提供 config、Manifest、KB 文档、验证产物和查询回答模板。
-- [tools/kb_scaffold.py](./tools/kb_scaffold.py)：无依赖的初始化辅助工具，用于把 starter config、Manifest 和 KB 保留目录安装到目标仓库。
-- [tools/kb_manifest.py](./tools/kb_manifest.py)：无依赖的 `KB_PLAN.md` 小步任务选择器，用于落实 bounded execution。
-- [tools/kb_docs.py](./tools/kb_docs.py)：无依赖的现有文档清单、Manifest Docs Comparison 覆盖率、死链报告和重复提示工具。
-- [tools/kb_audit.py](./tools/kb_audit.py)：无依赖的确定性审计辅助工具，负责 setup 检查、hash、dirty 状态、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
-- [tools/kb_fingerprint.py](./tools/kb_fingerprint.py)：无依赖的 dirty-aware source fingerprint 生成与检查工具。
-- [tools/kb_impact.py](./tools/kb_impact.py)：无依赖的 diff-first changed files 到 Manifest 任务影响面映射工具，供 `kb-update` 使用。
-- [tools/kb_update_plan.py](./tools/kb_update_plan.py)：无依赖的只读更新规划工具，把 impact 结果转换为 bounded actions、阻塞项、docs review 和新 KB 候选。
-- [tools/kb_query_lint.py](./tools/kb_query_lint.py)：无依赖的 `kb-query` 回答来源类型与推断隔离检查工具。
+- [kb_tricks/commands/](./kb_tricks/commands)：安装后的 `kb` CLI 使用的无依赖命令实现。
+- [tools/kb_scaffold.py](./tools/kb_scaffold.py)：源码 checkout wrapper，用于把 starter config、Manifest 和 KB 保留目录安装到目标仓库。
+- [tools/kb_manifest.py](./tools/kb_manifest.py)：源码 checkout wrapper，用于 `KB_PLAN.md` 小步任务选择。
+- [tools/kb_docs.py](./tools/kb_docs.py)：源码 checkout wrapper，用于现有文档清单、Manifest Docs Comparison 覆盖率、死链报告和重复提示。
+- [tools/kb_audit.py](./tools/kb_audit.py)：源码 checkout wrapper，用于 setup 检查、hash、dirty 状态、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
+- [tools/kb_fingerprint.py](./tools/kb_fingerprint.py)：源码 checkout wrapper，用于 dirty-aware source fingerprint 生成与检查。
+- [tools/kb_impact.py](./tools/kb_impact.py)：源码 checkout wrapper，用于 diff-first changed files 到 Manifest 任务影响面映射。
+- [tools/kb_update_plan.py](./tools/kb_update_plan.py)：源码 checkout wrapper，用于只读 bounded actions、阻塞项、docs review 和新 KB 候选规划。
+- [tools/kb_query_lint.py](./tools/kb_query_lint.py)：源码 checkout wrapper，用于 `kb-query` 回答来源类型与推断隔离检查。
 - [tools/release_smoke.py](./tools/release_smoke.py)：本地/CI release smoke 入口，统一运行测试、CLI import 检查、scaffold dry-run、query lint 和 whitespace 检查。
 
 安装后的 CLI 示例：

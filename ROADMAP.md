@@ -26,15 +26,17 @@ Current repository support:
 - `skills/` contains copyable Agent skill prompts, with one `SKILL.md` per released skill directory.
 - `templates/` provides starter artifacts for target repositories.
 - `kb_tricks/templates/` packages those starter artifacts so installed `kb scaffold` does not depend on a source checkout.
-- `tools/kb_scaffold.py` installs starter config, manifest, and reserved KB directories into a target repository without generating KB prose.
-- `tools/kb_manifest.py` selects bounded `KB_PLAN.md` tasks by status, ID/tag/path filters, and slice size; it does not execute or generate KB prose.
-- `tools/kb_docs.py` inventories existing docs from `docs.existing`, checks Manifest `Docs Comparison` coverage, and emits duplicate hints without judging prose quality.
-- `tools/kb_audit.py` provides the first deterministic Tool Layer helper. It audits existing artifacts and can write `.agent/kb/index.json`; it does not generate KB prose.
-- `tools/kb_fingerprint.py` generates and checks dirty-aware source fingerprints used by KB frontmatter.
-- `tools/kb_impact.py` maps `--staged`, `--worktree`, `--base`, `--since`, or `--files` changes to Manifest tasks, existing docs changes, and special KB artifact changes for diff-first maintenance.
-- `tools/kb_update_plan.py` turns impact results into read-only bounded update actions, blockers, existing-docs reviews, special artifact reviews, and new KB candidates.
-- `tools/kb_query_lint.py` checks `kb-query` answer drafts for required sections, source type markers, inference isolation, and citation coverage.
-- `kb` is the installed CLI dispatcher for the deterministic tools; source checkouts may still call `python3 tools/kb_*.py` directly.
+- `kb_tricks/commands/` contains the released command implementations used by the installed `kb` CLI.
+- `tools/kb_*.py` are source-checkout wrappers around `kb_tricks.commands.*` for direct `python3 tools/kb_*.py` usage.
+- `kb_tricks.commands.scaffold` installs starter config, manifest, and reserved KB directories into a target repository without generating KB prose.
+- `kb_tricks.commands.manifest` selects bounded `KB_PLAN.md` tasks by status, ID/tag/path filters, and slice size; it does not execute or generate KB prose.
+- `kb_tricks.commands.docs` inventories existing docs from `docs.existing`, checks Manifest `Docs Comparison` coverage, and emits duplicate hints without judging prose quality.
+- `kb_tricks.commands.audit` audits existing artifacts and can write `.agent/kb/index.json`; it does not generate KB prose.
+- `kb_tricks.commands.fingerprint` generates and checks dirty-aware source fingerprints used by KB frontmatter.
+- `kb_tricks.commands.impact` maps `--staged`, `--worktree`, `--base`, `--since`, or `--files` changes to Manifest tasks, existing docs changes, and special KB artifact changes for diff-first maintenance.
+- `kb_tricks.commands.update_plan` turns impact results into read-only bounded update actions, blockers, existing-docs reviews, special artifact reviews, and new KB candidates.
+- `kb_tricks.commands.query_lint` checks `kb-query` answer drafts for required sections, source type markers, inference isolation, and citation coverage.
+- `kb` is the installed CLI dispatcher for the deterministic commands; source checkouts may still call `python3 tools/kb_*.py` directly.
 - `kb self-check` is the release smoke boundary: it imports every released subcommand module and verifies that the installed dispatcher can reach each tool.
 
 ## Core Operating Contracts

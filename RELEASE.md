@@ -2,7 +2,7 @@
 
 ## Release Boundary
 
-`kb-tricks` ships deterministic tooling through the `kb` CLI. Skills remain repository-local instructions: a target repository may call an installed `kb`, copy the released `tools/` bundle, or reference this repository through an external mechanism such as `vasmc`.
+`kb-tricks` ships deterministic tooling through the `kb` CLI. Skills remain repository-local instructions: a target repository may call an installed `kb`, run source-checkout wrappers in `tools/`, or reference this repository through an external mechanism such as `vasmc`.
 
 The target repository owns KB artifacts such as `.agent/kb/config.yaml`, `KB_PLAN.md`, `.agent/kb/**/*.md`, `_validation/`, and `index.json`. The installed package owns only the reusable CLI, deterministic tools, and starter templates.
 
@@ -55,6 +55,7 @@ The install smoke should be run in an environment with standard Python packaging
 ## Packaging Notes
 
 - `pyproject.toml` exposes `kb = "kb_tricks.cli:main"`.
-- `tools` is packaged so installed CLI commands can import deterministic tool modules.
+- `kb_tricks.commands` contains the released command implementations used by installed CLI commands.
+- `tools/kb_*.py` wrappers are included in source distributions for checkout and reference workflows.
 - `kb_tricks/templates/*` is packaged so `kb scaffold` works after installation.
 - Root-level `templates/`, `spec/`, and `skills/` directories are included in source distributions for copy/reference workflows.

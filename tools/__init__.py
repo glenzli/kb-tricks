@@ -1,1 +1,1 @@
-"""Importable wrappers for kb-tricks deterministic tools."""
+"""Source-checkout compatibility wrappers for kb-tricks commands."""
