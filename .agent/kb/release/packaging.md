@@ -45,10 +45,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:2a3ce16cd0ca1e923c6ef13b8443c8ab46996b6baa113f2bde608d7c02e14727"
   - file: "tests/test_packaging.py"
-    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    commit: "a5b8df6a7a4061ae42d09146264884edbaa09d4c"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:7264e81b7eb9cb82c211ebf036be43b33e59e4f2d58bf77ee38eed8308defd49"
+    contentHash: "sha256:a89a91e5997caf0053799683f5ded073919cdf71b8f14d148634dffd56ae87ce"
   - file: ".github/workflows/ci.yml"
     commit: "95653ed4add23dcd17e68fd77148b694f0144c47"
     tracked: true
@@ -60,10 +60,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:a9039d42138230425cab3b2f7f3ed0c5e13afe4dcdc3d692563766ac68251e1b"
   - file: "RELEASE.md"
-    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    commit: "a5b8df6a7a4061ae42d09146264884edbaa09d4c"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:3ff57aef55c1aae56e9a072afb7df1931ac011d17cfb0f1b9ba129bf38465516"
+    contentHash: "sha256:ce34440199bce3e45ae2ca6abd5f8e91609d9cc255b3c0721993c47b686b29da"
   - file: "ROADMAP.md"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
@@ -89,6 +89,8 @@ checkout.
   source-checkout wrappers in source distributions.
 - [release_smoke.py](../../../tools/release_smoke.py) runs the shared release
   smoke sequence for source checkouts and installed CLIs.
+- Manual scaffold smoke commands must create the target directory first because
+  `kb scaffold --repo` targets an existing repository.
 - [ci.yml](../../../.github/workflows/ci.yml) verifies source smoke, package
   installation, and installed CLI smoke.
 - [test_packaging.py](../../../tests/test_packaging.py) checks package template
@@ -110,5 +112,7 @@ updates.
 ## Blindspots
 
 - The project has a local `.venv`, but release smoke should not rely on it in CI.
+- Setuptools 82 warns that `project.license` as a TOML table is deprecated and
+  must move to current license metadata before 2027-02-18.
 - The first real tag/release still needs a decision on versioning and publish
   destination.
