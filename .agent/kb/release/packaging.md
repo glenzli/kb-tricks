@@ -44,26 +44,31 @@ fingerprint:
     tracked: true
     worktree: "clean"
     contentHash: "sha256:2a3ce16cd0ca1e923c6ef13b8443c8ab46996b6baa113f2bde608d7c02e14727"
-  - file: "tests/test_packaging.py"
-    commit: "7e31e43900298893edc0b6b6a8e19357fd995663"
+  - file: "tools/release_rehearsal.py"
+    commit: "32d2c13f4f098138fe02d3f77147e1b85428f47e"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:546a6ba1bf7afcc6451e86936b32ff71b6412221cb34af988782d8da383b260b"
+    contentHash: "sha256:dab6f22b2aaaba73797b6ecc1c1029b8bdc418c85255c1b81cc626dba4b012c1"
+  - file: "tests/test_packaging.py"
+    commit: "32d2c13f4f098138fe02d3f77147e1b85428f47e"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:637971311fe856f361b0b1d0eaeec17210bc83f0cd6244f3accfd8bae58847f0"
   - file: ".github/workflows/ci.yml"
     commit: "95653ed4add23dcd17e68fd77148b694f0144c47"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:6a42e1b9c8a575d8a67080adb5743355c02678380dca6af0ed77c42fef112c65"
   - file: "README.md"
-    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    commit: "32d2c13f4f098138fe02d3f77147e1b85428f47e"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:a9039d42138230425cab3b2f7f3ed0c5e13afe4dcdc3d692563766ac68251e1b"
+    contentHash: "sha256:ed4b25c0b8f0644611d8e668a43203f5f95c9e57c809de4adcb8a3ca71dd06eb"
   - file: "RELEASE.md"
-    commit: "7e31e43900298893edc0b6b6a8e19357fd995663"
+    commit: "32d2c13f4f098138fe02d3f77147e1b85428f47e"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:14f7addd1ecae2f990a577b4f62d35ee16effb78cc58a9f1412a9a1ec79a1448"
+    contentHash: "sha256:1f97027f375ad808d64a777921139ccdccd5a36b0482f4abb38e3b685e57e748"
   - file: "ROADMAP.md"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
@@ -92,12 +97,17 @@ checkout.
   source-checkout wrappers in source distributions.
 - [release_smoke.py](../../../tools/release_smoke.py) runs the shared release
   smoke sequence for source checkouts and installed CLIs.
+- [release_rehearsal.py](../../../tools/release_rehearsal.py) exports committed
+  `HEAD`, builds sdist and wheel in a temporary tree, checks package boundaries
+  and license metadata, installs the wheel into a temporary venv, and runs
+  installed CLI smoke checks.
 - Manual scaffold smoke commands must create the target directory first because
   `kb scaffold --repo` targets an existing repository.
 - [ci.yml](../../../.github/workflows/ci.yml) verifies source smoke, package
   installation, and installed CLI smoke.
 - [test_packaging.py](../../../tests/test_packaging.py) checks package template
-  availability, scaffold fallback behavior, and release smoke command coverage.
+  availability, scaffold fallback behavior, release smoke command coverage, and
+  release rehearsal boundaries.
 
 ## Release Boundary
 

@@ -55,8 +55,8 @@ packaging metadata, and release outputs remain the source of truth.
 - [built] release-packaging
   - **ID**: `release-packaging`
   - **KB**: `.agent/kb/release/packaging.md`
-  - **Sources**: `pyproject.toml`, `MANIFEST.in`, `kb_tricks/templates/KB_PLAN.md`, `kb_tricks/templates/config.yaml`, `kb_tricks/templates/kb-doc.md`, `kb_tricks/templates/query-answer.md`, `kb_tricks/templates/validation.md`, `tools/release_smoke.py`, `tests/test_packaging.py`, `.github/workflows/ci.yml`, `README.md`, `RELEASE.md`, `ROADMAP.md`
-  - **Focus**: Package data, installed CLI smoke testing, CI release checks, and which dogfood artifacts stay out of release semantics.
+  - **Sources**: `pyproject.toml`, `MANIFEST.in`, `kb_tricks/templates/KB_PLAN.md`, `kb_tricks/templates/config.yaml`, `kb_tricks/templates/kb-doc.md`, `kb_tricks/templates/query-answer.md`, `kb_tricks/templates/validation.md`, `tools/release_smoke.py`, `tools/release_rehearsal.py`, `tests/test_packaging.py`, `.github/workflows/ci.yml`, `README.md`, `RELEASE.md`, `ROADMAP.md`
+  - **Focus**: Package data, installed CLI smoke testing, full release rehearsal, CI release checks, and which dogfood artifacts stay out of release semantics.
   - **Tags**: `release`, `packaging`, `ci`, `templates`
   - **Docs Comparison**: README and RELEASE document commands; KB explains why package resources, source templates, and CI smoke checks must move together.
   - **Status**: `built`
