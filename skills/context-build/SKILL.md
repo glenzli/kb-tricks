@@ -29,20 +29,21 @@ Use to materialize planned Context tasks into `.dev-cycle/context/**/*.md`.
 
 1. Select tasks with `dev-cycle context manifest --status planned --slice N --json` when available.
 2. Stop if the selector reports legacy manifest entries; run `dev-cycle context migrate-plan` first.
-3. For each selected task, inspect listed `Sources`.
-4. Check source state with `dev-cycle context fingerprint` or Git:
+3. Optionally run `dev-cycle context build-assist --slice N` to generate deterministic skeletons and fingerprints; use `--write` only when the user wants the skeleton files.
+4. For each selected task, inspect listed `Sources`.
+5. Check source state with `dev-cycle context fingerprint` or Git:
    - clean tracked: formal write allowed.
    - dirty tracked: block or draft.
    - untracked: block or draft.
    - deleted: mark orphaned candidate; do not build.
-5. Build a focused cognitive map:
+6. Build a focused cognitive map:
    - Frontmatter from `templates/context-doc.md`.
    - Cross-module contracts and design tradeoffs.
    - Mermaid only when it clarifies multi-step interaction.
    - Links instead of duplicated definitions.
-6. Update `GLOSSARY.md` for formal Context only.
-7. Write validation questions and answers.
-8. Update `CONTEXT_PLAN.md` status only for formal successful builds.
+7. Update `GLOSSARY.md` for formal Context only.
+8. Write validation questions and answers.
+9. Update `CONTEXT_PLAN.md` status only for formal successful builds.
 
 ## Output
 

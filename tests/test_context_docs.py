@@ -73,7 +73,7 @@ Release packaging normalizes package names.
         else ""
     )
     (repo / "CONTEXT_PLAN.md").write_text(
-        f"""# Knowledge Base Manifest
+        f"""# Context Manifest
 
 ## Task Manifest
 
@@ -117,12 +117,13 @@ class KbDocsTests(unittest.TestCase):
             self.assertEqual(data["deadLinks"], [])
             hints = data["duplicateHints"]
             self.assertEqual(data["duplicateHintCount"], len(hints))
-            self.assertEqual(data["duplicateHintSeverityCounts"]["high"], len(hints))
+            self.assertGreaterEqual(data["duplicateHintSeverityCounts"]["high"], 1)
             self.assertTrue(
                 any(
                     hint["taskId"] == "release-packaging"
                     and hint["doc"] == "docs/release.md"
                     and hint["severity"] == "high"
+                    and hint["overlapKind"] == "content"
                     and any("source-mentioned" in reason for reason in hint["reasons"])
                     for hint in hints
                 ),
@@ -161,7 +162,7 @@ class KbDocsTests(unittest.TestCase):
                 encoding="utf-8",
             )
             (repo / "CONTEXT_PLAN.md").write_text(
-                """# Knowledge Base Manifest
+                """# Context Manifest
 
 ## Task Manifest
 
@@ -200,7 +201,7 @@ class KbDocsTests(unittest.TestCase):
                 encoding="utf-8",
             )
             (repo / "CONTEXT_PLAN.md").write_text(
-                """# Knowledge Base Manifest
+                """# Context Manifest
 
 ## Task Manifest
 
@@ -221,6 +222,7 @@ class KbDocsTests(unittest.TestCase):
             self.assertEqual(data["duplicateHintSeverityCounts"], {"high": 0, "medium": 1, "low": 0})
             self.assertEqual(data["duplicateHints"][0]["severity"], "medium")
             self.assertEqual(data["duplicateHints"][0]["sourceMentionKind"], "docs")
+            self.assertEqual(data["duplicateHints"][0]["overlapKind"], "source-reference")
 
     def test_check_manifest_fails_when_comparison_is_missing(self):
         with tempfile.TemporaryDirectory() as tmp:

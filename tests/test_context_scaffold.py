@@ -57,7 +57,7 @@ class KbScaffoldTests(unittest.TestCase):
             self.assertTrue((repo / ".dev-cycle" / "context" / "config.yaml").exists())
             self.assertTrue((repo / ".dev-cycle" / "context" / "AGENT_GUIDE.md").exists())
             self.assertIn(
-                "Knowledge Base Manifest",
+                "Context Manifest",
                 (repo / "CONTEXT_PLAN.md").read_text(encoding="utf-8"),
             )
 
@@ -101,7 +101,7 @@ class KbScaffoldTests(unittest.TestCase):
             proc = scaffold(repo, "--force")
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
             self.assertNotEqual(config.read_text(encoding="utf-8"), "custom: true\n")
-            self.assertIn("Knowledge Base Manifest", manifest.read_text(encoding="utf-8"))
+            self.assertIn("Context Manifest", manifest.read_text(encoding="utf-8"))
 
     def test_scaffold_satisfies_audit_presence_policies(self):
         with tempfile.TemporaryDirectory() as tmp:

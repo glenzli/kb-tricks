@@ -49,6 +49,7 @@ Configure `.dev-cycle/context/config.yaml` before building Context content. At m
 dev-cycle self-check --json
 dev-cycle context docs --repo . --check-manifest --check-links
 dev-cycle context manifest --repo . --slice 1
+dev-cycle context build-assist --repo . --slice 1
 dev-cycle context impact --repo . --since HEAD~1 --json
 dev-cycle context update-plan --repo . --since HEAD~1 --slice 1
 dev-cycle context fingerprint --repo . --check .dev-cycle/context/path/to/doc.md

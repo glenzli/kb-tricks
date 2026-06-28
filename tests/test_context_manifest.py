@@ -12,7 +12,7 @@ TOOL = PROJECT_ROOT / "tools" / "context_manifest.py"
 def write_manifest(repo: Path) -> None:
     repo.mkdir(parents=True, exist_ok=True)
     (repo / "CONTEXT_PLAN.md").write_text(
-        """# Knowledge Base Manifest
+        """# Context Manifest
 
 ## Task Manifest
 
@@ -152,7 +152,7 @@ class KbManifestTests(unittest.TestCase):
             repo = Path(tmp) / "project"
             repo.mkdir()
             (repo / "CONTEXT_PLAN.md").write_text(
-                """# Knowledge Base Manifest
+                """# Context Manifest
 
 ## Task Manifest
 

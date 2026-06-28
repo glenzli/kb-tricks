@@ -1,4 +1,4 @@
-# Knowledge Base Manifest
+# Context Manifest
 
 ## Task Manifest
 

@@ -276,6 +276,19 @@ def special_actions(special_changes: dict[str, bool]) -> list[dict[str, Any]]:
     return result
 
 
+def support_actions(context_support_changes: list[dict[str, str]]) -> list[dict[str, Any]]:
+    return [
+        {
+            "file": item["file"],
+            "kind": item["kind"],
+            "action": f"review-context-{item['kind']}",
+            "allowed": True,
+            "reasons": [item["reason"]],
+        }
+        for item in context_support_changes
+    ]
+
+
 def build_update_plan(
     repo: Path,
     manifest_path: Path,
@@ -354,6 +367,8 @@ def build_update_plan(
         "docsChanges": impact["docsChanges"],
         "docsActions": docs_actions(impact["docsChanges"]),
         "possibleContextDocs": impact.get("possibleContextDocs", []),
+        "contextSupportChanges": impact.get("contextSupportChanges", []),
+        "contextSupportActions": support_actions(impact.get("contextSupportChanges", [])),
         "newContextCandidates": candidates,
         "specialChanges": impact["specialChanges"],
         "specialActions": special_actions(impact["specialChanges"]),
@@ -416,6 +431,11 @@ def print_markdown(data: dict[str, Any]) -> None:
         print()
         print("## Special Artifacts")
         for action in data["specialActions"]:
+            print(f"- {action['file']}: {action['action']}")
+    if data.get("contextSupportActions"):
+        print()
+        print("## Context Support Artifacts")
+        for action in data["contextSupportActions"]:
             print(f"- {action['file']}: {action['action']}")
     if data["warnings"]:
         print()

@@ -17,6 +17,7 @@ class DevCycleCliTests(unittest.TestCase):
         proc = run(CLI + ["--help"], PROJECT_ROOT, check=False)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertIn("audit", proc.stdout)
+        self.assertIn("build-assist", proc.stdout)
         self.assertIn("impact", proc.stdout)
         self.assertIn("migrate-plan", proc.stdout)
         self.assertIn("query-lint", proc.stdout)
@@ -65,6 +66,7 @@ class DevCycleCliTests(unittest.TestCase):
         self.assertEqual(data["entryPoint"], "dev_cycle.cli:main")
         commands = {item["command"]: item for item in data["commands"]}
         self.assertIn("context audit", commands)
+        self.assertIn("context build-assist", commands)
         self.assertIn("context impact", commands)
         self.assertIn("context migrate-plan", commands)
         self.assertIn("context query-lint", commands)

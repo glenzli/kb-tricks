@@ -1,18 +1,18 @@
 ---
-id: "example-task"
-title: "Example Task"
-status: "built"
-notAuthoritative: false
+id: "<task-id>"
+title: "<Task Title>"
+status: "planned"
+notAuthoritative: true
 fingerprint:
-  - file: "src/example.ts"
+  - file: "<source/path.ext>"
     commit: "current-git-commit-hash-or-null"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:..."
-tags: ["example"]
+tags: ["<tag>"]
 ---
 
-# Example Task
+# <Task Title>
 
 ## Role
 
@@ -44,4 +44,4 @@ sequenceDiagram
 
 ## Blindspots
 
-- Record known gaps instead of filling them with guesses.
+- Replace template placeholders before marking this document authoritative.

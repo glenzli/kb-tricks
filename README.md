@@ -30,6 +30,7 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [dev_cycle/context/](./dev_cycle/context): released dependency-free command implementations used by the installed `dev-cycle` CLI.
 - [tools/context_scaffold.py](./tools/context_scaffold.py): source-checkout wrapper for installing starter config, AI agent guidance, manifest, and reserved Context directories into a target repository.
 - [tools/context_manifest.py](./tools/context_manifest.py): source-checkout wrapper for bounded `CONTEXT_PLAN.md` task selection.
+- [tools/context_build_assist.py](./tools/context_build_assist.py): source-checkout wrapper for deterministic Context skeleton, fingerprint, and validation draft generation.
 - [tools/context_migrate_plan.py](./tools/context_migrate_plan.py): source-checkout wrapper for converting legacy path-only Manifest entries into explicit task fields.
 - [tools/context_docs.py](./tools/context_docs.py): source-checkout wrapper for existing-docs inventory, manifest comparison coverage, dead-link reporting, severity-ranked duplicate hints, and compact summary JSON.
 - [tools/context_audit.py](./tools/context_audit.py): source-checkout wrapper for setup checks, hashes, dirty-state checks, support/reserved Context classification, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
@@ -49,6 +50,7 @@ Installed CLI example:
 dev-cycle self-check --json
 dev-cycle context scaffold --repo /path/to/project --dry-run
 dev-cycle context manifest --repo /path/to/project --slice 1 --json
+dev-cycle context build-assist --repo /path/to/project --slice 1 --write
 dev-cycle context migrate-plan --repo /path/to/project --dry-run
 dev-cycle context migrate-plan --repo /path/to/project --write
 dev-cycle context docs --repo /path/to/project --check-manifest --check-links
@@ -77,6 +79,7 @@ Source checkout fallback:
 
 ```bash
 python3 tools/context_audit.py --repo /path/to/project --write-index .dev-cycle/context/index.json
+python3 tools/context_build_assist.py --repo /path/to/project --slice 1 --write
 python3 tools/context_migrate_plan.py --repo /path/to/project --dry-run
 python3 tools/context_impact.py --repo /path/to/project --files src/cli/release.ts --json
 python3 tools/context_update_plan.py --repo /path/to/project --since HEAD~1 --json
@@ -107,7 +110,7 @@ A thin orchestration recipe for scaffold, `context-plan`, user confirmation, and
 
 ### Context Layer
 
-#### [context-plan](./skills/context-plan/SKILL.md) — Knowledge Base Manifest Planning
+#### [context-plan](./skills/context-plan/SKILL.md) — Context Manifest Planning
 
 Scans the repository to identify high-signal boundaries and generates a structured long-lived `CONTEXT_PLAN.md` manifest.
 
@@ -119,7 +122,7 @@ Scans the repository to identify high-signal boundaries and generates a structur
 
 #### [context-build](./skills/context-build/SKILL.md) — Manifest Execution & Context Construction
 
-Executes the `CONTEXT_PLAN.md` manifest in bounded slices to build a high-signal knowledge base.
+Executes the `CONTEXT_PLAN.md` manifest in bounded slices to build high-signal Context.
 
 - **Bounded Execution**: Defaults to `slice 1`; full execution requires explicit `until-complete`
 - **Manifest Execution**: Iteratively processes tasks from the manifest ensuring no loss of context
@@ -141,7 +144,7 @@ Keeps an existing Context fresh via fingerprint diffing and chunked scoped rewri
 - **Manifest Sync**: Keeps `CONTEXT_PLAN.md` lifecycle state in sync when files are added, updated, merged, or deprecated
 - **Context-Cleared Validation**: Reduced-scope self-evaluation (1-2 questions per changed doc)
 
-#### [context-query](./skills/context-query/SKILL.md) — Knowledge Base Query & Source Fallback
+#### [context-query](./skills/context-query/SKILL.md) — Context Query & Source Fallback
 
 Anti-hallucination knowledge retrieval with automatic source code verification.
 
@@ -151,7 +154,7 @@ Anti-hallucination knowledge retrieval with automatic source code verification.
 - **Provenance Contract**: Every factual answer line marks Context, source fallback, or existing docs; inference is isolated and lintable
 - **Blindspot Reporting**: Honestly reports gaps instead of hallucinating
 
-#### [context-audit](./skills/context-audit/SKILL.md) — Knowledge Base Health Check
+#### [context-audit](./skills/context-audit/SKILL.md) — Context Health Check
 
 Token-efficient Context health dashboard using metadata-only scanning.
 
@@ -287,6 +290,7 @@ Context 不是代码仓库的权威来源。源码、配置、测试、发布产
 - [dev_cycle/context/](./dev_cycle/context)：安装后的 `dev-cycle` CLI 使用的无依赖命令实现。
 - [tools/context_scaffold.py](./tools/context_scaffold.py)：源码 checkout wrapper，用于把 starter config、AI agent 指引、Manifest 和 Context 保留目录安装到目标仓库。
 - [tools/context_manifest.py](./tools/context_manifest.py)：源码 checkout wrapper，用于 `CONTEXT_PLAN.md` 小步任务选择。
+- [tools/context_build_assist.py](./tools/context_build_assist.py)：源码 checkout wrapper，用于生成确定性的 Context skeleton、fingerprint 和 validation 草稿。
 - [tools/context_migrate_plan.py](./tools/context_migrate_plan.py)：源码 checkout wrapper，用于把旧的纯路径 Manifest 条目迁移为显式任务字段。
 - [tools/context_docs.py](./tools/context_docs.py)：源码 checkout wrapper，用于现有文档清单、Manifest Docs Comparison 覆盖率、死链报告、按严重级别排序的重复提示和紧凑 summary JSON。
 - [tools/context_audit.py](./tools/context_audit.py)：源码 checkout wrapper，用于 setup 检查、hash、dirty 状态、support/reserved Context 分类、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
@@ -305,6 +309,7 @@ Context 不是代码仓库的权威来源。源码、配置、测试、发布产
 dev-cycle self-check --json
 dev-cycle context scaffold --repo /path/to/project --dry-run
 dev-cycle context manifest --repo /path/to/project --slice 1 --json
+dev-cycle context build-assist --repo /path/to/project --slice 1 --write
 dev-cycle context migrate-plan --repo /path/to/project --dry-run
 dev-cycle context migrate-plan --repo /path/to/project --write
 dev-cycle context docs --repo /path/to/project --check-manifest --check-links
@@ -332,6 +337,7 @@ dev-cycle context fingerprint --repo /path/to/project --check .dev-cycle/context
 
 ```bash
 python3 tools/context_audit.py --repo /path/to/project --write-index .dev-cycle/context/index.json
+python3 tools/context_build_assist.py --repo /path/to/project --slice 1 --write
 python3 tools/context_migrate_plan.py --repo /path/to/project --dry-run
 python3 tools/context_impact.py --repo /path/to/project --files src/cli/release.ts --json
 python3 tools/context_update_plan.py --repo /path/to/project --since HEAD~1 --json

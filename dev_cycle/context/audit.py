@@ -113,6 +113,9 @@ class AuditResult:
     release_excluded_hits: list[str]
     metrics: dict[str, float]
     grade: str
+    health_grade: str
+    completeness_grade: str
+    artifact_git_state: list[dict[str, str]]
     failures: list[str]
 
 
@@ -560,7 +563,128 @@ def grade_from_metrics(metrics: dict[str, float], dead_links: int, dirty_docs: i
     return "A"
 
 
+def grade_from_percentage(value: float) -> str:
+    if value < 25:
+        return "F"
+    if value < 50:
+        return "D"
+    if value < 75:
+        return "C"
+    if value < 90:
+        return "B"
+    return "A"
+
+
+def active_tasks(tasks: list[ManifestTask]) -> list[ManifestTask]:
+    return [task for task in tasks if task.status in {"planned", "built", "stale"}]
+
+
+def built_context_count(tasks: list[ManifestTask], documents: list[DocumentAudit]) -> int:
+    existing_context_paths = {doc.path for doc in documents}
+    return len(
+        [
+            task
+            for task in tasks
+            if task.status == "built"
+            and task.context
+            and task.context in existing_context_paths
+        ]
+    )
+
+
+def completeness_summary(result: AuditResult) -> dict[str, Any]:
+    active = active_tasks(result.tasks)
+    built = built_context_count(result.tasks, result.documents)
+    coverage = result.metrics.get("coverage", 100.0)
+    return {
+        "status": "complete" if active and built == len(active) else "incomplete",
+        "built": built,
+        "activeTasks": len(active),
+        "coverage": coverage,
+        "grade": result.completeness_grade,
+    }
+
+
+def parse_porcelain_artifact(line: str) -> dict[str, str] | None:
+    if len(line) < 4:
+        return None
+    code = line[:2]
+    path = line[3:]
+    original = ""
+    if " -> " in path:
+        original, path = path.split(" -> ", 1)
+    if code == "??":
+        state = "untracked"
+    elif "D" in code:
+        state = "deleted"
+    elif "A" in code:
+        state = "added"
+    elif "R" in code:
+        state = "renamed"
+    elif "M" in code:
+        state = "modified"
+    else:
+        state = "changed"
+    item = {"path": path, "xy": code, "state": state}
+    if original:
+        item["from"] = original
+    return item
+
+
+def context_artifact_git_state(repo: Path, context_root: Path, manifest: Path) -> list[dict[str, str]]:
+    paths = [relpath(manifest, repo), relpath(context_root, repo)]
+    proc = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(repo),
+            "status",
+            "--porcelain",
+            "--untracked-files=all",
+            "--",
+            *paths,
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        check=False,
+    )
+    if proc.returncode != 0 or not proc.stdout:
+        return []
+    artifacts: list[dict[str, str]] = []
+    for line in proc.stdout.splitlines():
+        item = parse_porcelain_artifact(line)
+        if item:
+            artifacts.append(item)
+    return artifacts
+
+
+def release_excluded_summary(paths: list[str], config: dict[str, list[str]]) -> dict[str, Any]:
+    patterns = config.get("releaseExcluded", [])
+    by_pattern = []
+    for pattern in patterns:
+        matches = [path for path in paths if pattern_matches(path, pattern)]
+        if matches:
+            by_pattern.append(
+                {
+                    "pattern": pattern,
+                    "count": len(matches),
+                    "sample": matches[:5],
+                }
+            )
+    return {
+        "count": len(paths),
+        "healthConcern": False,
+        "reason": "releaseExcluded paths are context-only inputs; verify prose does not treat them as release authority",
+        "byPattern": by_pattern,
+        "sample": paths[:10],
+    }
+
+
 def build_index(result: AuditResult) -> dict[str, Any]:
+    health_metrics = {
+        key: value for key, value in result.metrics.items() if key != "coverage"
+    }
     data = {
         "schemaVersion": 1,
         "generatedAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
@@ -618,9 +742,14 @@ def build_index(result: AuditResult) -> dict[str, Any]:
         ],
         "summary": {
             "grade": result.grade,
+            "healthGrade": result.health_grade,
+            "completenessGrade": result.completeness_grade,
             "metrics": result.metrics,
+            "healthMetrics": health_metrics,
+            "completeness": completeness_summary(result),
             "failures": result.failures,
         },
+        "artifactGitState": result.artifact_git_state,
     }
     try:
         from .docs import collect_docs_data
@@ -669,7 +798,7 @@ def audit(repo: Path, context_root: Path, manifest: Path, config_path: Path) -> 
             validation_missing.append(task.task_id)
             continue
         text = validation.read_text(encoding="utf-8").lower()
-        if re.search(r"\*\*result\*\*:\s*fail|\bresult:\s*fail", text):
+        if re.search(r"\*\*result\*\*:\s*(fail|pending)|\bresult:\s*(fail|pending)", text):
             validation_failed.append(task.task_id)
 
     config = parse_config(config_path)
@@ -677,9 +806,7 @@ def audit(repo: Path, context_root: Path, manifest: Path, config_path: Path) -> 
         tasks, documents, config
     )
 
-    planned_built_stale = [
-        task for task in tasks if task.status in {"planned", "built", "stale"}
-    ]
+    planned_built_stale = active_tasks(tasks)
     coverage = metric_ratio(
         len([task for task in built_tasks if task.context and task.context in existing_context_paths]),
         len(planned_built_stale),
@@ -716,7 +843,9 @@ def audit(repo: Path, context_root: Path, manifest: Path, config_path: Path) -> 
         "validation": validation_metric,
     }
     dirty_docs = [doc for doc in authoritative_docs if doc.dirty]
-    grade = grade_from_metrics(metrics, len(dead_links), len(dirty_docs))
+    health_metrics = {key: value for key, value in metrics.items() if key != "coverage"}
+    health_grade = grade_from_metrics(health_metrics, len(dead_links), len(dirty_docs))
+    completeness_grade = grade_from_percentage(coverage)
     return AuditResult(
         repo=str(repo),
         context_root=relpath(context_root, repo),
@@ -735,7 +864,10 @@ def audit(repo: Path, context_root: Path, manifest: Path, config_path: Path) -> 
         boundary_violations=boundary_violations,
         release_excluded_hits=release_excluded_hits,
         metrics=metrics,
-        grade=grade,
+        grade=health_grade,
+        health_grade=health_grade,
+        completeness_grade=completeness_grade,
+        artifact_git_state=context_artifact_git_state(repo, context_root, manifest),
         failures=[],
     )
 
@@ -778,6 +910,7 @@ def failure_reasons(result: AuditResult, fail_on: list[str], min_score: str | No
 
 def result_to_dict(result: AuditResult) -> dict[str, Any]:
     data = build_index(result)
+    config = parse_config(Path(result.repo) / result.config_path)
     data["configPresent"] = result.config_present
     data["manifestPresent"] = result.manifest_present
     data["validationMissing"] = result.validation_missing
@@ -786,6 +919,10 @@ def result_to_dict(result: AuditResult) -> dict[str, Any]:
     data["untrackedContext"] = result.untracked_context
     data["boundaryViolations"] = result.boundary_violations
     data["releaseExcludedHits"] = result.release_excluded_hits
+    data["releaseExcludedSummary"] = release_excluded_summary(
+        result.release_excluded_hits,
+        config,
+    )
     data["releaseExcludedUses"] = [
         {
             "path": path,
@@ -799,6 +936,7 @@ def result_to_dict(result: AuditResult) -> dict[str, Any]:
 
 
 def summary_to_dict(result: AuditResult) -> dict[str, Any]:
+    config = parse_config(Path(result.repo) / result.config_path)
     docs = result.documents
     all_links = [link for doc in docs for link in doc.links] + result.glossary_links
     dead_links = [
@@ -821,7 +959,13 @@ def summary_to_dict(result: AuditResult) -> dict[str, Any]:
         "config": result.config_path,
         "summary": {
             "grade": result.grade,
+            "healthGrade": result.health_grade,
+            "completenessGrade": result.completeness_grade,
             "metrics": result.metrics,
+            "healthMetrics": {
+                key: value for key, value in result.metrics.items() if key != "coverage"
+            },
+            "completeness": completeness_summary(result),
             "failures": result.failures,
         },
         "counts": {
@@ -840,6 +984,7 @@ def summary_to_dict(result: AuditResult) -> dict[str, Any]:
             "failedValidation": len(result.validation_failed),
             "boundaryViolations": len(result.boundary_violations),
             "releaseExcludedHits": len(result.release_excluded_hits),
+            "artifactGitState": len(result.artifact_git_state),
         },
         "topIssues": {
             "stale": stale[:10],
@@ -863,14 +1008,8 @@ def summary_to_dict(result: AuditResult) -> dict[str, Any]:
             for doc in docs
             if doc.kind == "support"
         ],
-        "releaseExcludedUses": [
-            {
-                "path": path,
-                "severity": "context",
-                "healthConcern": False,
-            }
-            for path in result.release_excluded_hits[:10]
-        ],
+        "releaseExcludedUses": release_excluded_summary(result.release_excluded_hits, config),
+        "artifactGitState": result.artifact_git_state[:20],
     }
 
 
@@ -892,7 +1031,8 @@ def print_markdown(result: AuditResult) -> None:
     print(f"- Context root: `{result.context_root}`")
     print(f"- Manifest: `{result.manifest_path}` ({'present' if result.manifest_present else 'missing'})")
     print(f"- Config: `{result.config_path}` ({'present' if result.config_present else 'missing'})")
-    print(f"- Grade: **{result.grade}**")
+    print(f"- Health grade: **{result.health_grade}**")
+    print(f"- Completeness grade: **{result.completeness_grade}**")
     print()
     print("## Metrics")
     for key, value in result.metrics.items():
@@ -911,6 +1051,7 @@ def print_markdown(result: AuditResult) -> None:
     print(f"- Missing validation files: {len(result.validation_missing)}")
     print(f"- Failed validation files: {len(result.validation_failed)}")
     print(f"- Boundary violations: {len(result.boundary_violations)}")
+    print(f"- Context artifact Git changes: {len(result.artifact_git_state)}")
     print()
     if result.failures:
         print("## Policy Failures")

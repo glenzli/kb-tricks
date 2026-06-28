@@ -11,6 +11,7 @@ from . import __version__
 
 CONTEXT_COMMANDS = {
     "audit": "dev_cycle.context.audit",
+    "build-assist": "dev_cycle.context.build_assist",
     "docs": "dev_cycle.context.docs",
     "fingerprint": "dev_cycle.context.fingerprint",
     "impact": "dev_cycle.context.impact",

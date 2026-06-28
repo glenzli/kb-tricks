@@ -1,6 +1,6 @@
-# Validation: example-task
+# Validation: <task-id>
 
-- **Context**: `.dev-cycle/context/example/task.md`
+- **Context**: `.dev-cycle/context/<area>/<topic>.md`
 - **Source Mode**: `clean`
 - **Validated At**: `YYYY-MM-DD`
 
@@ -11,15 +11,15 @@
 - **Question**: If a related feature is added, which modules need to change and in what order?
 - **Context-only Answer**: ...
 - **Citations**: ...
-- **Result**: pass
+- **Result**: pending
 
 ### Q2 Boundary
 
 - **Question**: What happens when the primary input is missing or invalid?
 - **Context-only Answer**: ...
 - **Citations**: ...
-- **Result**: pass
+- **Result**: pending
 
 ## Blindspots
 
-- None
+- Replace pending answers before marking the Manifest task `built`.

@@ -38,7 +38,7 @@ docs:
         encoding="utf-8",
     )
     (repo / "CONTEXT_PLAN.md").write_text(
-        """# Knowledge Base Manifest
+        """# Context Manifest
 
 ## Task Manifest
 
@@ -246,6 +246,39 @@ docs:
                             "config missing; Context support files may be treated as source candidates"
                         ),
                     }
+                ],
+            )
+
+    def test_configured_context_support_files_are_not_unmatched(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            write_impact_repo(repo)
+            init_repo(repo)
+            validation = repo / ".dev-cycle" / "context" / "_validation" / "release-packaging.md"
+            validation.parent.mkdir(parents=True, exist_ok=True)
+            validation.write_text("# Validation\n", encoding="utf-8")
+            (repo / ".dev-cycle" / "context" / "AGENT_GUIDE.md").write_text(
+                "# Agent Guide\n",
+                encoding="utf-8",
+            )
+
+            proc, data = impact_json(repo, "--worktree")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["unmatchedFiles"], [])
+            self.assertEqual(
+                data["contextSupportChanges"],
+                [
+                    {
+                        "file": ".dev-cycle/context/AGENT_GUIDE.md",
+                        "kind": "support",
+                        "reason": "Context support artifact",
+                    },
+                    {
+                        "file": ".dev-cycle/context/_validation/release-packaging.md",
+                        "kind": "reserved",
+                        "reason": "Context support artifact",
+                    },
                 ],
             )
 

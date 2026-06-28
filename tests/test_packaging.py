@@ -71,12 +71,15 @@ class PackagingTests(unittest.TestCase):
 
     def test_release_rehearsal_checks_artifact_boundaries(self):
         self.assertIn("tools/release_rehearsal.py", release_rehearsal.SDIST_REQUIRED)
+        self.assertIn("tools/context_build_assist.py", release_rehearsal.SDIST_REQUIRED)
         self.assertIn("tools/context_migrate_plan.py", release_rehearsal.SDIST_REQUIRED)
         self.assertIn("tools/release_rehearsal.py", release_rehearsal.WHEEL_FORBIDDEN)
+        self.assertIn("tools/context_build_assist.py", release_rehearsal.WHEEL_FORBIDDEN)
         self.assertIn("tools/context_migrate_plan.py", release_rehearsal.WHEEL_FORBIDDEN)
         self.assertIn("skills/context-build/SKILL.md", release_rehearsal.SDIST_REQUIRED)
         self.assertIn("skills/context-build/SKILL.md", release_rehearsal.WHEEL_FORBIDDEN)
         self.assertIn("dev_cycle/context/audit.py", release_rehearsal.WHEEL_REQUIRED)
+        self.assertIn("dev_cycle/context/build_assist.py", release_rehearsal.WHEEL_REQUIRED)
         self.assertIn("dev_cycle/context/migrate_plan.py", release_rehearsal.WHEEL_REQUIRED)
         self.assertIn("dev_cycle/templates/AGENT_GUIDE.md", release_rehearsal.WHEEL_REQUIRED)
         self.assertIn("dev_cycle/templates/config.yaml", release_rehearsal.WHEEL_REQUIRED)

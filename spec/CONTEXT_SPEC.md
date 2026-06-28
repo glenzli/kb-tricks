@@ -76,7 +76,7 @@ python3 tools/context_docs.py --repo /path/to/project --check-links
 python3 tools/context_docs.py --repo /path/to/project --duplicate-limit 5
 ```
 
-It reads `.dev-cycle/context/config.yaml` `docs.existing`, expands matching Markdown documents, extracts headings, content hashes, local links, unmatched patterns, Manifest `Docs Comparison` coverage, dead local links, and low-cost duplicate hints. Duplicate hints include `severity` (`high`, `medium`, `low`), `score`, and `sourceMentionKind` (`source`, `docs`, or `null`). Direct mentions of code/config source paths are high severity; source mentions that only reference general docs such as `README.md`, `docs/**`, or `spec/**` are medium; shared title/slug matches are medium; tag-only matches are low. Generic tags such as `api`, `cli`, `docs`, `preview`, `release`, and `test` are ignored when they are the only match signal.
+It reads `.dev-cycle/context/config.yaml` `docs.existing`, expands matching Markdown documents, extracts headings, content hashes, local links, unmatched patterns, Manifest `Docs Comparison` coverage, dead local links, and low-cost duplicate hints. Duplicate hints include `severity` (`high`, `medium`, `low`), `score`, `sourceMentionKind` (`source`, `docs`, or `null`), and `overlapKind` (`content`, `source-reference`, or `term`). Shared title/slug plus source mentions are high severity; shared title/slug alone or source-reference overlap alone is medium; tag-only matches are low. Generic tags such as `api`, `cli`, `docs`, `preview`, `release`, and `test` are ignored when they are the only match signal.
 
 It does not decide whether prose is sufficient; that remains a skill-layer judgment. Text output limits duplicate hints by default so dead links and missing comparison work stay visible. `--json` and `--full-json` keep the complete `duplicateHints` list; `--summary-json` emits counts, global top duplicate hints, `topDuplicateHintsByTask`, dead-link counts, and Docs Comparison status without the full heading inventory. `--check-manifest` exits `1` when active Manifest tasks lack `Docs Comparison`, `--check-links` exits `1` when existing docs contain dead local links, and both exit `2` when the requested check cannot run.
 
@@ -136,6 +136,20 @@ python3 tools/context_manifest.py --repo /path/to/project --status any --slice 1
 
 Default selection is `status planned, stale` with `slice 1`. `--only` may match task ID, task name, tag, Context path, or source path. The tool is read-only: it never reads source content, writes Context prose, mutates `CONTEXT_PLAN.md`, or updates status. When legacy path-only entries are present, it emits a warning to run `dev-cycle context migrate-plan`. Skills must treat the JSON `selected` array as the maximum task set they are allowed to process in the current bounded turn.
 
+### Build Assist
+
+`tools/context_build_assist.py` is the deterministic skeleton helper for bounded Context builds:
+
+```text
+dev-cycle context build-assist --repo /path/to/project --slice 1
+dev-cycle context build-assist --repo /path/to/project --slice 1 --write
+dev-cycle context build-assist --repo /path/to/project --only release-packaging --write
+dev-cycle context build-assist --repo /path/to/project --draft --write
+python3 tools/context_build_assist.py --repo /path/to/project --slice 1 --json
+```
+
+It selects Manifest tasks with the same status and `--only` semantics as `context manifest`, computes dirty-aware fingerprints for listed sources, and prepares a Context document skeleton plus `_validation/<task-id>.md` skeleton. It does not synthesize Context prose, update `GLOSSARY.md`, or mark Manifest tasks `built`. Generated skeletons are `notAuthoritative: true` and validation answers are `pending` until a skill or human replaces the placeholders. `--write` is required to touch the target repository; without it the command is a dry run. Dirty or untracked source blocks formal skeleton writes unless `--draft`, `--allow-dirty`, or `--allow-untracked` is explicit.
+
 ### Impact Mapping
 
 `tools/context_impact.py` is the deterministic helper for diff-first maintenance:
@@ -151,7 +165,7 @@ python3 tools/context_impact.py --repo /path/to/project --files src/cli/release.
 
 Exactly one scope option must be provided: `--staged`, `--worktree`, `--base`, `--since`, or `--files`. JSON output includes top-level `scopeMode` plus a `scope` object so automation can distinguish index changes, dirty worktree changes, branch-base changes, explicit commitish diffs, and manually supplied file lists.
 
-It maps changed files to Manifest tasks through `Sources`, Context paths, and Context frontmatter fingerprints. It also reports existing docs changes from `docs.existing`, special artifact changes such as `CONTEXT_PLAN.md` and `.dev-cycle/context/config.yaml`, `possibleContextDocs` for development-doc paths such as `docs/dev/**` when config is missing, `setupWarnings` for obvious Context support artifacts such as `.dev-cycle/context/AGENT_GUIDE.md`, `.dev-cycle/context/GLOSSARY.md`, and reserved support directories, unmatched files, and a bounded `selectedTasks` slice. Context support artifacts reported through `setupWarnings` are removed from `unmatchedFiles` so they do not look like source candidates. It does not read changed file contents or rewrite Context prose.
+It maps changed files to Manifest tasks through `Sources`, Context paths, and Context frontmatter fingerprints. It also reports existing docs changes from `docs.existing`, special artifact changes such as `CONTEXT_PLAN.md` and `.dev-cycle/context/config.yaml`, `possibleContextDocs` for development-doc paths such as `docs/dev/**` when config is missing, `contextSupportChanges` for support/reserved Context artifacts such as `.dev-cycle/context/AGENT_GUIDE.md` and `_validation/**`, `setupWarnings` when config is missing, unmatched files, and a bounded `selectedTasks` slice. Context support artifacts are removed from `unmatchedFiles` so they do not look like source candidates. It does not read changed file contents or rewrite Context prose.
 
 ### Update Planning
 
@@ -164,9 +178,9 @@ dev-cycle context update-plan --repo /path/to/project --base main --slice 2 --js
 python3 tools/context_update_plan.py --repo /path/to/project --since HEAD~1 --json
 ```
 
-It reuses the same mutually exclusive scope options as `dev-cycle context impact`, then adds dirty-source gates and bounded update actions. JSON output includes `actions`, `blocked`, `docsActions`, `newContextCandidates`, `specialActions`, `releaseExcludedChanges`, `setupWarnings`, and `policy`. Task actions include `targetContext`; draft task actions also include `draftTarget` under `.dev-cycle/context/_draft/`. Draft new-context candidates include `draftTarget` derived from the changed file stem.
+It reuses the same mutually exclusive scope options as `dev-cycle context impact`, then adds dirty-source gates and bounded update actions. JSON output includes `actions`, `blocked`, `docsActions`, `contextSupportActions`, `newContextCandidates`, `specialActions`, `releaseExcludedChanges`, `setupWarnings`, and `policy`. Task actions include `targetContext`; draft task actions also include `draftTarget` under `.dev-cycle/context/_draft/`. Draft new-context candidates include `draftTarget` derived from the changed file stem.
 
-When `.dev-cycle/context/config.yaml` is missing and changed `.dev-cycle/context/**` files would otherwise appear as unmatched source candidates, impact analysis emits a `setupWarnings` entry with code `missing-config-context-support-files`; the planner preserves those warnings and removes the files from `newContextCandidates`. Development-doc paths such as `docs/dev/**` are reported as `possibleContextDocs` instead of ordinary new context candidates until config declares whether they are existing docs, release-excluded context, or source inputs. It is read-only: it does not read changed file contents, rewrite context prose, mutate `CONTEXT_PLAN.md`, or refresh fingerprints.
+When `.dev-cycle/context/config.yaml` is missing and changed `.dev-cycle/context/**` support files would otherwise appear as unmatched source candidates, impact analysis emits a `setupWarnings` entry with code `missing-config-context-support-files`; the planner preserves those warnings and removes the files from `newContextCandidates`. Development-doc paths such as `docs/dev/**` are reported as `possibleContextDocs` instead of ordinary new context candidates until config declares whether they are existing docs, release-excluded context, or source inputs. It is read-only: it does not read changed file contents, rewrite context prose, mutate `CONTEXT_PLAN.md`, or refresh fingerprints.
 
 ### Query Answer Schema
 

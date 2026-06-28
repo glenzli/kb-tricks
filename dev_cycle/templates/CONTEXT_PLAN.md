@@ -1,20 +1,20 @@
-# Knowledge Base Manifest
+# Context Manifest
 
 ## Overall Approach
 
-Describe the repository architecture and why the Context is divided into the task groups below.
+Describe the repository architecture and why the Context is divided into the task groups below. Keep this short; detailed prose belongs in Context documents after bounded build slices.
 
 ## Artifact Boundary
 
 - Config: `.dev-cycle/context/config.yaml`
-- Include: `src/**`, `docs/dev/**`
-- Exclude: `dist/**`, `out/**`, `node_modules/**`
-- Release Excluded: `.dev-cycle/**`, `docs/dev/**`
+- Include: `<source-or-doc-patterns>`
+- Exclude: `<generated-or-noisy-patterns>`
+- Release Excluded: `.dev-cycle/**`, `<agent-only-or-internal-patterns>`
 
 ## Existing Docs Comparison
 
 - `README.md`: Covers install and quickstart; do not duplicate.
-- `docs/example.md`: Add concrete comparison notes here.
+- `<docs/path.md>`: Add concrete comparison notes before creating parallel Context.
 
 ## Ignored Targets
 
@@ -23,12 +23,12 @@ Describe the repository architecture and why the Context is divided into the tas
 
 ## Task Manifest
 
-- [planned] example-task
-  - **ID**: `example-task`
-  - **Context**: `.dev-cycle/context/example/task.md`
-  - **Sources**: `src/example.ts`
+- [planned] <task-id>
+  - **ID**: `<task-id>`
+  - **Context**: `.dev-cycle/context/<area>/<topic>.md`
+  - **Sources**: `<source/path.ext>`
   - **Focus**: Cross-module contract, design trade-offs, and edge behavior.
-  - **Tags**: `example`
-  - **Docs Comparison**: Existing docs have overview only; Context should capture Agent retrieval anchors.
+  - **Tags**: `<tag>`
+  - **Docs Comparison**: Existing docs have overview only; Context should capture agent retrieval anchors.
   - **Status**: `planned`
   - **LastValidated**: ``

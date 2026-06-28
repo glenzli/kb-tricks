@@ -47,7 +47,7 @@ tags: ["runtime", "scanner"]
                 encoding="utf-8",
             )
             (repo / "CONTEXT_PLAN.md").write_text(
-                """# Knowledge Base Manifest
+                """# Context Manifest
 
 ## Task Manifest
 
@@ -69,7 +69,7 @@ tags: ["runtime", "scanner"]
             self.assertEqual(entry["missingFields"], ["Docs Comparison"])
             self.assertEqual(
                 (repo / "CONTEXT_PLAN.md").read_text(encoding="utf-8").strip(),
-                "# Knowledge Base Manifest\n\n## Task Manifest\n\n- [x] .dev-cycle/context/core/scanner-state.md",
+                "# Context Manifest\n\n## Task Manifest\n\n- [x] .dev-cycle/context/core/scanner-state.md",
             )
 
     def test_write_rewrites_legacy_entries_to_explicit_manifest_fields(self):
@@ -77,7 +77,7 @@ tags: ["runtime", "scanner"]
             repo = Path(tmp) / "project"
             repo.mkdir()
             (repo / "CONTEXT_PLAN.md").write_text(
-                """# Knowledge Base Manifest
+                """# Context Manifest
 
 ## Task Manifest
 
@@ -101,7 +101,7 @@ tags: ["runtime", "scanner"]
             repo = Path(tmp) / "project"
             repo.mkdir()
             (repo / "CONTEXT_PLAN.md").write_text(
-                """# Knowledge Base Manifest
+                """# Context Manifest
 
 ## Task Manifest
 

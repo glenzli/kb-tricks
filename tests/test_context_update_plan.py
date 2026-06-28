@@ -169,6 +169,33 @@ class KbUpdatePlanTests(unittest.TestCase):
             self.assertEqual(data["specialActions"][0]["file"], "CONTEXT_PLAN.md")
             self.assertEqual(data["specialActions"][0]["action"], "review-manifest")
 
+    def test_context_support_changes_are_review_actions_not_candidates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            write_impact_repo(repo)
+            init_repo(repo)
+            validation = repo / ".dev-cycle" / "context" / "_validation" / "release-packaging.md"
+            validation.parent.mkdir(parents=True, exist_ok=True)
+            validation.write_text("# Validation\n", encoding="utf-8")
+
+            proc, data = plan_json(repo, "--worktree")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["unmatchedFiles"], [])
+            self.assertEqual(data["newContextCandidates"], [])
+            self.assertEqual(
+                data["contextSupportActions"],
+                [
+                    {
+                        "file": ".dev-cycle/context/_validation/release-packaging.md",
+                        "kind": "reserved",
+                        "action": "review-context-reserved",
+                        "allowed": True,
+                        "reasons": ["Context support artifact"],
+                    }
+                ],
+            )
+
     def test_requires_exactly_one_scope(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "project"

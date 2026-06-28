@@ -187,13 +187,22 @@ def strong_source_mentions(sources: list[str]) -> bool:
 
 
 def duplicate_severity(reasons: list[str], source_mentions: list[str]) -> str:
-    if source_mentions and strong_source_mentions(source_mentions):
+    has_content_signal = any(reason.startswith("shared-title-or-slug:") for reason in reasons)
+    if source_mentions and has_content_signal:
         return "high"
+    if has_content_signal:
+        return "medium"
     if source_mentions:
         return "medium"
-    if any(reason.startswith("shared-title-or-slug:") for reason in reasons):
-        return "medium"
     return "low"
+
+
+def overlap_kind(reasons: list[str], source_mentions: list[str]) -> str:
+    if any(reason.startswith("shared-title-or-slug:") for reason in reasons):
+        return "content"
+    if source_mentions:
+        return "source-reference"
+    return "term"
 
 
 def duplicate_hints(repo: Path, docs: list[ExistingDoc], tasks: list[ManifestTask]) -> list[dict[str, Any]]:
@@ -243,6 +252,7 @@ def duplicate_hints(repo: Path, docs: list[ExistingDoc], tasks: list[ManifestTas
                         if source_mentions
                         else None
                     ),
+                    "overlapKind": overlap_kind(reasons, source_mentions),
                     "reasons": reasons,
                 }
             )

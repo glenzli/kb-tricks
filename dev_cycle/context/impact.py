@@ -192,6 +192,20 @@ def context_support_file(path: str) -> bool:
     return Path(normalized).name in CONTEXT_SUPPORT_FILES
 
 
+def context_support_to_dict(path: str) -> dict[str, str]:
+    normalized = normalize_path(path)
+    parts = normalized.split("/")
+    if len(parts) >= 3 and parts[2] in CONTEXT_RESERVED_DIRS:
+        kind = "reserved"
+    else:
+        kind = "support"
+    return {
+        "file": normalized,
+        "kind": kind,
+        "reason": "Context support artifact",
+    }
+
+
 def impact_to_dict(impact: ImpactedTask) -> dict[str, Any]:
     data = task_to_dict(impact.task)
     data["matchedFiles"] = [
@@ -241,10 +255,16 @@ def build_impact_data(
         if not config_present and possible_context_doc(path)
     ]
     possible_context_files = {item["file"] for item in possible_context_docs}
+    context_support_changes = [
+        context_support_to_dict(path)
+        for path in raw_unmatched
+        if context_support_file(path)
+    ]
+    context_support_files = {item["file"] for item in context_support_changes}
     setup_support_files = [
         path
         for path in raw_unmatched
-        if not config_present and context_support_file(path)
+        if not config_present and path in context_support_files
     ]
     setup_support_set = set(setup_support_files)
     setup_warnings = []
@@ -259,7 +279,7 @@ def build_impact_data(
     unmatched = [
         path
         for path in raw_unmatched
-        if path not in possible_context_files and path not in setup_support_set
+        if path not in possible_context_files and path not in context_support_files
     ]
     return {
         "schemaVersion": 1,
@@ -274,6 +294,7 @@ def build_impact_data(
         "slice": slice_size,
         "docsChanges": docs_changes,
         "possibleContextDocs": possible_context_docs,
+        "contextSupportChanges": context_support_changes,
         "setupWarnings": setup_warnings,
         "specialChanges": special_changes,
         "unmatchedFiles": unmatched,
@@ -294,6 +315,8 @@ def print_markdown(data: dict[str, Any]) -> None:
         print(f"- Possible context docs: {len(data['possibleContextDocs'])}")
     if data.get("setupWarnings"):
         print(f"- Setup warnings: {len(data['setupWarnings'])}")
+    if data.get("contextSupportChanges"):
+        print(f"- Context support changes: {len(data['contextSupportChanges'])}")
     if any(data["specialChanges"].values()):
         changed = [key for key, value in data["specialChanges"].items() if value]
         print("- Special changes: " + ", ".join(changed))
@@ -322,6 +345,11 @@ def print_markdown(data: dict[str, Any]) -> None:
             print(f"- {warning['message']}")
             for path in warning["files"]:
                 print(f"  - {path}")
+    if data.get("contextSupportChanges"):
+        print()
+        print("## Context Support Changes")
+        for item in data["contextSupportChanges"]:
+            print(f"- {item['file']}: {item['kind']}")
     if data["warnings"]:
         print()
         print("## Warnings")

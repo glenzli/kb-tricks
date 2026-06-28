@@ -136,6 +136,9 @@ class KbAuditTests(unittest.TestCase):
             proc, data = audit_summary_json(repo)
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
             self.assertEqual(data["summary"]["grade"], "A")
+            self.assertEqual(data["summary"]["healthGrade"], "A")
+            self.assertEqual(data["summary"]["completenessGrade"], "A")
+            self.assertEqual(data["summary"]["completeness"]["status"], "complete")
             self.assertEqual(data["counts"]["authoritativeDocuments"], 1)
             self.assertEqual(data["counts"]["supportDocuments"], 1)
             self.assertEqual(data["counts"]["reservedDocuments"], 1)
@@ -145,6 +148,55 @@ class KbAuditTests(unittest.TestCase):
                 "./release/packaging.md",
             )
             self.assertNotIn("documents", data)
+
+    def test_summary_reports_context_artifact_git_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = materialize_fixture(tmp, "valid-context")
+            glossary = repo / ".dev-cycle" / "context" / "GLOSSARY.md"
+            glossary.write_text(
+                glossary.read_text(encoding="utf-8") + "| New term | synonym | [packaging.md](./release/packaging.md) |\n",
+                encoding="utf-8",
+            )
+
+            proc, data = audit_summary_json(repo)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["counts"]["artifactGitState"], 1)
+            self.assertEqual(
+                data["artifactGitState"],
+                [
+                    {
+                        "path": ".dev-cycle/context/GLOSSARY.md",
+                        "state": "modified",
+                        "xy": " M",
+                    }
+                ],
+            )
+
+    def test_partial_bounded_context_keeps_health_separate_from_completeness(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = materialize_fixture(tmp, "valid-context")
+            manifest = repo / "CONTEXT_PLAN.md"
+            manifest.write_text(
+                manifest.read_text(encoding="utf-8")
+                + """
+- [planned] second-task
+  - **ID**: `second-task`
+  - **Context**: `.dev-cycle/context/second.md`
+  - **Sources**: `src/release.py`
+  - **Focus**: Second bounded task.
+  - **Tags**: `test`
+  - **Docs Comparison**: No existing docs.
+  - **Status**: `planned`
+""",
+                encoding="utf-8",
+            )
+
+            proc, data = audit_summary_json(repo)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["summary"]["healthGrade"], "A")
+            self.assertEqual(data["summary"]["completenessGrade"], "C")
+            self.assertEqual(data["summary"]["completeness"]["coverage"], 50.0)
+            self.assertEqual(data["summary"]["completeness"]["status"], "incomplete")
 
     def test_broken_fixture_reports_policy_failures(self):
         with tempfile.TemporaryDirectory() as tmp:

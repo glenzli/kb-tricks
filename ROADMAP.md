@@ -230,8 +230,12 @@ python3 tools/release_smoke.py
 - CI-friendly audit exit codes through `--fail-on` and `--min-score`.
 - Diff-first maintenance scope through `dev-cycle context impact`.
 - Read-only update planning through `dev-cycle context update-plan`.
+- Deterministic Context skeleton and validation draft preparation through `dev-cycle context build-assist`.
+- Audit health/completeness split so bounded Context coverage does not masquerade as freshness failure.
+- Context support/reserved artifact classification in impact and update planning.
 - Hard provenance for `context-query` through `templates/context-query-answer.md` and `dev-cycle context query-lint`.
 - Installed CLI dispatcher, package templates, release smoke script, and GitHub Actions CI workflow.
+- First bounded dogfood slice for this repository.
 
 ### In Progress
 
@@ -241,7 +245,7 @@ python3 tools/release_smoke.py
 
 ### Next
 
-- Dogfood the released CLI against a real repository, starting with scaffold/docs/impact/update-plan/audit.
+- Continue dogfood slices after source changes are committed, starting with `context-artifact-contract`.
 - Add a concise `CONTRIBUTING.md` or developer quickstart that points contributors to `tools/release_smoke.py`.
 - Decide whether to publish a first tagged release or keep iterating as source-only package installs.
 

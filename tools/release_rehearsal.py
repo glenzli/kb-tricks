@@ -28,6 +28,7 @@ SDIST_REQUIRED = [
     "LICENSE",
     "skills/context-build/SKILL.md",
     "tools/context_audit.py",
+    "tools/context_build_assist.py",
     "tools/context_migrate_plan.py",
     "tools/release_smoke.py",
     "tools/release_rehearsal.py",
@@ -35,12 +36,14 @@ SDIST_REQUIRED = [
     "templates/AGENT_GUIDE.md",
     "templates/context-query-answer.md",
     "dev_cycle/context/audit.py",
+    "dev_cycle/context/build_assist.py",
     "dev_cycle/context/migrate_plan.py",
     "dev_cycle/templates/AGENT_GUIDE.md",
     "dev_cycle/templates/config.yaml",
 ]
 WHEEL_REQUIRED = [
     "dev_cycle/context/audit.py",
+    "dev_cycle/context/build_assist.py",
     "dev_cycle/context/migrate_plan.py",
     "dev_cycle/context/update_plan.py",
     "dev_cycle/templates/AGENT_GUIDE.md",
@@ -49,6 +52,7 @@ WHEEL_REQUIRED = [
 ]
 WHEEL_FORBIDDEN = [
     "tools/context_audit.py",
+    "tools/context_build_assist.py",
     "tools/context_migrate_plan.py",
     "tools/release_smoke.py",
     "tools/release_rehearsal.py",

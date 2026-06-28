@@ -22,7 +22,7 @@ def tool(repo: Path, script: Path, *args: str):
 
 def write_plan(repo: Path, status: str) -> None:
     repo.joinpath("CONTEXT_PLAN.md").write_text(
-        f"""# Knowledge Base Manifest
+        f"""# Context Manifest
 
 ## Task Manifest
 
