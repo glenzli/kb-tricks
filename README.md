@@ -35,6 +35,7 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [tools/kb_update_plan.py](./tools/kb_update_plan.py): source-checkout wrapper for read-only bounded update actions, blockers, docs reviews, and new KB candidates.
 - [tools/kb_query_lint.py](./tools/kb_query_lint.py): source-checkout wrapper for provenance linting of `kb-query` answers.
 - [tools/release_smoke.py](./tools/release_smoke.py): local/CI release smoke runner for tests, CLI import checks, scaffold dry-run, query lint, and whitespace checks.
+- [tools/release_rehearsal.py](./tools/release_rehearsal.py): full release rehearsal for sdist/wheel content boundaries, installed CLI checks, and packaging metadata warnings.
 
 Installed CLI example:
 
@@ -69,6 +70,12 @@ Minimal CI smoke chain:
 
 ```bash
 python3 -B tools/release_smoke.py
+```
+
+Full release rehearsal before publishing:
+
+```bash
+python3 -B tools/release_rehearsal.py
 ```
 
 ## Skills
@@ -256,6 +263,7 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - [tools/kb_update_plan.py](./tools/kb_update_plan.py)：源码 checkout wrapper，用于只读 bounded actions、阻塞项、docs review 和新 KB 候选规划。
 - [tools/kb_query_lint.py](./tools/kb_query_lint.py)：源码 checkout wrapper，用于 `kb-query` 回答来源类型与推断隔离检查。
 - [tools/release_smoke.py](./tools/release_smoke.py)：本地/CI release smoke 入口，统一运行测试、CLI import 检查、scaffold dry-run、query lint 和 whitespace 检查。
+- [tools/release_rehearsal.py](./tools/release_rehearsal.py)：完整 release 预演入口，用于验证 sdist/wheel 内容边界、安装态 CLI 和 packaging metadata 警告。
 
 安装后的 CLI 示例：
 
@@ -290,6 +298,12 @@ python3 tools/kb_query_lint.py templates/query-answer.md
 
 ```bash
 python3 -B tools/release_smoke.py
+```
+
+发布前完整 release 预演：
+
+```bash
+python3 -B tools/release_rehearsal.py
 ```
 
 ## 技能一览

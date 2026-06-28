@@ -5,7 +5,7 @@ import unittest
 from test_kb_audit import PROJECT_ROOT
 
 from kb_tricks import __version__
-from tools import release_smoke
+from tools import release_rehearsal, release_smoke
 
 try:
     import tomllib
@@ -63,6 +63,19 @@ class PackagingTests(unittest.TestCase):
         self.assertIn("recursive-include tools *.py", manifest)
         self.assertIn("recursive-include kb_tricks/templates *", manifest)
 
+    def test_release_rehearsal_defaults_to_committed_source(self):
+        args = release_rehearsal.parse_args([])
+
+        self.assertEqual(args.source, "head")
+
+    def test_release_rehearsal_checks_artifact_boundaries(self):
+        self.assertIn("tools/release_rehearsal.py", release_rehearsal.SDIST_REQUIRED)
+        self.assertIn("tools/release_rehearsal.py", release_rehearsal.WHEEL_FORBIDDEN)
+        self.assertIn("skills/kb-build/SKILL.md", release_rehearsal.SDIST_REQUIRED)
+        self.assertIn("skills/kb-build/SKILL.md", release_rehearsal.WHEEL_FORBIDDEN)
+        self.assertIn("kb_tricks/commands/audit.py", release_rehearsal.WHEEL_REQUIRED)
+        self.assertIn("kb_tricks/templates/config.yaml", release_rehearsal.WHEEL_REQUIRED)
+
     def test_release_smoke_commands_cover_source_checks(self):
         commands = release_smoke.smoke_commands(
             installed=False,
@@ -84,6 +97,11 @@ class PackagingTests(unittest.TestCase):
             "python3 tools/kb_scaffold.py --repo /tmp/kb-smoke --dry-run",
             release_notes,
         )
+
+    def test_release_docs_reference_full_rehearsal(self):
+        release_notes = (PROJECT_ROOT / "RELEASE.md").read_text(encoding="utf-8")
+
+        self.assertIn("python3 -B tools/release_rehearsal.py", release_notes)
 
     def test_ci_workflow_uses_release_smoke(self):
         workflow = (PROJECT_ROOT / ".github" / "workflows" / "ci.yml").read_text(

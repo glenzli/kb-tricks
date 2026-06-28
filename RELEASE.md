@@ -45,7 +45,14 @@ Before publishing, run:
 
 ```bash
 python3 -B tools/release_smoke.py
+python3 -B tools/release_rehearsal.py
 ```
+
+`release_smoke.py` is the fast source/installed CLI check. `release_rehearsal.py`
+exports committed `HEAD` to a temporary source tree, builds sdist and wheel,
+checks the release artifact boundary, installs the wheel into a temporary
+virtual environment, and then runs installed CLI smoke checks. Use
+`--source worktree` only when validating uncommitted release-script changes.
 
 After installing into a virtual environment, run the installed CLI smoke:
 
