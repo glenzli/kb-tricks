@@ -19,6 +19,11 @@ fingerprint:
     tracked: true
     worktree: "clean"
     contentHash: "sha256:183ec6fceeec7fdc3c6dd761dd0b9048c751a5ae2bc3ffc14699449894951e6f"
+  - file: "kb_tricks/templates/AGENT_GUIDE.md"
+    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:6193fc1dc4be581176c44982626543d3533a753d4609abb48479ad8929b23f29"
   - file: "kb_tricks/templates/config.yaml"
     commit: "91c9b39bf8d8b1052632e9e139c0b3635cae1bcc"
     tracked: true
@@ -45,25 +50,25 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:2a3ce16cd0ca1e923c6ef13b8443c8ab46996b6baa113f2bde608d7c02e14727"
   - file: "tools/release_rehearsal.py"
-    commit: "32d2c13f4f098138fe02d3f77147e1b85428f47e"
+    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:dab6f22b2aaaba73797b6ecc1c1029b8bdc418c85255c1b81cc626dba4b012c1"
+    contentHash: "sha256:3fb1431e04602e783e5c47e1b46af83a6d44b11dbbb284e736ea076cc6b350f6"
   - file: "tests/test_packaging.py"
-    commit: "32d2c13f4f098138fe02d3f77147e1b85428f47e"
+    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:637971311fe856f361b0b1d0eaeec17210bc83f0cd6244f3accfd8bae58847f0"
+    contentHash: "sha256:ed90be8389a0da64c3d18415c6f6bea22bf25f68edd2e94b1c0c44dd6c5d1529"
   - file: ".github/workflows/ci.yml"
     commit: "95653ed4add23dcd17e68fd77148b694f0144c47"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:6a42e1b9c8a575d8a67080adb5743355c02678380dca6af0ed77c42fef112c65"
   - file: "README.md"
-    commit: "32d2c13f4f098138fe02d3f77147e1b85428f47e"
+    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:ed4b25c0b8f0644611d8e668a43203f5f95c9e57c809de4adcb8a3ca71dd06eb"
+    contentHash: "sha256:cd82e75b8b361baa6329747dfca8f50d8917103f0a6b2d030038f1094adb502f"
   - file: "RELEASE.md"
     commit: "32d2c13f4f098138fe02d3f77147e1b85428f47e"
     tracked: true
@@ -90,6 +95,8 @@ checkout.
 - [pyproject.toml](../../../pyproject.toml) defines the `kb` console script and
   includes `kb_tricks.commands` and `kb_tricks/templates/*` in the installed
   package.
+- Packaged templates include `AGENT_GUIDE.md` so installed `kb scaffold` can
+  create target-repository AI usage instructions without a source checkout.
 - Packaging metadata uses SPDX-style `license = "MIT"`, `license-files`, and
   `setuptools>=77` so current setuptools builds do not emit deprecated
   `project.license` table warnings.

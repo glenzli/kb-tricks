@@ -74,6 +74,11 @@ fingerprint:
     tracked: true
     worktree: "clean"
     contentHash: "sha256:183ec6fceeec7fdc3c6dd761dd0b9048c751a5ae2bc3ffc14699449894951e6f"
+  - file: "templates/AGENT_GUIDE.md"
+    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:6193fc1dc4be581176c44982626543d3533a753d4609abb48479ad8929b23f29"
   - file: "templates/config.yaml"
     commit: "6e5713c139884c1233ac88a64c4305c3dd3f7ee0"
     tracked: true
@@ -95,10 +100,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:3f11169b1c453b30b559d7b3c826bca12c25a981b883de65f66f50d2f8252533"
   - file: "spec/KB_SPEC.md"
-    commit: "06623c6dc07f1e33e041f8138b36d35328bafd9e"
+    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:0b2396d68a0f7ae2e4ce9ee2e0d666b6ae2f22c47be2ec9db50700f0b655f16e"
+    contentHash: "sha256:ee144656876b486c05c6e043e259139324fa6f362432662c77239f854e60b51e"
 tags: ["skills", "templates", "spec", "provenance"]
 ---
 
@@ -113,6 +118,8 @@ artifacts but does not replace skill judgment.
 ## Contracts
 
 - Skills should use bounded execution and select small slices from the manifest.
+- `AGENT_GUIDE.md` should be scaffolded into target repositories and referenced
+  from root agent instructions such as `AGENTS.md` or `CLAUDE.md`.
 - Generated KB documents should carry dirty-aware fingerprints in frontmatter.
 - Query answers must distinguish KB, source fallback, existing docs, and
   inference.

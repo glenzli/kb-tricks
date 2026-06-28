@@ -15,10 +15,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:f64d8314f5d077e70f2cddeb00618e5b8dbd65e06d8cd8b69748cbfa3ea58628"
   - file: "kb_tricks/commands/audit.py"
-    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:e653a740b3ddf774974eaacaed20b4ea4381214a636ec2c0f9f7759c1402eb9f"
+    contentHash: "sha256:bdf1190d2e1a4ca23b584884eba7585b726649595d22cd2d7e69ab8543f15386"
   - file: "kb_tricks/commands/manifest.py"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
@@ -50,10 +50,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:b93b88fbdd2d55b86b15da5ef16078095d12816f3af85d992a4f28ffe2311083"
   - file: "kb_tricks/commands/scaffold.py"
-    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:cbf1a7829ec8e8e276b87b98095d6927c140903d4b6f7ed631edc7f27a76916d"
+    contentHash: "sha256:60803e89575ac29c599ef4bee6b1bab94f59197a2fb9dcce9d59141ea0d7a194"
   - file: "tools/__init__.py"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
@@ -99,6 +99,11 @@ fingerprint:
     tracked: true
     worktree: "clean"
     contentHash: "sha256:c5f9b52d014189300ca3053fe90c1a74071d5e84befb0c73f4f09c17692c15b7"
+  - file: "tests/test_kb_scaffold.py"
+    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:4b4aeb22bb05411ae565d23f28720e768ffb15c9e251037a816a110e67924cc0"
 tags: ["cli", "audit", "bounded", "fingerprint", "impact"]
 ---
 
@@ -126,9 +131,11 @@ authoritative KB prose; skills and humans write or update the prose.
 - `kb docs` inventories existing Markdown docs declared in boundary config and
   compares them with manifest tasks.
 - `kb audit` checks manifest coverage, KB freshness, links, validation files,
-  boundary config, release-excluded hits, and optional CI failure policies.
+  boundary config, release-excluded hits, auxiliary agent guide files, and
+  optional CI failure policies.
 - `kb query-lint` checks answer templates for explicit source provenance labels.
-- `kb scaffold` creates the starter manifest/config and validation directories.
+- `kb scaffold` creates the starter manifest/config, agent guide, and validation
+  directories.
 
 ## Operating Boundaries
 
