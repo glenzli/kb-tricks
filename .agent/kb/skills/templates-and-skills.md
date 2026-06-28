@@ -100,10 +100,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:3f11169b1c453b30b559d7b3c826bca12c25a981b883de65f66f50d2f8252533"
   - file: "spec/KB_SPEC.md"
-    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
+    commit: "e34ed786f4440147155ea52ec9aa991d0f795e97"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:ee144656876b486c05c6e043e259139324fa6f362432662c77239f854e60b51e"
+    contentHash: "sha256:63bdb42370757da82af927f76de866a9eda283e4230cd2ac0bf871a8b3ca28fb"
 tags: ["skills", "templates", "spec", "provenance"]
 ---
 
@@ -127,6 +127,12 @@ artifacts but does not replace skill judgment.
   can check whether built tasks were actually self-tested.
 - Existing docs comparison is required for active manifest tasks so KB does not
   duplicate README, release, or spec content.
+- The spec treats `AGENT_GUIDE.md`, `GLOSSARY.md`, `CHANGELOG.md`, and
+  `ONBOARDING.md` as support documents, while `_draft/`, `_impact/`, and
+  `_validation/` remain reserved non-authoritative areas.
+- The spec now distinguishes compact summary JSON from full JSON for docs and
+  audit outputs, and requires update-plan draft actions to expose the target
+  authoritative KB separately from the draft path.
 
 ## Boundary Between Skill and CLI
 

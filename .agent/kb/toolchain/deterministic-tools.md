@@ -15,20 +15,20 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:f64d8314f5d077e70f2cddeb00618e5b8dbd65e06d8cd8b69748cbfa3ea58628"
   - file: "kb_tricks/commands/audit.py"
-    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
+    commit: "e34ed786f4440147155ea52ec9aa991d0f795e97"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:bdf1190d2e1a4ca23b584884eba7585b726649595d22cd2d7e69ab8543f15386"
+    contentHash: "sha256:7b9a0047a0e4defb206817274087d4f08b7326bd9334b2f99f3e7e7d5cd7b589"
   - file: "kb_tricks/commands/manifest.py"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:8ba50351310cbb614fc89c069fdbcba55d925d859127b3c39f423e3661ab3482"
   - file: "kb_tricks/commands/update_plan.py"
-    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    commit: "e34ed786f4440147155ea52ec9aa991d0f795e97"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:3849197abee22105659fbd1faa10093f3d84ce1cfeba9843b2ba7a7559ebfe8d"
+    contentHash: "sha256:09025d2f2b8f4f2ae9d36b3abba6bdedd63f668a475b44e9d8780e6d8105b454"
   - file: "kb_tricks/commands/impact.py"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
@@ -40,10 +40,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:d38da0319caf13489b3b5b9bb656aed4b6447a5cd4462c5091613a27e20ccba3"
   - file: "kb_tricks/commands/docs.py"
-    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    commit: "e34ed786f4440147155ea52ec9aa991d0f795e97"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:765f88338d5c6ece0d84f31c387eab857cbad89c7fa001c6514d1f88ccc3637a"
+    contentHash: "sha256:0e867a00736b02f795330f43eec7afd4960397b1ecc91a7b75ba5080ac1a40aa"
   - file: "kb_tricks/commands/query_lint.py"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
@@ -128,11 +128,21 @@ authoritative KB prose; skills and humans write or update the prose.
   KB fingerprints.
 - `kb update-plan` starts from diff impact and blocks dirty or untracked sources
   unless the user explicitly opts into draft or allow modes.
+- `kb update-plan` emits `targetKb` for task actions and `draftTarget` for
+  draft writes, so agents can distinguish the authoritative destination from
+  non-authoritative draft output.
+- When config is missing, `kb update-plan` reports `.agent/kb/**` support-file
+  candidate noise as `setupWarnings` instead of creating misleading KB topics.
 - `kb docs` inventories existing Markdown docs declared in boundary config and
-  compares them with manifest tasks.
+  compares them with manifest tasks. Duplicate hints carry severity and generic
+  tag-only matches are down-ranked or suppressed.
 - `kb audit` checks manifest coverage, KB freshness, links, validation files,
   boundary config, release-excluded hits, auxiliary agent guide files, and
-  optional CI failure policies.
+  optional CI failure policies. `--summary-json` returns compact counts and
+  top issues; `--json`/`--full-json` keep the full payload.
+- `kb audit` classifies Markdown under `.agent/kb/` as authoritative, support,
+  or reserved so guides, glossaries, drafts, and validations do not pollute
+  authoritative KB health.
 - `kb query-lint` checks answer templates for explicit source provenance labels.
 - `kb scaffold` creates the starter manifest/config, agent guide, and validation
   directories.
@@ -158,6 +168,12 @@ The follow-up fix adds `query-lint --repo`, adds an audit `setup` metric that
 drops missing manifest/config repositories to grade F, skips links inside fenced
 code blocks, exposes existing-doc `deadLinks`, supports `docs --check-links`,
 and limits text duplicate hints by default.
+
+The markdown-formal pressure test produced the next hardening pass: compact
+summary JSON modes for `docs` and `audit`, support/reserved KB classification,
+severity-ranked duplicate hints, explicit draft targets in update plans, and
+setup warnings for missing config cases that otherwise misclassify `.agent/kb`
+support files.
 
 ## SSOT Links
 

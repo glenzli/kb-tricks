@@ -65,10 +65,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:6a42e1b9c8a575d8a67080adb5743355c02678380dca6af0ed77c42fef112c65"
   - file: "README.md"
-    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
+    commit: "e34ed786f4440147155ea52ec9aa991d0f795e97"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:cd82e75b8b361baa6329747dfca8f50d8917103f0a6b2d030038f1094adb502f"
+    contentHash: "sha256:2a3095ca6a1d7d8d9a5c7902fbc390317aed37df10d139629b4e3a56e1dc324d"
   - file: "RELEASE.md"
     commit: "32d2c13f4f098138fe02d3f77147e1b85428f47e"
     tracked: true
@@ -115,6 +115,9 @@ checkout.
 - [test_packaging.py](../../../tests/test_packaging.py) checks package template
   availability, scaffold fallback behavior, release smoke command coverage, and
   release rehearsal boundaries.
+- [README.md](../../../README.md) is the public command surface for installed
+  users; it now shows compact `--summary-json` entry points for `docs` and
+  `audit` without changing package boundaries.
 
 ## Release Boundary
 

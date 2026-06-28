@@ -2,7 +2,7 @@
 
 - **KB**: `.agent/kb/toolchain/deterministic-tools.md`
 - **Source Mode**: `clean`
-- **Validated At**: `2026-06-26`
+- **Validated At**: `2026-06-28`
 
 ## Questions
 
@@ -17,6 +17,13 @@
 
 - **Question**: Which tool blocks updates when impacted sources are dirty or untracked?
 - **KB-only Answer**: `kb update-plan` starts from impact data and blocks dirty or untracked sources unless draft or allow flags are used.
+- **Citations**: `.agent/kb/toolchain/deterministic-tools.md`
+- **Result**: pass
+
+### Q3 Reporting Shape
+
+- **Question**: Which tools now expose compact summary JSON, and what kind of data is kept out of that compact view?
+- **KB-only Answer**: `kb docs` and `kb audit` expose `--summary-json`; the compact view keeps counts and top issues, while full heading inventories and complete payload details stay in `--json`/`--full-json`.
 - **Citations**: `.agent/kb/toolchain/deterministic-tools.md`
 - **Result**: pass
 

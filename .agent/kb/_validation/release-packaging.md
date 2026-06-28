@@ -2,7 +2,7 @@
 
 - **KB**: `.agent/kb/release/packaging.md`
 - **Source Mode**: `clean`
-- **Validated At**: `2026-06-26`
+- **Validated At**: `2026-06-28`
 
 ## Questions
 
@@ -17,6 +17,13 @@
 
 - **Question**: What does CI verify for release smoke?
 - **KB-only Answer**: CI runs source checkout smoke, installs the package, then runs installed CLI smoke.
+- **Citations**: `.agent/kb/release/packaging.md`
+- **Result**: pass
+
+### Q3 Public CLI Surface
+
+- **Question**: Where should installed users discover compact JSON entry points?
+- **KB-only Answer**: `README.md` is the public command surface and shows compact `--summary-json` entry points for `docs` and `audit`.
 - **Citations**: `.agent/kb/release/packaging.md`
 - **Result**: pass
 

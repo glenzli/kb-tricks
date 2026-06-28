@@ -2,7 +2,7 @@
 
 - **KB**: `.agent/kb/skills/templates-and-skills.md`
 - **Source Mode**: `clean`
-- **Validated At**: `2026-06-26`
+- **Validated At**: `2026-06-28`
 
 ## Questions
 
@@ -17,6 +17,13 @@
 
 - **Question**: What provenance must query answers expose?
 - **KB-only Answer**: Query answers must distinguish KB, source fallback, existing docs, and inference.
+- **Citations**: `.agent/kb/skills/templates-and-skills.md`
+- **Result**: pass
+
+### Q3 Support Artifacts
+
+- **Question**: Which KB files are support documents rather than authoritative KB topics?
+- **KB-only Answer**: `AGENT_GUIDE.md`, `GLOSSARY.md`, `CHANGELOG.md`, and `ONBOARDING.md` are support documents. `_draft/`, `_impact/`, and `_validation/` remain reserved non-authoritative areas.
 - **Citations**: `.agent/kb/skills/templates-and-skills.md`
 - **Result**: pass
 
