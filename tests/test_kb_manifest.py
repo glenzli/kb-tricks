@@ -147,6 +147,25 @@ class KbManifestTests(unittest.TestCase):
             self.assertEqual(proc.returncode, 2)
             self.assertIn("manifest does not exist", proc.stderr)
 
+    def test_legacy_manifest_entries_warn_about_migration(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            (repo / "KB_PLAN.md").write_text(
+                """# Knowledge Base Manifest
+
+## Task Manifest
+
+- [x] .agent/kb/core/scanner-state.md
+""",
+                encoding="utf-8",
+            )
+
+            proc, data = manifest_json(repo, "--status", "any")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["total"], 1)
+            self.assertIn("legacy manifest format detected", data["warnings"][0])
+
 
 if __name__ == "__main__":
     unittest.main()

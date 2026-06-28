@@ -353,6 +353,7 @@ def build_update_plan(
         "blocked": blocked,
         "docsChanges": impact["docsChanges"],
         "docsActions": docs_actions(impact["docsChanges"]),
+        "possibleContextDocs": impact.get("possibleContextDocs", []),
         "newKbCandidates": candidates,
         "specialChanges": impact["specialChanges"],
         "specialActions": special_actions(impact["specialChanges"]),
@@ -376,6 +377,8 @@ def print_markdown(data: dict[str, Any]) -> None:
     print(f"- Actions: {len(data['actions'])}")
     print(f"- Blocked: {len(data['blocked'])}")
     print(f"- New KB candidates: {len(data['newKbCandidates'])}")
+    if data.get("possibleContextDocs"):
+        print(f"- Possible context docs: {len(data['possibleContextDocs'])}")
     if data["actions"]:
         print()
         print("## Actions")
@@ -392,6 +395,11 @@ def print_markdown(data: dict[str, Any]) -> None:
             print(f"- {candidate['file']}: {candidate['action']} ({label})")
             for reason in candidate["blockedReasons"]:
                 print(f"  - {reason}")
+    if data.get("possibleContextDocs"):
+        print()
+        print("## Possible Context Docs")
+        for item in data["possibleContextDocs"]:
+            print(f"- {item['file']}: {item['recommendation']}")
     if data["setupWarnings"]:
         print()
         print("## Setup Warnings")

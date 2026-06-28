@@ -18,6 +18,7 @@ class KbCliTests(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertIn("audit", proc.stdout)
         self.assertIn("impact", proc.stdout)
+        self.assertIn("migrate-plan", proc.stdout)
         self.assertIn("query-lint", proc.stdout)
         self.assertIn("self-check", proc.stdout)
         self.assertIn("update-plan", proc.stdout)
@@ -56,6 +57,7 @@ class KbCliTests(unittest.TestCase):
         commands = {item["command"]: item for item in data["commands"]}
         self.assertIn("audit", commands)
         self.assertIn("impact", commands)
+        self.assertIn("migrate-plan", commands)
         self.assertIn("query-lint", commands)
         self.assertIn("update-plan", commands)
         self.assertTrue(all(item["ok"] for item in commands.values()))

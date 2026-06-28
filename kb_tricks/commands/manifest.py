@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from .audit import ALLOWED_STATES, ManifestTask, parse_manifest, relpath, strip_value
+from .migrate_plan import legacy_task
 
 
 DEFAULT_STATUSES = ("planned", "stale")
@@ -102,6 +103,11 @@ def select_tasks(
     invalid_task_statuses = sorted({task.status for task in tasks} - ALLOWED_STATES)
     if invalid_task_statuses:
         warnings.append(f"manifest has unknown status: {', '.join(invalid_task_statuses)}")
+    legacy_tasks = [task for task in tasks if legacy_task(task)]
+    if legacy_tasks:
+        warnings.append(
+            "legacy manifest format detected; run kb migrate-plan --repo <repo> --write"
+        )
 
     eligible: list[ManifestTask] = []
     for task in tasks:

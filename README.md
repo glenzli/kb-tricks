@@ -28,6 +28,7 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [kb_tricks/commands/](./kb_tricks/commands): released dependency-free command implementations used by the installed `kb` CLI.
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py): source-checkout wrapper for installing starter config, AI agent guidance, manifest, and reserved KB directories into a target repository.
 - [tools/kb_manifest.py](./tools/kb_manifest.py): source-checkout wrapper for bounded `KB_PLAN.md` task selection.
+- [tools/kb_migrate_plan.py](./tools/kb_migrate_plan.py): source-checkout wrapper for converting legacy path-only Manifest entries into explicit task fields.
 - [tools/kb_docs.py](./tools/kb_docs.py): source-checkout wrapper for existing-docs inventory, manifest comparison coverage, dead-link reporting, severity-ranked duplicate hints, and compact summary JSON.
 - [tools/kb_audit.py](./tools/kb_audit.py): source-checkout wrapper for setup checks, hashes, dirty-state checks, support/reserved KB classification, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py): source-checkout wrapper for generating and checking dirty-aware source fingerprints.
@@ -43,6 +44,8 @@ Installed CLI example:
 kb self-check --json
 kb scaffold --repo /path/to/project --dry-run
 kb manifest --repo /path/to/project --slice 1 --json
+kb migrate-plan --repo /path/to/project --dry-run
+kb migrate-plan --repo /path/to/project --write
 kb docs --repo /path/to/project --check-manifest --check-links
 kb docs --repo /path/to/project --summary-json
 kb impact --repo /path/to/project --staged --json
@@ -69,6 +72,7 @@ Source checkout fallback:
 
 ```bash
 python3 tools/kb_audit.py --repo /path/to/project --write-index .agent/kb/index.json
+python3 tools/kb_migrate_plan.py --repo /path/to/project --dry-run
 python3 tools/kb_impact.py --repo /path/to/project --files src/cli/release.ts --json
 python3 tools/kb_update_plan.py --repo /path/to/project --since HEAD~1 --json
 python3 tools/kb_query_lint.py templates/query-answer.md
@@ -264,6 +268,7 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - [kb_tricks/commands/](./kb_tricks/commands)：安装后的 `kb` CLI 使用的无依赖命令实现。
 - [tools/kb_scaffold.py](./tools/kb_scaffold.py)：源码 checkout wrapper，用于把 starter config、AI agent 指引、Manifest 和 KB 保留目录安装到目标仓库。
 - [tools/kb_manifest.py](./tools/kb_manifest.py)：源码 checkout wrapper，用于 `KB_PLAN.md` 小步任务选择。
+- [tools/kb_migrate_plan.py](./tools/kb_migrate_plan.py)：源码 checkout wrapper，用于把旧的纯路径 Manifest 条目迁移为显式任务字段。
 - [tools/kb_docs.py](./tools/kb_docs.py)：源码 checkout wrapper，用于现有文档清单、Manifest Docs Comparison 覆盖率、死链报告、按严重级别排序的重复提示和紧凑 summary JSON。
 - [tools/kb_audit.py](./tools/kb_audit.py)：源码 checkout wrapper，用于 setup 检查、hash、dirty 状态、support/reserved KB 分类、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
 - [tools/kb_fingerprint.py](./tools/kb_fingerprint.py)：源码 checkout wrapper，用于 dirty-aware source fingerprint 生成与检查。
@@ -279,6 +284,8 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 kb self-check --json
 kb scaffold --repo /path/to/project --dry-run
 kb manifest --repo /path/to/project --slice 1 --json
+kb migrate-plan --repo /path/to/project --dry-run
+kb migrate-plan --repo /path/to/project --write
 kb docs --repo /path/to/project --check-manifest --check-links
 kb docs --repo /path/to/project --summary-json
 kb impact --repo /path/to/project --staged --json
@@ -304,6 +311,7 @@ kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 
 ```bash
 python3 tools/kb_audit.py --repo /path/to/project --write-index .agent/kb/index.json
+python3 tools/kb_migrate_plan.py --repo /path/to/project --dry-run
 python3 tools/kb_impact.py --repo /path/to/project --files src/cli/release.ts --json
 python3 tools/kb_update_plan.py --repo /path/to/project --since HEAD~1 --json
 python3 tools/kb_query_lint.py templates/query-answer.md

@@ -22,6 +22,15 @@ from .audit import (
 from .manifest import task_to_dict
 
 
+CONTEXT_DOC_PREFIXES = (
+    "docs/dev/",
+    "docs/development/",
+    "docs/internal/",
+    "docs/context/",
+    "dev/docs/",
+)
+
+
 @dataclass
 class Match:
     file: str
@@ -158,6 +167,19 @@ def collect_special_changes(changed_files: list[str]) -> dict[str, bool]:
     }
 
 
+def possible_context_doc(path: str) -> bool:
+    normalized = normalize_path(path).lower()
+    return any(normalized.startswith(prefix) for prefix in CONTEXT_DOC_PREFIXES)
+
+
+def context_doc_to_dict(path: str) -> dict[str, str]:
+    return {
+        "file": path,
+        "reason": "missing config and development-docs path",
+        "recommendation": "add docs.existing or releaseExcluded in .agent/kb/config.yaml",
+    }
+
+
 def impact_to_dict(impact: ImpactedTask) -> dict[str, Any]:
     data = task_to_dict(impact.task)
     data["matchedFiles"] = [
@@ -181,6 +203,7 @@ def build_impact_data(
 ) -> dict[str, Any]:
     tasks = parse_manifest(manifest_path)
     config = parse_config(config_path)
+    config_present = config_path.exists()
     impacts = collect_impacts(repo, tasks, changed_files)
     docs_changes = collect_docs_changes(config, changed_files)
     impacted_files = {
@@ -195,11 +218,18 @@ def build_impact_data(
         ".agent/kb/GLOSSARY.md",
     }
     matched_docs = set(docs_changes)
-    unmatched = [
+    raw_unmatched = [
         path
         for path in changed_files
         if path not in impacted_files and path not in matched_docs and path not in matched_special
     ]
+    possible_context_docs = [
+        context_doc_to_dict(path)
+        for path in raw_unmatched
+        if not config_present and possible_context_doc(path)
+    ]
+    possible_context_files = {item["file"] for item in possible_context_docs}
+    unmatched = [path for path in raw_unmatched if path not in possible_context_files]
     return {
         "schemaVersion": 1,
         "repo": str(repo),
@@ -212,6 +242,7 @@ def build_impact_data(
         "selectedTasks": [impact_to_dict(impact) for impact in impacts[:slice_size]],
         "slice": slice_size,
         "docsChanges": docs_changes,
+        "possibleContextDocs": possible_context_docs,
         "specialChanges": special_changes,
         "unmatchedFiles": unmatched,
         "warnings": warnings,
@@ -227,6 +258,8 @@ def print_markdown(data: dict[str, Any]) -> None:
     print(f"- Selected tasks: {len(data['selectedTasks'])} (slice {data['slice']})")
     if data["docsChanges"]:
         print(f"- Existing docs changes: {len(data['docsChanges'])}")
+    if data.get("possibleContextDocs"):
+        print(f"- Possible context docs: {len(data['possibleContextDocs'])}")
     if any(data["specialChanges"].values()):
         changed = [key for key, value in data["specialChanges"].items() if value]
         print("- Special changes: " + ", ".join(changed))
@@ -243,6 +276,11 @@ def print_markdown(data: dict[str, Any]) -> None:
         print("## Unmatched Files")
         for path in data["unmatchedFiles"]:
             print(f"- {path}")
+    if data.get("possibleContextDocs"):
+        print()
+        print("## Possible Context Docs")
+        for item in data["possibleContextDocs"]:
+            print(f"- {item['file']}: {item['recommendation']}")
     if data["warnings"]:
         print()
         print("## Warnings")

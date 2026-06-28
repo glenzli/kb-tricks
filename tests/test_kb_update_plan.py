@@ -104,6 +104,24 @@ class KbUpdatePlanTests(unittest.TestCase):
                 ],
             )
 
+    def test_missing_config_keeps_dev_docs_out_of_new_kb_candidates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            write_impact_repo(repo)
+            (repo / ".agent" / "kb" / "config.yaml").unlink()
+            init_repo(repo)
+            (repo / "docs" / "dev").mkdir()
+            (repo / "docs" / "dev" / "context.md").write_text(
+                "# Development Context\n",
+                encoding="utf-8",
+            )
+
+            proc, data = plan_json(repo, "--worktree", "--draft")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["newKbCandidates"], [])
+            self.assertEqual(data["possibleContextDocs"][0]["file"], "docs/dev/context.md")
+
     def test_unmatched_included_source_becomes_blocked_new_kb_candidate(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "project"

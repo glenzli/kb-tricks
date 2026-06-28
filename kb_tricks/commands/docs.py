@@ -35,6 +35,7 @@ GENERIC_TAGS = {
     "config",
     "docs",
     "documentation",
+    "preview",
     "release",
     "source",
     "test",
@@ -194,13 +195,20 @@ def duplicate_hints(repo: Path, docs: list[ExistingDoc], tasks: list[ManifestTas
             source_mentions = [source for source in task.sources if source.lower() in lower_text]
             if source_mentions:
                 reasons.append("source-mentioned: " + ", ".join(source_mentions))
-            tag_mentions = [
+            specific_tag_mentions = [
                 tag
                 for tag in task.tags
                 if tag.lower() in lower_text and heading_slug(tag) not in GENERIC_TAGS
             ]
-            if tag_mentions:
-                reasons.append("tag-mentioned: " + ", ".join(tag_mentions))
+            generic_tag_mentions = [
+                tag
+                for tag in task.tags
+                if tag.lower() in lower_text and heading_slug(tag) in GENERIC_TAGS
+            ]
+            if specific_tag_mentions:
+                reasons.append("tag-mentioned: " + ", ".join(specific_tag_mentions))
+            if generic_tag_mentions and reasons:
+                reasons.append("generic-tag-mentioned: " + ", ".join(generic_tag_mentions))
             if not reasons:
                 continue
             severity = duplicate_severity(reasons)
@@ -334,6 +342,14 @@ def print_markdown(data: dict[str, Any], duplicate_limit: int) -> None:
 
 def summary_data(data: dict[str, Any], duplicate_limit: int = 5) -> dict[str, Any]:
     visible_hints = data["duplicateHints"] if duplicate_limit < 0 else data["duplicateHints"][:duplicate_limit]
+    grouped_hints: dict[str, list[dict[str, Any]]] = {}
+    for hint in data["duplicateHints"]:
+        grouped_hints.setdefault(hint["taskId"], []).append(hint)
+    if duplicate_limit >= 0:
+        grouped_hints = {
+            task_id: hints[:duplicate_limit]
+            for task_id, hints in grouped_hints.items()
+        }
     return {
         "schemaVersion": data["schemaVersion"],
         "repo": data["repo"],
@@ -349,6 +365,7 @@ def summary_data(data: dict[str, Any], duplicate_limit: int = 5) -> dict[str, An
         "duplicateHintCount": data["duplicateHintCount"],
         "duplicateHintSeverityCounts": data["duplicateHintSeverityCounts"],
         "topDuplicateHints": visible_hints,
+        "topDuplicateHintsByTask": grouped_hints,
     }
 
 

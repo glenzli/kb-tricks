@@ -192,6 +192,35 @@ docs:
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
             self.assertEqual(data["docsChanges"], ["README.md"])
 
+    def test_missing_config_classifies_dev_docs_as_possible_context_docs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            write_impact_repo(repo)
+            (repo / ".agent" / "kb" / "config.yaml").unlink()
+            init_repo(repo)
+            (repo / "docs" / "dev").mkdir()
+            (repo / "docs" / "dev" / "context.md").write_text(
+                "# Development Context\n",
+                encoding="utf-8",
+            )
+
+            proc, data = impact_json(repo, "--worktree")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["unmatchedFiles"], [])
+            self.assertEqual(
+                data["possibleContextDocs"],
+                [
+                    {
+                        "file": "docs/dev/context.md",
+                        "reason": "missing config and development-docs path",
+                        "recommendation": (
+                            "add docs.existing or releaseExcluded in .agent/kb/config.yaml"
+                        ),
+                    }
+                ],
+            )
+
     def test_base_maps_branch_diff_against_base_commitish(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "project"

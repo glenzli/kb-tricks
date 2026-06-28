@@ -15,6 +15,7 @@ COMMANDS = {
     "fingerprint": "kb_tricks.commands.fingerprint",
     "impact": "kb_tricks.commands.impact",
     "manifest": "kb_tricks.commands.manifest",
+    "migrate-plan": "kb_tricks.commands.migrate_plan",
     "query-lint": "kb_tricks.commands.query_lint",
     "scaffold": "kb_tricks.commands.scaffold",
     "update-plan": "kb_tricks.commands.update_plan",

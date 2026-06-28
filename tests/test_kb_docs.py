@@ -140,7 +140,47 @@ class KbDocsTests(unittest.TestCase):
             self.assertEqual(data["existingDocsCount"], 2)
             self.assertEqual(data["docsComparison"]["missing"], ["api-auth-flow"])
             self.assertIn("topDuplicateHints", data)
+            self.assertIn("release-packaging", data["topDuplicateHintsByTask"])
             self.assertNotIn("existingDocs", data)
+
+    def test_generic_tag_only_matches_do_not_create_duplicate_hints(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            (repo / ".agent" / "kb").mkdir(parents=True)
+            (repo / "docs").mkdir()
+            (repo / ".agent" / "kb" / "config.yaml").write_text(
+                """docs:
+  existing:
+    - docs/**
+""",
+                encoding="utf-8",
+            )
+            (repo / "docs" / "brief.md").write_text(
+                "# Development Brief\n\nPreview cache verification notes.\n",
+                encoding="utf-8",
+            )
+            (repo / "KB_PLAN.md").write_text(
+                """# Knowledge Base Manifest
+
+## Task Manifest
+
+- [planned] unrelated-runtime
+  - **ID**: `unrelated-runtime`
+  - **KB**: `.agent/kb/runtime/unrelated.md`
+  - **Sources**: `src/runtime.ts`
+  - **Focus**: Runtime behavior.
+  - **Tags**: `preview`, `cache`, `verification`
+  - **Docs Comparison**: No existing docs.
+  - **Status**: `planned`
+""",
+                encoding="utf-8",
+            )
+
+            proc, data = docs_json(repo)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["duplicateHints"], [])
+            self.assertEqual(data["duplicateHintSeverityCounts"], {"high": 0, "medium": 0, "low": 0})
 
     def test_check_manifest_fails_when_comparison_is_missing(self):
         with tempfile.TemporaryDirectory() as tmp:
