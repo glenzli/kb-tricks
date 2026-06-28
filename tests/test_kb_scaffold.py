@@ -30,6 +30,7 @@ class KbScaffoldTests(unittest.TestCase):
             proc = scaffold(repo)
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
             self.assertTrue((repo / ".agent" / "kb" / "config.yaml").exists())
+            self.assertTrue((repo / ".agent" / "kb" / "AGENT_GUIDE.md").exists())
             self.assertTrue((repo / "KB_PLAN.md").exists())
             self.assertTrue((repo / ".agent" / "kb" / "_draft" / ".gitkeep").exists())
             self.assertTrue((repo / ".agent" / "kb" / "_impact" / ".gitkeep").exists())
@@ -37,6 +38,8 @@ class KbScaffoldTests(unittest.TestCase):
             config = (repo / ".agent" / "kb" / "config.yaml").read_text(encoding="utf-8")
             self.assertIn("README.md", config)
             self.assertIn("docs/**", config)
+            guide = (repo / ".agent" / "kb" / "AGENT_GUIDE.md").read_text(encoding="utf-8")
+            self.assertIn("This repository uses `kb-tricks`", guide)
 
     def test_scaffold_can_read_packaged_templates_without_source_templates(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -52,6 +55,7 @@ class KbScaffoldTests(unittest.TestCase):
                 kb_scaffold.TEMPLATES = original_templates
 
             self.assertTrue((repo / ".agent" / "kb" / "config.yaml").exists())
+            self.assertTrue((repo / ".agent" / "kb" / "AGENT_GUIDE.md").exists())
             self.assertIn(
                 "Knowledge Base Manifest",
                 (repo / "KB_PLAN.md").read_text(encoding="utf-8"),
@@ -64,6 +68,7 @@ class KbScaffoldTests(unittest.TestCase):
             proc = scaffold(repo, "--dry-run")
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
             self.assertIn("WRITE .agent/kb/config.yaml", proc.stdout)
+            self.assertIn("WRITE .agent/kb/AGENT_GUIDE.md", proc.stdout)
             self.assertFalse((repo / ".agent").exists())
             self.assertFalse((repo / "KB_PLAN.md").exists())
 
@@ -115,6 +120,8 @@ class KbScaffoldTests(unittest.TestCase):
                     "missing-manifest",
                     "--fail-on",
                     "missing-config",
+                    "--fail-on",
+                    "untracked",
                 ],
                 PROJECT_ROOT,
                 check=False,

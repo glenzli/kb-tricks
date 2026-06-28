@@ -16,6 +16,7 @@ except ImportError:  # pragma: no cover - Python < 3.11 compatibility
 class PackagingTests(unittest.TestCase):
     template_names = [
         "config.yaml",
+        "AGENT_GUIDE.md",
         "KB_PLAN.md",
         "kb-doc.md",
         "validation.md",
@@ -74,6 +75,7 @@ class PackagingTests(unittest.TestCase):
         self.assertIn("skills/kb-build/SKILL.md", release_rehearsal.SDIST_REQUIRED)
         self.assertIn("skills/kb-build/SKILL.md", release_rehearsal.WHEEL_FORBIDDEN)
         self.assertIn("kb_tricks/commands/audit.py", release_rehearsal.WHEEL_REQUIRED)
+        self.assertIn("kb_tricks/templates/AGENT_GUIDE.md", release_rehearsal.WHEEL_REQUIRED)
         self.assertIn("kb_tricks/templates/config.yaml", release_rehearsal.WHEEL_REQUIRED)
 
     def test_release_smoke_commands_cover_source_checks(self):

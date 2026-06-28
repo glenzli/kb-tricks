@@ -24,9 +24,9 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [spec/KB_SPEC.md](./spec/KB_SPEC.md): stable artifact schema for `.agent/kb/config.yaml`, `KB_PLAN.md`, KB frontmatter, validation files, glossary, and `index.json`.
 - [RELEASE.md](./RELEASE.md): release boundary, install smoke, and packaging verification notes.
 - [skills/](./skills): copyable Agent skill prompts; each child directory keeps the released skill name and contains `SKILL.md`.
-- [templates/](./templates): starter templates for config, manifest, KB docs, validation artifacts, and query answers.
+- [templates/](./templates): starter templates for config, agent guidance, manifest, KB docs, validation artifacts, and query answers.
 - [kb_tricks/commands/](./kb_tricks/commands): released dependency-free command implementations used by the installed `kb` CLI.
-- [tools/kb_scaffold.py](./tools/kb_scaffold.py): source-checkout wrapper for installing starter config, manifest, and reserved KB directories into a target repository.
+- [tools/kb_scaffold.py](./tools/kb_scaffold.py): source-checkout wrapper for installing starter config, AI agent guidance, manifest, and reserved KB directories into a target repository.
 - [tools/kb_manifest.py](./tools/kb_manifest.py): source-checkout wrapper for bounded `KB_PLAN.md` task selection.
 - [tools/kb_docs.py](./tools/kb_docs.py): source-checkout wrapper for existing-docs inventory, manifest comparison coverage, dead-link reporting, and duplicate hints.
 - [tools/kb_audit.py](./tools/kb_audit.py): source-checkout wrapper for setup checks, hashes, dirty-state checks, links, manifest coverage, validation artifacts, policy exit codes, and optional `index.json` generation.
@@ -54,6 +54,10 @@ kb query-lint --repo /path/to/project templates/query-answer.md
 kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
 kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```
+
+After scaffolding a target repository, point its root `AGENTS.md`, `CLAUDE.md`,
+or equivalent AI instruction file at `.agent/kb/AGENT_GUIDE.md` so agents know
+how to use KB as auxiliary context rather than authority.
 
 `kb docs` and `kb impact/update-plan` apply `.agent/kb/config.yaml` `exclude` rules when collecting existing docs, so broad patterns such as `docs.existing: ["*.md"]` can safely pair with exclusions like `.agent/**` and `KB_PLAN.md`.
 
@@ -252,9 +256,9 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - [spec/KB_SPEC.md](./spec/KB_SPEC.md)：定义 `.agent/kb/config.yaml`、`KB_PLAN.md`、KB frontmatter、验证文件、词汇表和 `index.json` 的稳定结构。
 - [RELEASE.md](./RELEASE.md)：记录 release 边界、安装 smoke 和打包验证流程。
 - [skills/](./skills)：可复制的 Agent skill prompt；每个子目录保留发布后的 skill 名称，并包含 `SKILL.md`。
-- [templates/](./templates)：提供 config、Manifest、KB 文档、验证产物和查询回答模板。
+- [templates/](./templates)：提供 config、AI agent 指引、Manifest、KB 文档、验证产物和查询回答模板。
 - [kb_tricks/commands/](./kb_tricks/commands)：安装后的 `kb` CLI 使用的无依赖命令实现。
-- [tools/kb_scaffold.py](./tools/kb_scaffold.py)：源码 checkout wrapper，用于把 starter config、Manifest 和 KB 保留目录安装到目标仓库。
+- [tools/kb_scaffold.py](./tools/kb_scaffold.py)：源码 checkout wrapper，用于把 starter config、AI agent 指引、Manifest 和 KB 保留目录安装到目标仓库。
 - [tools/kb_manifest.py](./tools/kb_manifest.py)：源码 checkout wrapper，用于 `KB_PLAN.md` 小步任务选择。
 - [tools/kb_docs.py](./tools/kb_docs.py)：源码 checkout wrapper，用于现有文档清单、Manifest Docs Comparison 覆盖率、死链报告和重复提示。
 - [tools/kb_audit.py](./tools/kb_audit.py)：源码 checkout wrapper，用于 setup 检查、hash、dirty 状态、链接、Manifest 覆盖、验证产物、策略 exit code 和可选 `index.json` 生成。
@@ -282,6 +286,9 @@ kb query-lint --repo /path/to/project templates/query-answer.md
 kb audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
 kb fingerprint --repo /path/to/project --check .agent/kb/release/packaging.md
 ```
+
+对目标仓库执行 scaffold 后，建议在该仓库根目录的 `AGENTS.md`、`CLAUDE.md`
+或同类 AI 指令文件里指向 `.agent/kb/AGENT_GUIDE.md`，让 agent 明确 KB 只是辅助上下文，不是权威来源。
 
 `kb docs` 和 `kb impact/update-plan` 收集现有文档时会应用 `.agent/kb/config.yaml` 的 `exclude` 规则，所以文档型仓库可以用 `docs.existing: ["*.md"]`，再排除 `.agent/**` 和 `KB_PLAN.md`。
 

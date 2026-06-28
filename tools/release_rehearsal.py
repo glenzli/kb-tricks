@@ -31,13 +31,16 @@ SDIST_REQUIRED = [
     "tools/release_smoke.py",
     "tools/release_rehearsal.py",
     "spec/KB_SPEC.md",
+    "templates/AGENT_GUIDE.md",
     "templates/query-answer.md",
     "kb_tricks/commands/audit.py",
+    "kb_tricks/templates/AGENT_GUIDE.md",
     "kb_tricks/templates/config.yaml",
 ]
 WHEEL_REQUIRED = [
     "kb_tricks/commands/audit.py",
     "kb_tricks/commands/update_plan.py",
+    "kb_tricks/templates/AGENT_GUIDE.md",
     "kb_tricks/templates/config.yaml",
     "kb_tricks/cli.py",
 ]

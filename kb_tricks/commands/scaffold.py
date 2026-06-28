@@ -87,6 +87,12 @@ def render_config(repo: Path) -> str:
 def plan_writes(repo: Path, force: bool) -> list[PlannedWrite]:
     writes = [
         PlannedWrite(None, repo / ".agent" / "kb" / "config.yaml", "write", render_config(repo)),
+        PlannedWrite(
+            None,
+            repo / ".agent" / "kb" / "AGENT_GUIDE.md",
+            "write",
+            template_text("AGENT_GUIDE.md"),
+        ),
         PlannedWrite(None, repo / "KB_PLAN.md", "write", template_text("KB_PLAN.md")),
         PlannedWrite(None, repo / ".agent" / "kb" / "_draft" / ".gitkeep", "touch", ""),
         PlannedWrite(None, repo / ".agent" / "kb" / "_impact" / ".gitkeep", "touch", ""),

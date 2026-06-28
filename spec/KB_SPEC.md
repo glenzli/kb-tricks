@@ -11,6 +11,7 @@ The KB is not the repository authority. Source code, configuration, tests, relea
 | Path | Purpose |
 |---|---|
 | `.agent/kb/config.yaml` | Project-specific artifact boundaries and existing docs hints. |
+| `.agent/kb/AGENT_GUIDE.md` | Copyable AI-agent operating instructions for this repository's KB. |
 | `KB_PLAN.md` | Long-lived KB manifest and lifecycle state. |
 | `.agent/kb/**/*.md` | Authoritative KB documents, excluding reserved directories. |
 | `.agent/kb/_draft/` | Non-authoritative draft KB based on dirty or exploratory work. |
@@ -19,7 +20,7 @@ The KB is not the repository authority. Source code, configuration, tests, relea
 | `.agent/kb/GLOSSARY.md` | Term routing table. |
 | `.agent/kb/index.json` | Machine-readable index generated from manifest, KB docs, glossary, and links. |
 
-Reserved directories under `.agent/kb/` are `_draft/`, `_impact/`, and `_validation/`. Documents in reserved directories must not be treated as authoritative KB.
+Reserved directories under `.agent/kb/` are `_draft/`, `_impact/`, and `_validation/`. Documents in reserved directories must not be treated as authoritative KB. Auxiliary files such as `AGENT_GUIDE.md`, `GLOSSARY.md`, `CHANGELOG.md`, and `ONBOARDING.md` support routing or agent behavior and do not need Manifest entries.
 
 ## Scaffolding
 
@@ -31,7 +32,7 @@ python3 tools/kb_scaffold.py --repo /path/to/project
 python3 tools/kb_scaffold.py --repo /path/to/project --force
 ```
 
-It creates `.agent/kb/config.yaml`, `KB_PLAN.md`, and reserved directories for `_draft/`, `_impact/`, and `_validation/`. It does not generate KB prose, run repository analysis, or overwrite existing scaffold files unless `--force` is supplied. `--dry-run` prints the planned writes without touching the target repository.
+It creates `.agent/kb/config.yaml`, `.agent/kb/AGENT_GUIDE.md`, `KB_PLAN.md`, and reserved directories for `_draft/`, `_impact/`, and `_validation/`. It does not generate KB prose, run repository analysis, or overwrite existing scaffold files unless `--force` is supplied. `--dry-run` prints the planned writes without touching the target repository.
 
 ## `.agent/kb/config.yaml`
 

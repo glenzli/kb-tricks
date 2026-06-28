@@ -30,7 +30,7 @@ ALLOWED_STATES = {
 }
 
 RESERVED_DIRS = {"_draft", "_impact", "_validation"}
-AUXILIARY_MD = {"GLOSSARY.md", "CHANGELOG.md", "ONBOARDING.md"}
+AUXILIARY_MD = {"AGENT_GUIDE.md", "GLOSSARY.md", "CHANGELOG.md", "ONBOARDING.md"}
 GRADE_ORDER = {"F": 0, "D": 1, "C": 2, "B": 3, "A": 4}
 
 
