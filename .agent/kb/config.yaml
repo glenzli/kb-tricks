@@ -9,7 +9,9 @@ include:
   - tools/**
   - templates/**
   - skills/kb-*/SKILL.md
-  - skills/moe-*/SKILL.md
+  - skills/review-*/SKILL.md
+  - skills/cycle-*/SKILL.md
+  - skills/*.md
   - spec/**
   - tests/**
   - .github/workflows/**

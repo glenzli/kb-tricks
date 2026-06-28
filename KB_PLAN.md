@@ -11,7 +11,7 @@ packaging metadata, and release outputs remain the source of truth.
 ## Artifact Boundary
 
 - Config: `.agent/kb/config.yaml`
-- Include: `kb_tricks/**`, `tools/**`, `templates/**`, `skills/kb-*/SKILL.md`, `skills/moe-*/SKILL.md`, `spec/**`, `tests/**`, `.github/workflows/**`, `pyproject.toml`, `MANIFEST.in`, `README.md`, `RELEASE.md`, `ROADMAP.md`
+- Include: `kb_tricks/**`, `tools/**`, `templates/**`, `skills/kb-*/SKILL.md`, `skills/review-*/SKILL.md`, `skills/cycle-*/SKILL.md`, `skills/*.md`, `spec/**`, `tests/**`, `.github/workflows/**`, `pyproject.toml`, `MANIFEST.in`, `README.md`, `RELEASE.md`, `ROADMAP.md`
 - Exclude: `dist/**`, `out/**`, `node_modules/**`, `vendor/**`, `build/**`, `*.egg-info/**`, `.venv/**`
 - Release Excluded: `.agent/**`, `KB_PLAN.md`
 
@@ -42,14 +42,14 @@ packaging metadata, and release outputs remain the source of truth.
   - **Status**: `built`
   - **LastValidated**: `2026-06-28`
 
-- [built] skill-template-contract
+- [stale] skill-template-contract
   - **ID**: `skill-template-contract`
   - **KB**: `.agent/kb/skills/templates-and-skills.md`
-  - **Sources**: `skills/kb-build/SKILL.md`, `skills/kb-audit/SKILL.md`, `skills/kb-query/SKILL.md`, `skills/kb-update/SKILL.md`, `skills/kb-plan/SKILL.md`, `skills/kb-init/SKILL.md`, `skills/kb-changelog/SKILL.md`, `skills/kb-migrate/SKILL.md`, `skills/kb-onboard/SKILL.md`, `skills/moe-cr/SKILL.md`, `skills/moe-design/SKILL.md`, `skills/moe-postmortem/SKILL.md`, `skills/moe-test/SKILL.md`, `templates/AGENT_GUIDE.md`, `templates/KB_PLAN.md`, `templates/config.yaml`, `templates/kb-doc.md`, `templates/query-answer.md`, `templates/validation.md`, `spec/KB_SPEC.md`
-  - **Focus**: Skill catalog responsibilities, target-repository agent guidance, template shape, provenance requirements, and the boundary between generated KB prose and deterministic CLI checks.
-  - **Tags**: `skills`, `templates`, `spec`, `provenance`
+  - **Sources**: `skills/README.md`, `skills/REVIEW_PROTOCOL.md`, `skills/kb-build/SKILL.md`, `skills/kb-audit/SKILL.md`, `skills/kb-query/SKILL.md`, `skills/kb-update/SKILL.md`, `skills/kb-plan/SKILL.md`, `skills/cycle-init/SKILL.md`, `skills/cycle-changelog/SKILL.md`, `skills/cycle-migrate/SKILL.md`, `skills/cycle-onboard/SKILL.md`, `skills/cycle-postmortem/SKILL.md`, `skills/review-code/SKILL.md`, `skills/review-design/SKILL.md`, `skills/review-test/SKILL.md`, `templates/AGENT_GUIDE.md`, `templates/KB_PLAN.md`, `templates/config.yaml`, `templates/kb-doc.md`, `templates/query-answer.md`, `templates/validation.md`, `spec/KB_SPEC.md`
+  - **Focus**: Skill catalog responsibilities, lifecycle grouping, shared review protocol, target-repository agent guidance, template shape, provenance requirements, and the boundary between generated KB prose and deterministic CLI checks.
+  - **Tags**: `skills`, `templates`, `spec`, `provenance`, `review`
   - **Docs Comparison**: spec/KB_SPEC.md defines structure; KB adds agent routing and practical maintenance guidance.
-  - **Status**: `built`
+  - **Status**: `stale`
   - **LastValidated**: `2026-06-28`
 
 - [built] release-packaging

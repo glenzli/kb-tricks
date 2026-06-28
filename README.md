@@ -96,19 +96,17 @@ python3 -B tools/release_rehearsal.py
 
 ## Skills
 
-The skills are grouped by development-cycle role:
+The complete catalog is summarized in [skills/README.md](./skills/README.md). Review skills share [skills/REVIEW_PROTOCOL.md](./skills/REVIEW_PROTOCOL.md).
 
-- **Context Layer**: `kb-plan`, `kb-build`, `kb-query`, `kb-update`, `kb-audit`, `kb-onboard`, `kb-changelog`, `kb-migrate`.
-- **Review Layer**: `moe-design`, `moe-cr`, `moe-test`.
-- **Evolution Layer**: `kb-migrate`, `moe-postmortem`, `kb-changelog`, `kb-onboard`.
+### Recipes
 
-The KB skills provide the context substrate. The review and evolution skills remain source-first and must not trust stale KB as authority.
+#### [cycle-init](./skills/cycle-init/SKILL.md) — Initialization Recipe
 
-### 🚀 [kb-init](./skills/kb-init/SKILL.md) — One-Click Orchestration Pipeline
+A thin orchestration recipe for scaffold, `kb-plan`, user confirmation, and the first bounded `kb-build` slice.
 
-An orchestrator meta-skill that autonomously drives the `kb-plan` -> `Human Confirmation` -> `kb-build` pipeline, providing a seamless "Plan & Execute" experience.
+### Context Layer
 
-### 🗺️ [kb-plan](./skills/kb-plan/SKILL.md) — Knowledge Base Manifest Planning
+#### [kb-plan](./skills/kb-plan/SKILL.md) — Knowledge Base Manifest Planning
 
 Scans the repository to identify high-signal boundaries and generates a structured long-lived `KB_PLAN.md` manifest.
 
@@ -118,7 +116,7 @@ Scans the repository to identify high-signal boundaries and generates a structur
 - **Signal-to-Noise Isolation**: Explicitly filters out boilerplate, tests, and dependencies
 - **Task Chunking**: Breaks down the documentation process into manageable, file-by-file tasks
 
-### 🧠 [kb-build](./skills/kb-build/SKILL.md) — Manifest Execution & KB Construction
+#### [kb-build](./skills/kb-build/SKILL.md) — Manifest Execution & KB Construction
 
 Executes the `KB_PLAN.md` manifest in bounded slices to build a high-signal knowledge base.
 
@@ -130,7 +128,7 @@ Executes the `KB_PLAN.md` manifest in bounded slices to build a high-signal know
 - **Context-Cleared Validation**: 3-D adversarial questions scored against KB-only access to prevent hallucination
 - **Dirty-Aware Fingerprinting**: Git state + content hashes for rot detection
 
-### 🔄 [kb-update](./skills/kb-update/SKILL.md) — Incremental Knowledge Maintenance
+#### [kb-update](./skills/kb-update/SKILL.md) — Incremental Knowledge Maintenance
 
 Keeps an existing KB fresh via fingerprint diffing and chunked scoped rewrites.
 
@@ -142,7 +140,7 @@ Keeps an existing KB fresh via fingerprint diffing and chunked scoped rewrites.
 - **Manifest Sync**: Keeps `KB_PLAN.md` lifecycle state in sync when files are added, updated, merged, or deprecated
 - **Context-Cleared Validation**: Reduced-scope self-evaluation (1-2 questions per changed doc)
 
-### 🔎 [kb-query](./skills/kb-query/SKILL.md) — Knowledge Base Query & Source Fallback
+#### [kb-query](./skills/kb-query/SKILL.md) — Knowledge Base Query & Source Fallback
 
 Anti-hallucination knowledge retrieval with automatic source code verification.
 
@@ -152,7 +150,7 @@ Anti-hallucination knowledge retrieval with automatic source code verification.
 - **Provenance Contract**: Every factual answer line marks KB, source fallback, or existing docs; inference is isolated and lintable
 - **Blindspot Reporting**: Honestly reports gaps instead of hallucinating
 
-### 🩺 [kb-audit](./skills/kb-audit/SKILL.md) — Knowledge Base Health Check
+#### [kb-audit](./skills/kb-audit/SKILL.md) — Knowledge Base Health Check
 
 Token-efficient KB health dashboard using metadata-only scanning.
 
@@ -162,63 +160,69 @@ Token-efficient KB health dashboard using metadata-only scanning.
 - **Glossary Coverage**: Checks glossary entries point to existing files
 - **Health Report**: A/B/C/D/F scoring with actionable recommendations
 
-### 📐 [moe-design](./skills/moe-design/SKILL.md) — Mixture-of-Experts Design Review
+### Review Layer
+
+Review skills are source-first. They may use KB only after the shared freshness gate passes.
+
+#### [review-design](./skills/review-design/SKILL.md) — Design Review
 
 Shift-left architecture review before any code is written.
 
 - **Layer 1** (5 Design Experts, parallel): Feasibility · Scalability · Complexity Risk · Security & Compliance · Operational Cost
 - **Layer 2** (Domain Expert): Dynamically generated per project paradigm
 - **Layer 3** (KB Consistency Expert, conditional): Cross-checks design proposals against existing architectural patterns in KB
-- **Aggregator**: Design Readiness Rating (🔴 Blocked → 🟠 Major Revisions → 🟡 Minor Revisions → 🟢 Ready → ✅ Excellent)
+- **Aggregator**: Design Readiness Rating (Blocked -> Major Revisions -> Minor Revisions -> Ready -> Excellent)
 
-### 🔍 [moe-cr](./skills/moe-cr/SKILL.md) — Mixture-of-Experts Code Review
+#### [review-code](./skills/review-code/SKILL.md) — Code Review
 
 Multi-dimensional code review using specialized expert prompts.
 
-- **Diff Triage Filter**: Pre-classifies files as 🟢 Trivial / 🟡 Standard / 🔴 Critical to skip noise and boost critical findings
+- **Diff Triage Filter**: Pre-classifies files as Trivial / Standard / Critical to skip noise and boost critical findings
 - **Layer 1** (6 Base Experts, parallel): Architecture · Logic Boundary · Security · Performance · Testability · Maintainability
 - **Layer 2** (Domain Expert): Dynamically generated per project paradigm (REST API, compiler, data pipeline, etc.)
 - **Layer 3** (KB Expert, conditional): Cross-checks diffs against KB knowledge chains with **Freshness Hard Gate** — skips if KB is stale
   - **Direct Impact** → `KB-Action: UPDATE` (auto)
   - **Indirect Impact** → `KB-Action: REVIEW` (user decision)
-- **Aggregator**: Dedup → Critical File Boost → Conflict Resolution → Risk Rating (🔴🟠🟡🟢✅)
+- **Aggregator**: Dedup -> Critical File Boost -> Conflict Resolution -> Risk Rating
 
-### 🎓 [kb-onboard](./skills/kb-onboard/SKILL.md) — Knowledge-Driven Onboarding
-
-Generates guided learning paths for new team members from existing KB.
-
-- **Topology-Sorted Reading Path**: Orders KB docs by dependency graph (foundations first)
-- **Core Concept Summaries**: 2-3 sentence "What You Need to Know" per module
-- **Comprehension Quizzes**: Architecture / Design Intent / Boundary questions with reference answers
-- **Personalization**: Optional focus on specific modules for targeted roles
-
-### 🧪 [moe-test](./skills/moe-test/SKILL.md) — Mixture-of-Experts Test Review
+#### [review-test](./skills/review-test/SKILL.md) — Test Review
 
 Multi-dimensional test quality review with KB contract cross-check.
 
 - **Layer 1** (4 Test Experts, parallel): Coverage Gaps · Assertion Quality · Test Maintainability · Boundary Conditions
 - **Layer 2** (Framework Expert): Dynamically generated per test framework (Jest, pytest, Go testing, etc.)
 - **Layer 3** (KB Contract Coverage, conditional): Cross-checks KB-documented contracts against actual test coverage
-- **Aggregator**: Test Health Rating (🔴 Unsafe → 🟠 Weak → 🟡 Adequate → 🟢 Good → ✅ Excellent)
+- **Aggregator**: Test Health Rating (Unsafe -> Weak -> Adequate -> Good -> Excellent)
 
-### 🚑 [moe-postmortem](./skills/moe-postmortem/SKILL.md) — Mixture-of-Experts Incident Postmortem
+### Evolution Layer
 
-Structured incident analysis with root cause tracing and KB fault propagation mapping.
+#### [cycle-migrate](./skills/cycle-migrate/SKILL.md) — Large-Scale Migration Planning
+
+Architecture migration planning with safe execution ordering.
+
+- **Impact Matrix**: Classifies each module as unaffected, adaptable, rewrite required, or deprecated
+- **Dependency-Sorted Execution**: Leaves-first, core-last migration sequence
+- **Migration Blueprint**: `MIGRATION_PLAN.md` with phased execution plan
+- **Post-Migration Guidance**: Auto-triggers `kb-update` + `kb-audit` + `review-test`
+
+#### [cycle-postmortem](./skills/cycle-postmortem/SKILL.md) — Incident Postmortem
+
+Structured incident analysis with root cause tracing and optional KB fault propagation mapping.
 
 - **Layer 1** (5 Postmortem Experts, parallel): Root Cause (5 Whys) · Blast Radius · Timeline Reconstruction · Defense Gap Analysis · Systemic Fix Recommendations
 - **Layer 2** (KB Fault Propagation, conditional): Traces fault path through KB knowledge chains with Mermaid visualization
 - **Report**: Standardized postmortem with MTTD/MTTR, 5 Whys, action items, and propagation diagram
 
-### 🔀 [kb-migrate](./skills/kb-migrate/SKILL.md) — Large-Scale Migration Planning
+#### [cycle-onboard](./skills/cycle-onboard/SKILL.md) — Onboarding
 
-KB-driven architecture migration planning with safe execution ordering.
+Generates guided learning paths for new developers or agents from fresh project context.
 
-- **Impact Matrix**: Classifies each module as ⬜ Unaffected / 🟡 Adaptable / 🟠 Rewrite / 🔴 Deprecate
-- **Dependency-Sorted Execution**: Leaves-first, core-last migration sequence
-- **Migration Blueprint**: `MIGRATION_PLAN.md` with phased execution plan
-- **Post-Migration Guidance**: Auto-triggers `kb-update` + `kb-audit` + `moe-test`
+- **Topology-Sorted Reading Path**: Orders KB docs by dependency graph (foundations first)
+- **Core Concept Summaries**: 2-3 sentence "What You Need to Know" per module
+- **Comprehension Quizzes**: Architecture / Design Intent / Boundary questions with reference answers
+- **Personalization**: Optional focus on specific modules for targeted roles
 
-### 📝 [kb-changelog](./skills/kb-changelog/SKILL.md) — Knowledge Base Changelog
+#### [cycle-changelog](./skills/cycle-changelog/SKILL.md) — Context Changelog
 
 Auto-generates human-readable KB change summaries after updates.
 
@@ -229,19 +233,19 @@ Auto-generates human-readable KB change summaries after updates.
 ## How They Connect
 
 ```
-                      ┌──── moe-design ◄── RFC / 设计文档
+                      ┌──── review-design ◄── RFC / 设计文档
                       │
-kb-init (Orchestrator) ──drives──┐
+cycle-init (Orchestrator) ──drives──┐
                                  ▼
-kb-plan ──manifest──→ kb-build ──fingerprints──→ kb-update ──→ kb-changelog
+kb-plan ──manifest──→ kb-build ──fingerprints──→ kb-update ──→ cycle-changelog
                            │                          ↑
-                           ├──── KB ────→ moe-cr ─────┘ (KB-Action: UPDATE)
-                           ├──── KB ────→ moe-test (契约 ↔ 测试交叉验证)
-                           ├──── KB ────→ moe-postmortem (故障传播追踪)
-                           ├──── KB ────→ kb-migrate (迁移影响分析)
+                           ├──── KB ────→ review-code ─────┘ (KB-Action: UPDATE)
+                           ├──── KB ────→ review-test (契约 ↔ 测试交叉验证)
+                           ├──── KB ────→ cycle-postmortem (故障传播追踪)
+                           ├──── KB ────→ cycle-migrate (迁移影响分析)
                            ├──── KB ────→ kb-query (查询 + 源码回退)
                            ├──── KB ────→ kb-audit (健康体检)
-                           └──── KB ────→ kb-onboard (新人引导)
+                           └──── KB ────→ cycle-onboard (新人引导)
 ```
 
 ## License
@@ -347,19 +351,17 @@ python3 -B tools/release_rehearsal.py
 
 ## 技能一览
 
-这些技能按开发周期职责分组：
+完整目录见 [skills/README.md](./skills/README.md)。Review 技能共同遵守 [skills/REVIEW_PROTOCOL.md](./skills/REVIEW_PROTOCOL.md)。
 
-- **Context Layer**：`kb-plan`、`kb-build`、`kb-query`、`kb-update`、`kb-audit`、`kb-onboard`、`kb-changelog`、`kb-migrate`。
-- **Review Layer**：`moe-design`、`moe-cr`、`moe-test`。
-- **Evolution Layer**：`kb-migrate`、`moe-postmortem`、`kb-changelog`、`kb-onboard`。
+### Recipes
 
-KB 技能提供上下文底座。Review 和 evolution 技能仍然以源码为权威，不能把 stale KB 当作事实来源。
+#### [cycle-init](./skills/cycle-init/SKILL.md) — 初始化 recipe
 
-### 🚀 [kb-init](./skills/kb-init/SKILL.md) — 一键编排流水线
+一个薄编排 recipe，负责 scaffold、`kb-plan`、用户确认和第一个 bounded `kb-build` 切片。
 
-一个"元技能 (Meta-Skill)"，它负责自主编排 `kb-plan` -> `人类确认` -> `kb-build` 这一完整的"规划与执行 (Plan & Execute)"流水线，提供顺滑的交互体验。
+### Context Layer
 
-### 🗺️ [kb-plan](./skills/kb-plan/SKILL.md) — 知识库 Manifest 规划
+#### [kb-plan](./skills/kb-plan/SKILL.md) — 知识库 Manifest 规划
 
 通过宏观扫描代码库，区分高信噪比边界，并生成结构化、可长期维护的 `KB_PLAN.md` Manifest。
 
@@ -369,7 +371,7 @@ KB 技能提供上下文底座。Review 和 evolution 技能仍然以源码为�
 - **信噪比隔离**：显式过滤样板代码、测试文件和外部依赖
 - **任务分块**：将文档化过程拆解为可管理、防上下文溢出的逐文件任务
 
-### 🧠 [kb-build](./skills/kb-build/SKILL.md) — Manifest 执行与知识库构建
+#### [kb-build](./skills/kb-build/SKILL.md) — Manifest 执行与知识库构建
 
 按小切片执行 `KB_PLAN.md` Manifest，构建高信噪比、低维护成本的知识库。
 
@@ -381,7 +383,7 @@ KB 技能提供上下文底座。Review 和 evolution 技能仍然以源码为�
 - **清空上下文验证**：架构/设计意图/边界三维提问，仅允许基于 KB 作答以防幻觉
 - **dirty-aware 源码指纹**：Git 状态 + 内容哈希用于知识腐烂检测
 
-### 🔄 [kb-update](./skills/kb-update/SKILL.md) — 增量知识维护
+#### [kb-update](./skills/kb-update/SKILL.md) — 增量知识维护
 
 通过指纹比对和分块范围性重写，保持知识库的时效性。
 
@@ -393,7 +395,7 @@ KB 技能提供上下文底座。Review 和 evolution 技能仍然以源码为�
 - **Manifest 同步**：新增、更新、合并或废弃文件时同步更新 `KB_PLAN.md` 生命周期状态
 - **清空上下文验证**：缩小范围的自我评估（每个变更文档 1-2 个问题）
 
-### 🔎 [kb-query](./skills/kb-query/SKILL.md) — 知识库查询与源码回退
+#### [kb-query](./skills/kb-query/SKILL.md) — 知识库查询与源码回退
 
 带有反幻觉机制的知识库检索，不完整时自动回退到源码验证。
 
@@ -403,7 +405,7 @@ KB 技能提供上下文底座。Review 和 evolution 技能仍然以源码为�
 - **来源契约**：每条事实回答标注 KB、源码回退或现有 docs；推断隔离并可被 lint
 - **盲区上报**：诚实报告知识空白，而非幻觉填充
 
-### 🩺 [kb-audit](./skills/kb-audit/SKILL.md) — 知识库健康体检
+#### [kb-audit](./skills/kb-audit/SKILL.md) — 知识库健康体检
 
 省 Token 的元数据扫描式健康仪表盘。
 
@@ -413,63 +415,69 @@ KB 技能提供上下文底座。Review 和 evolution 技能仍然以源码为�
 - **词汇表覆盖**：检查词汇表条目是否指向存在的文件
 - **健康报告**：A/B/C/D/F 评级 + 可操作的改进建议
 
-### 📐 [moe-design](./skills/moe-design/SKILL.md) — 混合专家设计审查
+### Review Layer
+
+Review 技能以源码为权威。只有相关 KB 通过共同的新鲜度门控后，才允许使用 KB 交叉检查。
+
+#### [review-design](./skills/review-design/SKILL.md) — 设计审查
 
 在代码编写之前对架构提案进行"左移 (Shift-Left)"审查。
 
 - **Layer 1**（5 个设计专家，并行）：可行性 · 可扩展性 · 复杂度风险 · 安全与合规 · 运维成本
 - **Layer 2**（领域专家）：根据项目范式动态生成
 - **Layer 3**（KB 一致性专家，条件触发）：将设计提案与 KB 中现有的架构模式进行交叉验证
-- **聚合器**：设计就绪度评级（🔴 返工 → 🟠 重大修改 → 🟡 小幅修改 → 🟢 就绪 → ✅ 优秀）
+- **聚合器**：设计就绪度评级（返工 -> 重大修改 -> 小幅修改 -> 就绪 -> 优秀）
 
-### 🔍 [moe-cr](./skills/moe-cr/SKILL.md) — 混合专家代码审查
+#### [review-code](./skills/review-code/SKILL.md) — 代码审查
 
 使用专业化的专家提示词进行多维度代码审查。
 
-- **差异分级过滤器**：预先将文件分为 🟢 琐碎 / 🟡 标准 / 🔴 关键，跳过噪音并提升关键发现的严重级别
+- **差异分级过滤器**：预先将文件分为琐碎 / 标准 / 关键，跳过噪音并提升关键发现的严重级别
 - **Layer 1**（6 个基础专家，并行）：架构 · 逻辑边界 · 安全性 · 性能 · 可测试性 · 可维护性
 - **Layer 2**（领域专家）：根据项目范式动态生成（REST API、编译器、数据管道等）
 - **Layer 3**（KB 专家，条件触发）：将 diff 与 KB 知识链路交叉检查，并带有**新鲜度硬性门控** — KB 过期则直接跳过
   - **直接影响** → `KB-Action: UPDATE`（自动更新）
   - **间接影响** → `KB-Action: REVIEW`（由用户决定）
-- **聚合器**：去重 → 关键文件提升 → 冲突仲裁 → 风险评级（🔴🟠🟡🟢✅）
+- **聚合器**：去重 -> 关键文件提升 -> 冲突仲裁 -> 风险评级
 
-### 🎓 [kb-onboard](./skills/kb-onboard/SKILL.md) — 知识库驱动新人引导
-
-利用现有知识库为新团队成员生成有引导性的学习路径。
-
-- **拓扑排序阅读路径**：按知识依赖图排序（基础优先）
-- **核心概念速览**：每个模块 2-3 句"你需要知道什么"摘要
-- **理解检验测验**：架构 / 设计意图 / 边界条件问题 + 参考答案
-- **个性化扩展**：可选针对特定角色聚焦相关模块
-
-### 🧪 [moe-test](./skills/moe-test/SKILL.md) — 混合专家测试审查
+#### [review-test](./skills/review-test/SKILL.md) — 测试审查
 
 多维度测试质量审查，与 KB 契约交叉验证。
 
 - **Layer 1**（4 个测试专家，并行）：覆盖率缺口 · 断言质量 · 测试可维护性 · 边界条件
 - **Layer 2**（框架专家）：根据测试框架动态生成（Jest、pytest、Go testing 等）
 - **Layer 3**（KB 契约覆盖，条件触发）：将 KB 记录的契约与实际测试交叉比对
-- **聚合器**：测试健康度评级（🔴 不安全 → 🟠 薄弱 → 🟡 合格 → 🟢 良好 → ✅ 优秀）
+- **聚合器**：测试健康度评级（不安全 -> 薄弱 -> 合格 -> 良好 -> 优秀）
 
-### 🚑 [moe-postmortem](./skills/moe-postmortem/SKILL.md) — 混合专家事故复盘
+### Evolution Layer
 
-结构化事故分析：根因追踪 + KB 故障传播路径映射。
+#### [cycle-migrate](./skills/cycle-migrate/SKILL.md) — 大规模迁移规划
+
+架构迁移规划，安全排序执行。
+
+- **影响矩阵**：将每个模块分类为无影响、可适配、需重写或需废弃
+- **依赖排序执行**：叶子优先、核心最后的迁移顺序
+- **迁移蓝图**：`MIGRATION_PLAN.md` 分阶段执行计划
+- **迁移后联动**：自动触发 `kb-update` + `kb-audit` + `review-test`
+
+#### [cycle-postmortem](./skills/cycle-postmortem/SKILL.md) — 事故复盘
+
+结构化事故分析：根因追踪 + 可选 KB 故障传播路径映射。
 
 - **Layer 1**（5 个复盘专家，并行）：根因分析 (5 Why) · 影响面评估 · 时间线重建 · 防御缺失分析 · 系统性修复建议
 - **Layer 2**（KB 故障传播，条件触发）：沿 KB 知识链追踪故障传播路径 + Mermaid 可视化
 - **报告**：标准化复盘文档，含 MTTD/MTTR、5 Why、行动项和传播图
 
-### 🔀 [kb-migrate](./skills/kb-migrate/SKILL.md) — 大规模迁移规划
+#### [cycle-onboard](./skills/cycle-onboard/SKILL.md) — 入门引导
 
-基于 KB 的架构迁移规划，安全排序执行。
+利用新鲜项目上下文为新开发者或新 Agent 生成有引导性的学习路径。
 
-- **影响矩阵**：将每个模块分类为 ⬜ 无影响 / 🟡 可适配 / 🟠 需重写 / 🔴 需废弃
-- **依赖排序执行**：叶子优先、核心最后的迁移顺序
-- **迁移蓝图**：`MIGRATION_PLAN.md` 分阶段执行计划
-- **迁移后联动**：自动触发 `kb-update` + `kb-audit` + `moe-test`
+- **拓扑排序阅读路径**：按知识依赖图排序（基础优先）
+- **核心概念速览**：每个模块 2-3 句"你需要知道什么"摘要
+- **理解检验测验**：架构 / 设计意图 / 边界条件问题 + 参考答案
+- **个性化扩展**：可选针对特定角色聚焦相关模块
 
-### 📝 [kb-changelog](./skills/kb-changelog/SKILL.md) — 知识库变更日志
+#### [cycle-changelog](./skills/cycle-changelog/SKILL.md) — 上下文变更日志
 
 更新后自动生成人类可读的 KB 变更摘要。
 
@@ -480,19 +488,19 @@ KB 技能提供上下文底座。Review 和 evolution 技能仍然以源码为�
 ## 技能之间的关联
 
 ```
-                    ┌──── moe-design ◄── RFC / 设计文档
+                    ┌──── review-design ◄── RFC / 设计文档
                     │
-kb-init (编排器) ──驱动──┐
+cycle-init (编排器) ──驱动──┐
                         ▼
-kb-plan ──Manifest──→ kb-build ──指纹──→ kb-update ──→ kb-changelog
+kb-plan ──Manifest──→ kb-build ──指纹──→ kb-update ──→ cycle-changelog
                       │                    ↑
-                      ├──── KB ────→ moe-cr ─┘ (KB-Action: UPDATE)
-                      ├──── KB ────→ moe-test (契约 ↔ 测试交叉验证)
-                      ├──── KB ────→ moe-postmortem (故障传播追踪)
-                      ├──── KB ────→ kb-migrate (迁移影响分析)
+                      ├──── KB ────→ review-code ─┘ (KB-Action: UPDATE)
+                      ├──── KB ────→ review-test (契约 ↔ 测试交叉验证)
+                      ├──── KB ────→ cycle-postmortem (故障传播追踪)
+                      ├──── KB ────→ cycle-migrate (迁移影响分析)
                       ├──── KB ────→ kb-query (查询 + 源码回退)
                       ├──── KB ────→ kb-audit (健康体检)
-                      └──── KB ────→ kb-onboard (新人引导)
+                      └──── KB ────→ cycle-onboard (新人引导)
 ```
 
 ## 许可证

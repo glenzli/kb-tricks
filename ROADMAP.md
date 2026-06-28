@@ -16,7 +16,7 @@ Product layers:
 
 | Layer | Responsibility |
 |---|---|
-| Context Layer | Repository understanding through KB planning, building, querying, updating, auditing, onboarding, changelogging, and migration context. |
+| Context Layer | Repository understanding through KB planning, building, querying, updating, and auditing. |
 | Review Layer | Design, code, and test review workflows that use fresh KB when useful and fall back to source when needed. |
 | Evolution Layer | Migration planning, postmortem analysis, onboarding, and changelogging that turn project changes into reusable context. |
 
@@ -35,7 +35,8 @@ Distribution model: deterministic tools ship through normal releases under the `
 Current repository support:
 
 - `spec/KB_SPEC.md` defines the artifact schema.
-- `skills/` contains copyable Agent skill prompts, with one `SKILL.md` per released skill directory.
+- `skills/` contains copyable Agent skill prompts grouped as Context (`kb-*`), Review (`review-*`), Evolution (`cycle-*`), and thin recipes such as `cycle-init`.
+- `skills/REVIEW_PROTOCOL.md` defines the common source authority and KB freshness gate for review skills.
 - `templates/` provides starter artifacts for target repositories.
 - `kb_tricks/templates/` packages those starter artifacts so installed `kb scaffold` does not depend on a source checkout.
 - `kb_tricks/commands/` contains the released command implementations used by the installed `kb` CLI; the import package name is retained during the `dev-cycle` transition.
@@ -248,4 +249,4 @@ python3 tools/release_smoke.py
 
 - Automated KB prose generation as a deterministic tool. KB synthesis should remain a skill/Agent responsibility for now.
 - Deeper natural-language quality scoring for existing docs; current tools intentionally limit themselves to deterministic inventory and coverage signals.
-- Stronger MoE review integration through `KB-Action` outputs without letting review skills directly rewrite KB.
+- Stronger review expert integration through `KB-Action` outputs without letting review skills directly rewrite KB.

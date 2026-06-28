@@ -1,8 +1,8 @@
 ---
 id: "skill-template-contract"
 title: "Skill Template Contract"
-status: "built"
-notAuthoritative: false
+status: "stale"
+notAuthoritative: true
 fingerprint:
   - file: "skills/kb-build/SKILL.md"
     commit: "cbe149868fd1a918d6b2b4fe905241b8f03158b2"
@@ -29,42 +29,42 @@ fingerprint:
     tracked: true
     worktree: "clean"
     contentHash: "sha256:899189353ff76d30893891d7da379dc53321e97b752581a9a5162f387a79cba5"
-  - file: "skills/kb-init/SKILL.md"
+  - file: "skills/cycle-init/SKILL.md"
     commit: "cbe149868fd1a918d6b2b4fe905241b8f03158b2"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:adae3dea854d4f164378b7ea19a76200b763ffe56e32ca115f5507bff1f9342e"
-  - file: "skills/kb-changelog/SKILL.md"
+  - file: "skills/cycle-changelog/SKILL.md"
     commit: "cbe149868fd1a918d6b2b4fe905241b8f03158b2"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:1f5b0fa3e7b725d076af051b1ed0efdf087653bcafd9d2bee4e51a9789eda6b9"
-  - file: "skills/kb-migrate/SKILL.md"
+  - file: "skills/cycle-migrate/SKILL.md"
     commit: "cbe149868fd1a918d6b2b4fe905241b8f03158b2"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:975dd0eb758d5b9a1cbb3e7df00842d3349629b84e7e3252a6d8e4a4d9405676"
-  - file: "skills/kb-onboard/SKILL.md"
+  - file: "skills/cycle-onboard/SKILL.md"
     commit: "cbe149868fd1a918d6b2b4fe905241b8f03158b2"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:30cb1b4ef2fa344d112faa4b2d349020de224c6551b4467ba2aea71515a85ade"
-  - file: "skills/moe-cr/SKILL.md"
+  - file: "skills/review-code/SKILL.md"
     commit: "cbe149868fd1a918d6b2b4fe905241b8f03158b2"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:e74c32d526757a5ea053d27fa5df19ec147046f92f36ec19c5748ac9cd6acae8"
-  - file: "skills/moe-design/SKILL.md"
+  - file: "skills/review-design/SKILL.md"
     commit: "cbe149868fd1a918d6b2b4fe905241b8f03158b2"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:7dd182e5fc203b64e37073be673317c800345f391008fa1a7b19d2040caaa45e"
-  - file: "skills/moe-postmortem/SKILL.md"
+  - file: "skills/cycle-postmortem/SKILL.md"
     commit: "cbe149868fd1a918d6b2b4fe905241b8f03158b2"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:65acef8e4b81ac7df746e7143867283339e2ab848b16bfa93eda72a8f75a75b8"
-  - file: "skills/moe-test/SKILL.md"
+  - file: "skills/review-test/SKILL.md"
     commit: "cbe149868fd1a918d6b2b4fe905241b8f03158b2"
     tracked: true
     worktree: "clean"
@@ -104,7 +104,7 @@ fingerprint:
     tracked: true
     worktree: "clean"
     contentHash: "sha256:4a2437ff1f31bd8d5ceebdcab89ccb6d534cd7d2d8ab8e89fcaaf4e9039b17f4"
-tags: ["skills", "templates", "spec", "provenance"]
+tags: ["skills", "templates", "spec", "provenance", "review"]
 ---
 
 # Skill Template Contract
@@ -115,9 +115,16 @@ The `skills/` catalog defines agent workflows. The templates define the files
 those workflows should create. The deterministic CLI validates the resulting
 artifacts but does not replace skill judgment.
 
+Freshness note: this document tracks the current skill reshaping work, but its
+fingerprints must be refreshed after the rename/dehydration commit lands.
+
 ## Contracts
 
 - Skills should use bounded execution and select small slices from the manifest.
+- Skills are grouped by development-cycle role: Context (`kb-*`), Review
+  (`review-*`), Evolution (`cycle-*`), and thin recipes such as `cycle-init`.
+- Review skills share `skills/REVIEW_PROTOCOL.md`; dimension-specific review is
+  an internal pattern, not the public lifecycle skill name.
 - `AGENT_GUIDE.md` should be scaffolded into target repositories and referenced
   from root agent instructions such as `AGENTS.md` or `CLAUDE.md`.
 - Generated KB documents should carry dirty-aware fingerprints in frontmatter.
@@ -146,6 +153,8 @@ users can install the CLI, while skills can be copied or referenced separately.
 
 ## SSOT Links
 
+- Skill catalog: [skills/README.md](../../../skills/README.md)
+- Review protocol: [skills/REVIEW_PROTOCOL.md](../../../skills/REVIEW_PROTOCOL.md)
 - Build workflow: [skills/kb-build/SKILL.md](../../../skills/kb-build/SKILL.md)
 - Audit workflow: [skills/kb-audit/SKILL.md](../../../skills/kb-audit/SKILL.md)
 - Query workflow: [skills/kb-query/SKILL.md](../../../skills/kb-query/SKILL.md)
