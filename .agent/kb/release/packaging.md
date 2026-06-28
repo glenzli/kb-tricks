@@ -5,10 +5,10 @@ status: "built"
 notAuthoritative: false
 fingerprint:
   - file: "pyproject.toml"
-    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    commit: "7e31e43900298893edc0b6b6a8e19357fd995663"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:23fd65b3922618ab85ec41ab95423632f2543b687a1adc7a4cc7eed5845e49f7"
+    contentHash: "sha256:3477163dc119093991551a4a52d2d5e8409c060b5f24dd1b6218882d5e788ca8"
   - file: "MANIFEST.in"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
@@ -45,10 +45,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:2a3ce16cd0ca1e923c6ef13b8443c8ab46996b6baa113f2bde608d7c02e14727"
   - file: "tests/test_packaging.py"
-    commit: "a5b8df6a7a4061ae42d09146264884edbaa09d4c"
+    commit: "7e31e43900298893edc0b6b6a8e19357fd995663"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:a89a91e5997caf0053799683f5ded073919cdf71b8f14d148634dffd56ae87ce"
+    contentHash: "sha256:546a6ba1bf7afcc6451e86936b32ff71b6412221cb34af988782d8da383b260b"
   - file: ".github/workflows/ci.yml"
     commit: "95653ed4add23dcd17e68fd77148b694f0144c47"
     tracked: true
@@ -60,10 +60,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:a9039d42138230425cab3b2f7f3ed0c5e13afe4dcdc3d692563766ac68251e1b"
   - file: "RELEASE.md"
-    commit: "a5b8df6a7a4061ae42d09146264884edbaa09d4c"
+    commit: "7e31e43900298893edc0b6b6a8e19357fd995663"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:ce34440199bce3e45ae2ca6abd5f8e91609d9cc255b3c0721993c47b686b29da"
+    contentHash: "sha256:14f7addd1ecae2f990a577b4f62d35ee16effb78cc58a9f1412a9a1ec79a1448"
   - file: "ROADMAP.md"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
@@ -85,6 +85,9 @@ checkout.
 - [pyproject.toml](../../../pyproject.toml) defines the `kb` console script and
   includes `kb_tricks.commands` and `kb_tricks/templates/*` in the installed
   package.
+- Packaging metadata uses SPDX-style `license = "MIT"`, `license-files`, and
+  `setuptools>=77` so current setuptools builds do not emit deprecated
+  `project.license` table warnings.
 - [MANIFEST.in](../../../MANIFEST.in) keeps templates, specs, skills, and
   source-checkout wrappers in source distributions.
 - [release_smoke.py](../../../tools/release_smoke.py) runs the shared release
@@ -112,7 +115,5 @@ updates.
 ## Blindspots
 
 - The project has a local `.venv`, but release smoke should not rely on it in CI.
-- Setuptools 82 warns that `project.license` as a TOML table is deprecated and
-  must move to current license metadata before 2027-02-18.
 - The first real tag/release still needs a decision on versioning and publish
   destination.
