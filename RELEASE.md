@@ -13,9 +13,13 @@ From a clean checkout:
 ```bash
 python3 -m pip install .
 kb self-check --json
+mkdir -p /tmp/kb-smoke
 kb scaffold --repo /tmp/kb-smoke --dry-run
 kb query-lint templates/query-answer.md
 ```
+
+`kb scaffold` expects `--repo` to point at an existing repository directory; the
+smoke path is created explicitly so the example matches that contract.
 
 If the environment has `pip` but no importable `setuptools`, use a virtual environment and install build dependencies there. In network-restricted environments, avoid build isolation after the venv has `setuptools`:
 
@@ -30,6 +34,7 @@ When running from a source checkout without installing:
 
 ```bash
 python3 -B -m kb_tricks.cli self-check --json
+mkdir -p /tmp/kb-smoke
 python3 tools/kb_scaffold.py --repo /tmp/kb-smoke --dry-run
 python3 tools/kb_query_lint.py templates/query-answer.md
 ```

@@ -72,6 +72,16 @@ class PackagingTests(unittest.TestCase):
         self.assertTrue(any("query-lint --json templates/query-answer.md" in item for item in rendered))
         self.assertIn("git diff --check", rendered)
 
+    def test_release_docs_create_scaffold_target_before_smoke(self):
+        release_notes = (PROJECT_ROOT / "RELEASE.md").read_text(encoding="utf-8")
+
+        self.assertIn("mkdir -p /tmp/kb-smoke", release_notes)
+        self.assertIn("kb scaffold --repo /tmp/kb-smoke --dry-run", release_notes)
+        self.assertIn(
+            "python3 tools/kb_scaffold.py --repo /tmp/kb-smoke --dry-run",
+            release_notes,
+        )
+
     def test_ci_workflow_uses_release_smoke(self):
         workflow = (PROJECT_ROOT / ".github" / "workflows" / "ci.yml").read_text(
             encoding="utf-8"
