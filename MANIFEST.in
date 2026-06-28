@@ -5,6 +5,5 @@ include LICENSE
 include pyproject.toml
 recursive-include templates *
 recursive-include spec *.md
-recursive-include kb-* *
-recursive-include moe-* *
+recursive-include skills *
 recursive-include kb_tricks/templates *

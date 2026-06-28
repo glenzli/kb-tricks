@@ -11,7 +11,7 @@ packaging metadata, and release outputs remain the source of truth.
 ## Artifact Boundary
 
 - Config: `.agent/kb/config.yaml`
-- Include: `kb_tricks/**`, `tools/**`, `templates/**`, `kb-*/SKILL.md`, `moe-*/SKILL.md`, `spec/**`, `tests/**`, `.github/workflows/**`, `pyproject.toml`, `MANIFEST.in`, `README.md`, `RELEASE.md`, `ROADMAP.md`
+- Include: `kb_tricks/**`, `tools/**`, `templates/**`, `skills/kb-*/SKILL.md`, `skills/moe-*/SKILL.md`, `spec/**`, `tests/**`, `.github/workflows/**`, `pyproject.toml`, `MANIFEST.in`, `README.md`, `RELEASE.md`, `ROADMAP.md`
 - Exclude: `dist/**`, `out/**`, `node_modules/**`, `vendor/**`, `build/**`, `*.egg-info/**`, `.venv/**`
 - Release Excluded: `.agent/**`, `KB_PLAN.md`
 
@@ -45,7 +45,7 @@ packaging metadata, and release outputs remain the source of truth.
 - [built] skill-template-contract
   - **ID**: `skill-template-contract`
   - **KB**: `.agent/kb/skills/templates-and-skills.md`
-  - **Sources**: `kb-build/SKILL.md`, `kb-audit/SKILL.md`, `kb-query/SKILL.md`, `kb-update/SKILL.md`, `kb-plan/SKILL.md`, `kb-init/SKILL.md`, `templates/KB_PLAN.md`, `templates/config.yaml`, `templates/kb-doc.md`, `templates/query-answer.md`, `templates/validation.md`, `spec/KB_SPEC.md`
+  - **Sources**: `skills/kb-build/SKILL.md`, `skills/kb-audit/SKILL.md`, `skills/kb-query/SKILL.md`, `skills/kb-update/SKILL.md`, `skills/kb-plan/SKILL.md`, `skills/kb-init/SKILL.md`, `templates/KB_PLAN.md`, `templates/config.yaml`, `templates/kb-doc.md`, `templates/query-answer.md`, `templates/validation.md`, `spec/KB_SPEC.md`
   - **Focus**: Skill responsibilities, template shape, provenance requirements, and the boundary between generated KB prose and deterministic CLI checks.
   - **Tags**: `skills`, `templates`, `spec`, `provenance`
   - **Docs Comparison**: spec/KB_SPEC.md defines structure; KB adds agent routing and practical maintenance guidance.

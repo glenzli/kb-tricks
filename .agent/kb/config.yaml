@@ -8,8 +8,8 @@ include:
   - kb_tricks/**
   - tools/**
   - templates/**
-  - kb-*/SKILL.md
-  - moe-*/SKILL.md
+  - skills/kb-*/SKILL.md
+  - skills/moe-*/SKILL.md
   - spec/**
   - tests/**
   - .github/workflows/**

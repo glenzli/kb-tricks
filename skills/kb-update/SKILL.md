@@ -9,7 +9,7 @@ description: "一个增量知识库维护技能，通过 diff-first 范围分析
 # 前置条件 (Prerequisites)
 - 一个之前由 `kb-build` 技能构建的知识库，且每个 KB 文件都包含符合标准 Frontmatter 模板的指纹 (Fingerprint) 元数据。
 - 项目中存在由 `kb-plan` 技能生成的 `KB_PLAN.md` Manifest 文件。
-- 必须能够访问 `kb-build/SKILL.md` 以便引用其中的规范。
+- 必须能够访问 `../kb-build/SKILL.md` 以便引用其中的规范。
 - 如果存在 `.agent/kb/config.yaml`，必须遵守 include / exclude / releaseExcluded / docs.existing。
 
 # 调用契约 (Invocation Contract)
@@ -80,7 +80,7 @@ description: "一个增量知识库维护技能，通过 diff-first 范围分析
 3. **对于补丁级变更**：更新现有 KB 文件中受影响的段落。保持文档的整体结构不变。
 4. **对于破坏性变更**：重写受影响的章节。更新所有指向已变更定义的 SSOT 交叉引用。更新或重绘相关的 Mermaid 图表。
 5. **对于新模块**：
-   - 参考 **`kb-build/SKILL.md` 第 3 步（构建认知地图文档）**中的标准 Frontmatter 模板和文档规范来创建新的 KB 文件。
+   - 参考 **`../kb-build/SKILL.md` 第 3 步（构建认知地图文档）**中的标准 Frontmatter 模板和文档规范来创建新的 KB 文件。
    - 新文件必须包含完整的 YAML Frontmatter（`id`, `title`, `status`, `notAuthoritative`, `fingerprint`, `tags`）。
    - 如涉及多组件联动，必须包含 Mermaid 图表。
 
@@ -94,7 +94,7 @@ description: "一个增量知识库维护技能，通过 diff-first 范围分析
 5. **废弃文件**：确认不再需要的 KB 标记为 `[deprecated]`，并确保没有残留死链指向它。
 
 ### 第 6 步：词汇表同步 (GLOSSARY Sync)
-1. 参考 **`kb-build/SKILL.md` 第 4 步（更新词汇表）**的 Markdown 表格 Schema。
+1. 参考 **`../kb-build/SKILL.md` 第 4 步（更新词汇表）**的 Markdown 表格 Schema。
 2. 扫描所有更新或新创建的 KB 文件以寻找术语变更：
    - **新术语**：附带同义词和对应的 KB 文档链接添加到 `GLOSSARY.md` 表格中。
    - **重命名术语**：更新现有条目，将旧名称保留为同义词。
@@ -102,7 +102,7 @@ description: "一个增量知识库维护技能，通过 diff-first 范围分析
 3. draft 或 dirty override 产生的术语默认不要进入正式 `GLOSSARY.md`，除非用户显式要求。
 
 ### 第 7 步：清空上下文自我评估并刷新验证产物 (Validation Artifact Refresh)
-与 **`kb-build/SKILL.md` 第 5 步**保持一致的验证方式，但范围缩小：
+与 **`../kb-build/SKILL.md` 第 5 步**保持一致的验证方式，但范围缩小：
 
 1. **为每个变更的 KB 文件**设计 1-2 个刁钻问题（而不是全量构建时的 2 个）。
 2. 至少要有一个问题覆盖到**具体的变更内容**（例如："`authenticate()` 现在返回什么类型？"）。

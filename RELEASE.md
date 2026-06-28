@@ -57,4 +57,4 @@ The install smoke should be run in an environment with standard Python packaging
 - `pyproject.toml` exposes `kb = "kb_tricks.cli:main"`.
 - `tools` is packaged so installed CLI commands can import deterministic tool modules.
 - `kb_tricks/templates/*` is packaged so `kb scaffold` works after installation.
-- Root-level `templates/`, `spec/`, and skill directories are included in source distributions for copy/reference workflows.
+- Root-level `templates/`, `spec/`, and `skills/` directories are included in source distributions for copy/reference workflows.

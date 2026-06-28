@@ -23,6 +23,7 @@ Distribution model: deterministic tools should ship through normal releases and 
 Current repository support:
 
 - `spec/KB_SPEC.md` defines the artifact schema.
+- `skills/` contains copyable Agent skill prompts, with one `SKILL.md` per released skill directory.
 - `templates/` provides starter artifacts for target repositories.
 - `kb_tricks/templates/` packages those starter artifacts so installed `kb scaffold` does not depend on a source checkout.
 - `tools/kb_scaffold.py` installs starter config, manifest, and reserved KB directories into a target repository without generating KB prose.

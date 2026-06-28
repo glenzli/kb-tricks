@@ -56,8 +56,7 @@ class PackagingTests(unittest.TestCase):
         self.assertIn("include RELEASE.md", manifest)
         self.assertIn("recursive-include templates *", manifest)
         self.assertIn("recursive-include spec *.md", manifest)
-        self.assertIn("recursive-include kb-* *", manifest)
-        self.assertIn("recursive-include moe-* *", manifest)
+        self.assertIn("recursive-include skills *", manifest)
         self.assertIn("recursive-include kb_tricks/templates *", manifest)
 
     def test_release_smoke_commands_cover_source_checks(self):

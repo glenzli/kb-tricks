@@ -4,32 +4,32 @@ title: "Skill Template Contract"
 status: "built"
 notAuthoritative: false
 fingerprint:
-  - file: "kb-build/SKILL.md"
+  - file: "skills/kb-build/SKILL.md"
     commit: "7dce569328f5dff8a073cc9dd15ba2baba6e40b8"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:2ff76531e4659305de1fbd73db5664f1948f645f426fd054ddca9c99ea721b1f"
-  - file: "kb-audit/SKILL.md"
+  - file: "skills/kb-audit/SKILL.md"
     commit: "63ec70532cbc23787518ad3d92896fe3de00e4df"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:99d35511886a8cdbd391297ea785ba034c36b4e327bc30452e228f73f4af1da9"
-  - file: "kb-query/SKILL.md"
+  - file: "skills/kb-query/SKILL.md"
     commit: "e33e8ed2a2bd4b04de971df5d19816abf869e827"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:d97bd24382492a32a29fe576dc9abefb2975ce6012720f7b57257a42dbdd3c70"
-  - file: "kb-update/SKILL.md"
+  - file: "skills/kb-update/SKILL.md"
     commit: "704c01f14d1650d59d24ef01a7e3a68ff2be9e95"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:743dda6ab8723f1ba08f1a1c82ee8cd2f33125ae3110a6bf19d446f4a0d5db4a"
-  - file: "kb-plan/SKILL.md"
+  - file: "skills/kb-plan/SKILL.md"
     commit: "63ec70532cbc23787518ad3d92896fe3de00e4df"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:899189353ff76d30893891d7da379dc53321e97b752581a9a5162f387a79cba5"
-  - file: "kb-init/SKILL.md"
+  - file: "skills/kb-init/SKILL.md"
     commit: "2d2ced5a833a4d57d84ee0452da7c3c98cbe7ace"
     tracked: true
     worktree: "clean"
@@ -95,9 +95,9 @@ users can install the CLI, while skills can be copied or referenced separately.
 
 ## SSOT Links
 
-- Build workflow: [kb-build/SKILL.md](../../../kb-build/SKILL.md)
-- Audit workflow: [kb-audit/SKILL.md](../../../kb-audit/SKILL.md)
-- Query workflow: [kb-query/SKILL.md](../../../kb-query/SKILL.md)
+- Build workflow: [skills/kb-build/SKILL.md](../../../skills/kb-build/SKILL.md)
+- Audit workflow: [skills/kb-audit/SKILL.md](../../../skills/kb-audit/SKILL.md)
+- Query workflow: [skills/kb-query/SKILL.md](../../../skills/kb-query/SKILL.md)
 - Artifact spec: [KB_SPEC.md](../../../spec/KB_SPEC.md)
 
 ## Blindspots
