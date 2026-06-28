@@ -25,7 +25,7 @@ If the environment has `pip` but no importable `setuptools`, use a virtual envir
 
 ```bash
 python3 -m venv /tmp/kb-tricks-smoke-venv
-/tmp/kb-tricks-smoke-venv/bin/python -m pip install "setuptools>=68"
+/tmp/kb-tricks-smoke-venv/bin/python -m pip install "setuptools>=77"
 /tmp/kb-tricks-smoke-venv/bin/python -m pip install --no-build-isolation .
 /tmp/kb-tricks-smoke-venv/bin/kb self-check --json
 ```

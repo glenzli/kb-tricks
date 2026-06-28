@@ -26,9 +26,12 @@ class PackagingTests(unittest.TestCase):
     def test_pyproject_declares_released_cli_entrypoint(self):
         data = tomllib.loads((PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
 
+        self.assertIn("setuptools>=77", data["build-system"]["requires"])
         self.assertEqual(data["project"]["name"], "kb-tricks")
         self.assertEqual(data["project"]["version"], __version__)
         self.assertEqual(data["project"]["requires-python"], ">=3.10")
+        self.assertEqual(data["project"]["license"], "MIT")
+        self.assertEqual(data["project"]["license-files"], ["LICENSE"])
         self.assertEqual(data["project"]["scripts"]["kb"], "kb_tricks.cli:main")
 
         include = set(data["tool"]["setuptools"]["packages"]["find"]["include"])
