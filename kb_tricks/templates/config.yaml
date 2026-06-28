@@ -1,4 +1,4 @@
-# kb-tricks artifact boundary config
+# dev-cycle artifact boundary config
 #
 # Copy to .agent/kb/config.yaml in the target repository and adjust before
 # running kb-plan.

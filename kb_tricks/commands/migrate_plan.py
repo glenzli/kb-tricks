@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Migrate legacy kb-tricks manifest entries to explicit task fields."""
+"""Migrate legacy dev-cycle manifest entries to explicit task fields."""
 
 from __future__ import annotations
 
@@ -32,9 +32,15 @@ class MigratedEntry:
     task_id: str
     status: str
     kb: str
-    sources: list[str]
-    tags: list[str]
+    sources: str
+    focus: str
+    tags: str
+    docs_comparison: str
+    last_validated: str | None
     title: str
+    preserved_fields: list[str]
+    missing_fields: list[str]
+    inferred_fields: list[str]
 
 
 def legacy_kb_path(value: str) -> str | None:
@@ -112,20 +118,121 @@ def fingerprint_sources(frontmatter: dict[str, Any] | None) -> list[str]:
     return result
 
 
-def entry_from_legacy(repo: Path, line: int, marker: str, legacy_name: str) -> MigratedEntry:
+def normalize_field_key(value: str) -> str:
+    return value.strip().lower().replace(" ", "")
+
+
+def block_field_values(block: list[str]) -> dict[str, str]:
+    fields: dict[str, str] = {}
+    for line in block:
+        match = FIELD_RE.match(line)
+        if not match:
+            continue
+        fields[normalize_field_key(match.group("key"))] = match.group("value").strip()
+    return fields
+
+
+def field_present(fields: dict[str, str], key: str) -> bool:
+    return normalize_field_key(key) in fields and bool(fields[normalize_field_key(key)].strip())
+
+
+def field_value(fields: dict[str, str], key: str) -> str:
+    return fields.get(normalize_field_key(key), "").strip()
+
+
+def infer_status(marker: str, frontmatter: dict[str, Any] | None) -> str:
+    if frontmatter and frontmatter.get("status"):
+        return normalize_status(str(frontmatter["status"]))
+    return normalize_status(marker)
+
+
+def entry_from_legacy(
+    repo: Path,
+    line: int,
+    marker: str,
+    legacy_name: str,
+    fields: dict[str, str],
+) -> MigratedEntry:
     kb = legacy_kb_path(legacy_name)
     if kb is None:  # pragma: no cover - guarded by caller
         raise ValueError(f"not a legacy KB path: {legacy_name}")
     frontmatter = parse_frontmatter(repo / kb) if (repo / kb).exists() else None
-    task_id = slugify(str(frontmatter.get("id"))) if frontmatter and frontmatter.get("id") else id_from_path(kb)
-    status = (
-        normalize_status(str(frontmatter.get("status")))
-        if frontmatter and frontmatter.get("status")
-        else normalize_status(marker)
-    )
-    tags = frontmatter_list(frontmatter.get("tags")) if frontmatter else []
-    if not tags:
-        tags = tags_from_path(kb)
+    preserved: list[str] = []
+    missing: list[str] = []
+    inferred: list[str] = ["KB"]
+
+    if field_present(fields, "ID"):
+        task_id = slugify(strip_value(field_value(fields, "ID")))
+        preserved.append("ID")
+    elif frontmatter and frontmatter.get("id"):
+        task_id = slugify(str(frontmatter["id"]))
+        inferred.append("ID")
+    else:
+        task_id = id_from_path(kb)
+        inferred.append("ID")
+
+    if field_present(fields, "Status"):
+        status = normalize_status(strip_value(field_value(fields, "Status")))
+        preserved.append("Status")
+    else:
+        status = infer_status(marker, frontmatter)
+        inferred.append("Status")
+
+    if field_present(fields, "Sources"):
+        sources = field_value(fields, "Sources")
+        preserved.append("Sources")
+    else:
+        frontmatter_sources = fingerprint_sources(frontmatter)
+        sources = format_csv(frontmatter_sources, "TBD")
+        if frontmatter_sources:
+            inferred.append("Sources")
+        else:
+            missing.append("Sources")
+
+    if field_present(fields, "Focus"):
+        focus = field_value(fields, "Focus")
+        preserved.append("Focus")
+    else:
+        focus = f"Migrated legacy KB entry for {title_from_path(kb)}."
+        inferred.append("Focus")
+
+    if field_present(fields, "Tags"):
+        tags = field_value(fields, "Tags")
+        preserved.append("Tags")
+    else:
+        frontmatter_tags = frontmatter_list(frontmatter.get("tags")) if frontmatter else []
+        tags = format_csv(frontmatter_tags or tags_from_path(kb), "TBD")
+        if tags == "TBD":
+            missing.append("Tags")
+        else:
+            inferred.append("Tags")
+
+    if field_present(fields, "Docs Comparison"):
+        docs_comparison = field_value(fields, "Docs Comparison")
+        preserved.append("Docs Comparison")
+    else:
+        docs_comparison = "TBD"
+        missing.append("Docs Comparison")
+
+    last_validated = None
+    if field_present(fields, "LastValidated"):
+        last_validated = field_value(fields, "LastValidated")
+        preserved.append("LastValidated")
+
+    field_order = [
+        "ID",
+        "KB",
+        "Sources",
+        "Focus",
+        "Tags",
+        "Docs Comparison",
+        "Status",
+        "LastValidated",
+    ]
+    preserved = [field for field in field_order if field in preserved]
+    missing = [field for field in field_order if field in missing]
+    inferred = [field for field in field_order if field in inferred]
+
     title = str(frontmatter.get("title")) if frontmatter and frontmatter.get("title") else title_from_path(kb)
     return MigratedEntry(
         line=line,
@@ -133,9 +240,15 @@ def entry_from_legacy(repo: Path, line: int, marker: str, legacy_name: str) -> M
         task_id=task_id,
         status=status,
         kb=kb,
-        sources=fingerprint_sources(frontmatter),
+        sources=sources,
+        focus=focus,
         tags=tags,
+        docs_comparison=docs_comparison,
+        last_validated=last_validated,
         title=title,
+        preserved_fields=preserved,
+        missing_fields=missing,
+        inferred_fields=inferred,
     )
 
 
@@ -144,17 +257,19 @@ def format_csv(values: list[str], fallback: str) -> str:
 
 
 def format_entry(entry: MigratedEntry) -> list[str]:
-    focus = f"Migrated legacy KB entry for {entry.title}."
-    return [
+    lines = [
         f"- [{entry.status}] {entry.task_id}",
         f"  - **ID**: `{entry.task_id}`",
         f"  - **KB**: `{entry.kb}`",
-        f"  - **Sources**: {format_csv(entry.sources, 'TBD')}",
-        f"  - **Focus**: {focus}",
-        f"  - **Tags**: {format_csv(entry.tags, 'TBD')}",
-        "  - **Docs Comparison**: TBD",
+        f"  - **Sources**: {entry.sources}",
+        f"  - **Focus**: {entry.focus}",
+        f"  - **Tags**: {entry.tags}",
+        f"  - **Docs Comparison**: {entry.docs_comparison}",
         f"  - **Status**: `{entry.status}`",
     ]
+    if entry.last_validated is not None:
+        lines.append(f"  - **LastValidated**: {entry.last_validated}")
+    return lines
 
 
 def block_fields(block: list[str]) -> set[str]:
@@ -184,6 +299,7 @@ def migrate_manifest(repo: Path, manifest: Path) -> tuple[str, list[MigratedEntr
             end += 1
         block = lines[index:end]
         fields = block_fields(block)
+        field_values = block_field_values(block)
         legacy_name = task_match.group("name")
         kb = legacy_kb_path(legacy_name)
         if kb and "kb" not in fields and "id" not in fields:
@@ -192,6 +308,7 @@ def migrate_manifest(repo: Path, manifest: Path) -> tuple[str, list[MigratedEntr
                 index + 1,
                 task_match.group("marker"),
                 legacy_name,
+                field_values,
             )
             entries.append(entry)
             output.extend(format_entry(entry))
@@ -209,8 +326,14 @@ def entry_to_dict(entry: MigratedEntry) -> dict[str, Any]:
         "status": entry.status,
         "kb": entry.kb,
         "sources": entry.sources,
+        "focus": entry.focus,
         "tags": entry.tags,
+        "docsComparison": entry.docs_comparison,
+        "lastValidated": entry.last_validated,
         "title": entry.title,
+        "preservedFields": entry.preserved_fields,
+        "missingFields": entry.missing_fields,
+        "inferredFields": entry.inferred_fields,
     }
 
 

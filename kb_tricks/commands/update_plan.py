@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plan bounded kb-tricks updates from deterministic impact data."""
+"""Plan bounded dev-cycle updates from deterministic impact data."""
 
 from __future__ import annotations
 
@@ -289,7 +289,7 @@ def build_update_plan(
     manifest_tasks = task_by_id(parse_manifest(manifest_path))
     config = parse_config(config_path)
     config_present = config_path.exists()
-    setup_warnings: list[dict[str, Any]] = []
+    setup_warnings: list[dict[str, Any]] = list(impact.get("setupWarnings", []))
     setup_candidate_files: set[str] = set()
     if not config_present:
         setup_candidate_files = {

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the kb-tricks release smoke checks."""
+"""Run the dev-cycle release smoke checks."""
 
 from __future__ import annotations
 
@@ -80,7 +80,7 @@ def main(argv: list[str]) -> int:
     include_tests = not args.skip_tests
     include_git_check = not args.skip_git_check
     commands = smoke_commands(args.installed, include_tests, include_git_check, args.kb)
-    with tempfile.TemporaryDirectory(prefix="kb-tricks-smoke-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="dev-cycle-smoke-") as tmp:
         repo = Path(tmp) / "project"
         repo.mkdir()
         commands.insert(

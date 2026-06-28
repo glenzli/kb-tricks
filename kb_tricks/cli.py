@@ -1,4 +1,4 @@
-"""Thin command dispatcher for kb-tricks deterministic tools."""
+"""Thin command dispatcher for dev-cycle deterministic context tools."""
 
 from __future__ import annotations
 

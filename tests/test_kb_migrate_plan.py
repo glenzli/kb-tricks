@@ -63,8 +63,10 @@ tags: ["runtime", "scanner"]
             entry = data["entries"][0]
             self.assertEqual(entry["id"], "scanner-state")
             self.assertEqual(entry["kb"], ".agent/kb/core/scanner-state.md")
-            self.assertEqual(entry["sources"], ["src/scanner.ts"])
-            self.assertEqual(entry["tags"], ["runtime", "scanner"])
+            self.assertEqual(entry["sources"], "src/scanner.ts")
+            self.assertEqual(entry["tags"], "runtime, scanner")
+            self.assertEqual(entry["inferredFields"], ["ID", "KB", "Sources", "Focus", "Tags", "Status"])
+            self.assertEqual(entry["missingFields"], ["Docs Comparison"])
             self.assertEqual(
                 (repo / "KB_PLAN.md").read_text(encoding="utf-8").strip(),
                 "# Knowledge Base Manifest\n\n## Task Manifest\n\n- [x] .agent/kb/core/scanner-state.md",
@@ -93,6 +95,48 @@ tags: ["runtime", "scanner"]
             self.assertIn("- **KB**: `.agent/kb/release/release-packaging.md`", text)
             self.assertIn("- **Sources**: TBD", text)
             self.assertIn("- **Docs Comparison**: TBD", text)
+
+    def test_existing_legacy_fields_are_preserved(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            (repo / "KB_PLAN.md").write_text(
+                """# Knowledge Base Manifest
+
+## Task Manifest
+
+- [ ] `.agent/kb/release/release-packaging.md`
+  - **Sources**: `src/cli/release.ts`, `.vscodeignore`, `package.json`
+  - **Focus**: Release packaging behavior.
+  - **Tags**: `release`, `packaging`
+  - **Docs Comparison**: `docs/release.md` covers user flow.
+  - **Status**: `stale`
+  - **LastValidated**: `2026-06-28`
+""",
+                encoding="utf-8",
+            )
+
+            proc, data = migrate_json(repo, "--write")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            entry = data["entries"][0]
+            self.assertEqual(
+                entry["preservedFields"],
+                ["Sources", "Focus", "Tags", "Docs Comparison", "Status", "LastValidated"],
+            )
+            self.assertEqual(entry["missingFields"], [])
+            text = (repo / "KB_PLAN.md").read_text(encoding="utf-8")
+            self.assertIn("- [stale] release-packaging", text)
+            self.assertIn(
+                "- **Sources**: `src/cli/release.ts`, `.vscodeignore`, `package.json`",
+                text,
+            )
+            self.assertIn("- **Focus**: Release packaging behavior.", text)
+            self.assertIn("- **Tags**: `release`, `packaging`", text)
+            self.assertIn(
+                "- **Docs Comparison**: `docs/release.md` covers user flow.",
+                text,
+            )
+            self.assertIn("- **LastValidated**: `2026-06-28`", text)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Scaffold kb-tricks artifacts into a target repository."""
+"""Scaffold dev-cycle artifacts into a target repository."""
 
 from __future__ import annotations
 

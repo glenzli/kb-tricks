@@ -1,6 +1,6 @@
-# kb-tricks Artifact Spec
+# dev-cycle KB Artifact Spec
 
-This document defines the stable artifacts used by `kb-tricks`. Skills may synthesize and maintain the KB, but deterministic tools should validate only the structures described here.
+This document defines the stable KB artifacts used by `dev-cycle`. Skills may synthesize and maintain the KB, but deterministic tools should validate only the structures described here.
 
 ## Authority Model
 
@@ -76,7 +76,7 @@ python3 tools/kb_docs.py --repo /path/to/project --check-links
 python3 tools/kb_docs.py --repo /path/to/project --duplicate-limit 5
 ```
 
-It reads `.agent/kb/config.yaml` `docs.existing`, expands matching Markdown documents, extracts headings, content hashes, local links, unmatched patterns, Manifest `Docs Comparison` coverage, dead local links, and low-cost duplicate hints. Duplicate hints include `severity` (`high`, `medium`, `low`) and `score`; direct source mentions are high severity, shared title/slug matches are medium, and tag-only matches are low. Generic tags such as `api`, `cli`, `docs`, `preview`, `release`, and `test` are ignored when they are the only match signal.
+It reads `.agent/kb/config.yaml` `docs.existing`, expands matching Markdown documents, extracts headings, content hashes, local links, unmatched patterns, Manifest `Docs Comparison` coverage, dead local links, and low-cost duplicate hints. Duplicate hints include `severity` (`high`, `medium`, `low`), `score`, and `sourceMentionKind` (`source`, `docs`, or `null`). Direct mentions of code/config source paths are high severity; source mentions that only reference general docs such as `README.md`, `docs/**`, or `spec/**` are medium; shared title/slug matches are medium; tag-only matches are low. Generic tags such as `api`, `cli`, `docs`, `preview`, `release`, and `test` are ignored when they are the only match signal.
 
 It does not decide whether prose is sufficient; that remains a skill-layer judgment. Text output limits duplicate hints by default so dead links and missing comparison work stay visible. `--json` and `--full-json` keep the complete `duplicateHints` list; `--summary-json` emits counts, global top duplicate hints, `topDuplicateHintsByTask`, dead-link counts, and Docs Comparison status without the full heading inventory. `--check-manifest` exits `1` when active Manifest tasks lack `Docs Comparison`, `--check-links` exits `1` when existing docs contain dead local links, and both exit `2` when the requested check cannot run.
 
@@ -120,7 +120,7 @@ kb migrate-plan --repo /path/to/project --write
 python3 tools/kb_migrate_plan.py --repo /path/to/project --json
 ```
 
-The migration is deterministic. It derives `ID` and `Tags` from the KB path, reads existing KB frontmatter when available for `id`, `status`, `tags`, `title`, and fingerprint `Sources`, and marks unknown `Sources` or `Docs Comparison` values as `TBD`. `--dry-run` is the default; `--write` is required to modify `KB_PLAN.md`.
+The migration is deterministic. It preserves existing legacy task fields when they are already present: `ID`, `Sources`, `Focus`, `Tags`, `Docs Comparison`, `Status`, and `LastValidated`. Missing fields are inferred from the KB path and existing KB frontmatter when possible: `id`, `status`, `tags`, `title`, and fingerprint `Sources`. Unknown required values such as absent `Sources` or `Docs Comparison` are marked as `TBD`. JSON output includes `preservedFields`, `missingFields`, and `inferredFields` so callers can tell whether migration retained human-written metadata or filled gaps mechanically. `--dry-run` is the default; `--write` is required to modify `KB_PLAN.md`.
 
 ### Manifest Selection
 
@@ -151,7 +151,7 @@ python3 tools/kb_impact.py --repo /path/to/project --files src/cli/release.ts --
 
 Exactly one scope option must be provided: `--staged`, `--worktree`, `--base`, `--since`, or `--files`. JSON output includes top-level `scopeMode` plus a `scope` object so automation can distinguish index changes, dirty worktree changes, branch-base changes, explicit commitish diffs, and manually supplied file lists.
 
-It maps changed files to Manifest tasks through `Sources`, KB paths, and KB frontmatter fingerprints. It also reports existing docs changes from `docs.existing`, special artifact changes such as `KB_PLAN.md` and `.agent/kb/config.yaml`, `possibleContextDocs` for development-doc paths such as `docs/dev/**` when config is missing, unmatched files, and a bounded `selectedTasks` slice. It does not read changed file contents or rewrite KB prose.
+It maps changed files to Manifest tasks through `Sources`, KB paths, and KB frontmatter fingerprints. It also reports existing docs changes from `docs.existing`, special artifact changes such as `KB_PLAN.md` and `.agent/kb/config.yaml`, `possibleContextDocs` for development-doc paths such as `docs/dev/**` when config is missing, `setupWarnings` for obvious KB support artifacts such as `.agent/kb/AGENT_GUIDE.md`, `.agent/kb/GLOSSARY.md`, and reserved support directories, unmatched files, and a bounded `selectedTasks` slice. KB support artifacts reported through `setupWarnings` are removed from `unmatchedFiles` so they do not look like source candidates. It does not read changed file contents or rewrite KB prose.
 
 ### Update Planning
 
@@ -166,7 +166,7 @@ python3 tools/kb_update_plan.py --repo /path/to/project --since HEAD~1 --json
 
 It reuses the same mutually exclusive scope options as `kb impact`, then adds dirty-source gates and bounded update actions. JSON output includes `actions`, `blocked`, `docsActions`, `newKbCandidates`, `specialActions`, `releaseExcludedChanges`, `setupWarnings`, and `policy`. Task actions include `targetKb`; draft task actions also include `draftTarget` under `.agent/kb/_draft/`. Draft new-KB candidates include `draftTarget` derived from the changed file stem.
 
-When `.agent/kb/config.yaml` is missing and changed `.agent/kb/**` files would otherwise appear as unmatched source candidates, the planner emits a `setupWarnings` entry with code `missing-config-kb-support-files` and removes those files from `newKbCandidates`. Development-doc paths such as `docs/dev/**` are reported as `possibleContextDocs` instead of ordinary new KB candidates until config declares whether they are existing docs, release-excluded context, or source inputs. It is read-only: it does not read changed file contents, rewrite KB prose, mutate `KB_PLAN.md`, or refresh fingerprints.
+When `.agent/kb/config.yaml` is missing and changed `.agent/kb/**` files would otherwise appear as unmatched source candidates, impact analysis emits a `setupWarnings` entry with code `missing-config-kb-support-files`; the planner preserves those warnings and removes the files from `newKbCandidates`. Development-doc paths such as `docs/dev/**` are reported as `possibleContextDocs` instead of ordinary new KB candidates until config declares whether they are existing docs, release-excluded context, or source inputs. It is read-only: it does not read changed file contents, rewrite KB prose, mutate `KB_PLAN.md`, or refresh fingerprints.
 
 ### Query Answer Schema
 

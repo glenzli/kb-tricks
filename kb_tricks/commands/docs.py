@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inventory existing docs for kb-tricks planning and querying."""
+"""Inventory existing docs for dev-cycle planning and querying."""
 
 from __future__ import annotations
 
@@ -43,6 +43,8 @@ GENERIC_TAGS = {
     "verification",
 }
 SEVERITY_SCORE = {"high": 3, "medium": 2, "low": 1}
+GENERAL_DOC_NAMES = {"README.md", "RELEASE.md", "ROADMAP.md", "CHANGELOG.md"}
+GENERAL_DOC_PREFIXES = ("docs/", "spec/")
 
 
 @dataclass
@@ -171,9 +173,24 @@ def task_slugs(task: ManifestTask) -> set[str]:
     return {heading_slug(value) for value in values if heading_slug(value)}
 
 
-def duplicate_severity(reasons: list[str]) -> str:
-    if any(reason.startswith("source-mentioned:") for reason in reasons):
+def strong_source_mentions(sources: list[str]) -> bool:
+    for source in sources:
+        normalized = source.replace("\\", "/")
+        if normalized in GENERAL_DOC_NAMES:
+            continue
+        if normalized.startswith(GENERAL_DOC_PREFIXES):
+            continue
+        if normalized.endswith(".md"):
+            continue
+        return True
+    return False
+
+
+def duplicate_severity(reasons: list[str], source_mentions: list[str]) -> str:
+    if source_mentions and strong_source_mentions(source_mentions):
         return "high"
+    if source_mentions:
+        return "medium"
     if any(reason.startswith("shared-title-or-slug:") for reason in reasons):
         return "medium"
     return "low"
@@ -211,7 +228,7 @@ def duplicate_hints(repo: Path, docs: list[ExistingDoc], tasks: list[ManifestTas
                 reasons.append("generic-tag-mentioned: " + ", ".join(generic_tag_mentions))
             if not reasons:
                 continue
-            severity = duplicate_severity(reasons)
+            severity = duplicate_severity(reasons, source_mentions)
             hints.append(
                 {
                     "taskId": task.task_id,
@@ -219,6 +236,13 @@ def duplicate_hints(repo: Path, docs: list[ExistingDoc], tasks: list[ManifestTas
                     "doc": doc.path,
                     "severity": severity,
                     "score": SEVERITY_SCORE[severity],
+                    "sourceMentionKind": (
+                        "source"
+                        if strong_source_mentions(source_mentions)
+                        else "docs"
+                        if source_mentions
+                        else None
+                    ),
                     "reasons": reasons,
                 }
             )

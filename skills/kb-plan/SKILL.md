@@ -34,7 +34,7 @@ description: "一个用于探索代码库并生成长期知识库 Manifest (KB_P
        - docs/**
    ```
 3. 如果不存在，基于仓库结构在 `KB_PLAN.md` 中生成一个 **Proposed Artifact Boundary** 区块，列出建议的 include / exclude / releaseExcluded / docs.existing，并暂停要求用户确认或调整。不要在边界未确认时继续生成细粒度任务。
-4. 如果当前环境可访问 `kb-tricks/tools/kb_scaffold.py`，可以先用 `python3 tools/kb_scaffold.py --repo <target> --dry-run` 展示 starter artifact 写入计划；只有用户确认后才真正 scaffold。该工具只安装初始 config、Manifest 和保留目录，不替代本技能的规划判断。
+4. 如果当前环境可访问 `dev-cycle/tools/kb_scaffold.py`，可以先用 `python3 tools/kb_scaffold.py --repo <target> --dry-run` 展示 starter artifact 写入计划；只有用户确认后才真正 scaffold。该工具只安装初始 config、Manifest 和保留目录，不替代本技能的规划判断。
 5. 可参考 `templates/config.yaml` 的结构生成建议配置；稳定字段定义见 `spec/KB_SPEC.md`。
 6. `releaseExcluded` 表示不应被发布产物语义吸收的上下文资产。规划时可以读取，但在报告中必须标注其不属于 release-facing docs。
 

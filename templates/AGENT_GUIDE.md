@@ -1,6 +1,6 @@
-# kb-tricks Agent Guide
+# dev-cycle Agent Guide
 
-This repository uses `kb-tricks` for AI-maintained development context.
+This repository uses `dev-cycle` for AI-assisted development lifecycle context.
 
 ## Read This First
 
@@ -14,7 +14,7 @@ This repository uses `kb-tricks` for AI-maintained development context.
 Add this short pointer to the repository's root `AGENTS.md`, `CLAUDE.md`, or equivalent AI instruction file:
 
 ```markdown
-This repository uses kb-tricks. Before planning, querying, or updating repository knowledge, read `.agent/kb/AGENT_GUIDE.md`. Treat KB as routing/context, not authority; verify factual claims against source, tests, config, release artifacts, or maintained docs.
+This repository uses dev-cycle. Before planning, querying, or updating repository knowledge, read `.agent/kb/AGENT_GUIDE.md`. Treat KB as routing/context, not authority; verify factual claims against source, tests, config, release artifacts, or maintained docs.
 ```
 
 ## First-Time Setup
@@ -64,7 +64,7 @@ Use `kb-update` after source changes.
 Use `kb-query` for provenance-first answers.
 Use `kb-audit` before relying on KB for review or planning.
 
-Skills may be copied into the target repository or referenced from the `kb-tricks` source repository. The deterministic `kb` CLI is the stable implementation boundary.
+Skills may be copied into the target repository or referenced from the `dev-cycle` source repository. The deterministic `kb` CLI is the stable context-tooling boundary.
 
 ## When To Stop And Ask
 

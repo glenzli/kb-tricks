@@ -221,6 +221,34 @@ docs:
                 ],
             )
 
+    def test_missing_config_groups_kb_support_files_as_setup_warnings(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            write_impact_repo(repo)
+            (repo / ".agent" / "kb" / "config.yaml").unlink()
+            init_repo(repo)
+            (repo / ".agent" / "kb" / "AGENT_GUIDE.md").write_text(
+                "# Agent Guide\n",
+                encoding="utf-8",
+            )
+
+            proc, data = impact_json(repo, "--worktree")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["unmatchedFiles"], [])
+            self.assertEqual(
+                data["setupWarnings"],
+                [
+                    {
+                        "code": "missing-config-kb-support-files",
+                        "files": [".agent/kb/AGENT_GUIDE.md"],
+                        "message": (
+                            "config missing; KB support files may be treated as source candidates"
+                        ),
+                    }
+                ],
+            )
+
     def test_base_maps_branch_diff_against_base_commitish(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "project"

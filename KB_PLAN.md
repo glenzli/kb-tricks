@@ -1,9 +1,9 @@
-# kb-tricks Knowledge Base Manifest
+# dev-cycle Knowledge Base Manifest
 
 ## Overall Approach
 
-This repository is both the implementation of deterministic `kb` tooling and
-the source of the kb-tricks skills/templates. The KB is intentionally small:
+This repository is both the implementation of deterministic `kb` context tooling
+and the source of the dev-cycle skills/templates. The KB is intentionally small:
 it routes agents to the right source files, explains cross-file contracts, and
 records validation questions. It is not authoritative. Source code, tests,
 packaging metadata, and release outputs remain the source of truth.

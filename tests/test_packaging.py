@@ -28,7 +28,7 @@ class PackagingTests(unittest.TestCase):
         data = tomllib.loads((PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
 
         self.assertIn("setuptools>=77", data["build-system"]["requires"])
-        self.assertEqual(data["project"]["name"], "kb-tricks")
+        self.assertEqual(data["project"]["name"], "dev-cycle")
         self.assertEqual(data["project"]["version"], __version__)
         self.assertEqual(data["project"]["requires-python"], ">=3.10")
         self.assertEqual(data["project"]["license"], "MIT")

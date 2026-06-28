@@ -292,7 +292,7 @@ def run_rehearsal(args: argparse.Namespace) -> RehearsalSummary:
     if not repo.is_dir():
         raise RehearsalError(f"repo does not exist: {repo}")
 
-    root = Path(tempfile.mkdtemp(prefix="kb-tricks-release-", dir="/private/tmp"))
+    root = Path(tempfile.mkdtemp(prefix="dev-cycle-release-", dir="/private/tmp"))
     source_dir = root / "source"
     dist_dir = root / "dist"
     success = False

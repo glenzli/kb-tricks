@@ -39,7 +39,7 @@ class KbScaffoldTests(unittest.TestCase):
             self.assertIn("README.md", config)
             self.assertIn("docs/**", config)
             guide = (repo / ".agent" / "kb" / "AGENT_GUIDE.md").read_text(encoding="utf-8")
-            self.assertIn("This repository uses `kb-tricks`", guide)
+            self.assertIn("This repository uses `dev-cycle`", guide)
 
     def test_scaffold_can_read_packaged_templates_without_source_templates(self):
         with tempfile.TemporaryDirectory() as tmp:

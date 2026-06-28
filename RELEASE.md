@@ -2,7 +2,7 @@
 
 ## Release Boundary
 
-`kb-tricks` ships deterministic tooling through the `kb` CLI. Skills remain repository-local instructions: a target repository may call an installed `kb`, run source-checkout wrappers in `tools/`, or reference this repository through an external mechanism such as `vasmc`.
+`dev-cycle` ships deterministic context tooling through the `kb` CLI. Skills remain repository-local instructions: a target repository may call an installed `kb`, run source-checkout wrappers in `tools/`, or reference this repository through an external mechanism such as `vasmc`.
 
 The target repository owns KB artifacts such as `.agent/kb/config.yaml`, `KB_PLAN.md`, `.agent/kb/**/*.md`, `_validation/`, and `index.json`. The installed package owns only the reusable CLI, deterministic tools, and starter templates.
 
@@ -24,10 +24,10 @@ smoke path is created explicitly so the example matches that contract.
 If the environment has `pip` but no importable `setuptools`, use a virtual environment and install build dependencies there. In network-restricted environments, avoid build isolation after the venv has `setuptools`:
 
 ```bash
-python3 -m venv /tmp/kb-tricks-smoke-venv
-/tmp/kb-tricks-smoke-venv/bin/python -m pip install "setuptools>=77"
-/tmp/kb-tricks-smoke-venv/bin/python -m pip install --no-build-isolation .
-/tmp/kb-tricks-smoke-venv/bin/kb self-check --json
+python3 -m venv /tmp/dev-cycle-smoke-venv
+/tmp/dev-cycle-smoke-venv/bin/python -m pip install "setuptools>=77"
+/tmp/dev-cycle-smoke-venv/bin/python -m pip install --no-build-isolation .
+/tmp/dev-cycle-smoke-venv/bin/kb self-check --json
 ```
 
 When running from a source checkout without installing:
@@ -66,8 +66,9 @@ The install smoke should be run in an environment with standard Python packaging
 
 ## Packaging Notes
 
+- `pyproject.toml` publishes the distribution as `dev-cycle`.
 - `pyproject.toml` exposes `kb = "kb_tricks.cli:main"`.
-- `kb_tricks.commands` contains the released command implementations used by installed CLI commands.
+- `kb_tricks.commands` contains the released command implementations used by installed CLI commands; the import package name is retained for compatibility during the rename.
 - `tools/kb_*.py` wrappers are included in source distributions for checkout and reference workflows.
 - `kb_tricks/templates/*` is packaged so `kb scaffold` works after installation.
 - Root-level `templates/`, `spec/`, and `skills/` directories are included in source distributions for copy/reference workflows.

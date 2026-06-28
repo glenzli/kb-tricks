@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Select bounded kb-tricks manifest tasks."""
+"""Select bounded dev-cycle manifest tasks."""
 
 from __future__ import annotations
 

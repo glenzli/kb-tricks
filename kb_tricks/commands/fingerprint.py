@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate and check dirty-aware kb-tricks source fingerprints."""
+"""Generate and check dirty-aware dev-cycle source fingerprints."""
 
 from __future__ import annotations
 

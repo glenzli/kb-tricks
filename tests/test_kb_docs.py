@@ -182,6 +182,46 @@ class KbDocsTests(unittest.TestCase):
             self.assertEqual(data["duplicateHints"], [])
             self.assertEqual(data["duplicateHintSeverityCounts"], {"high": 0, "medium": 0, "low": 0})
 
+    def test_general_doc_source_mentions_are_medium_severity(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "project"
+            repo.mkdir()
+            (repo / ".agent" / "kb").mkdir(parents=True)
+            (repo / "docs").mkdir()
+            (repo / ".agent" / "kb" / "config.yaml").write_text(
+                """docs:
+  existing:
+    - docs/**
+""",
+                encoding="utf-8",
+            )
+            (repo / "docs" / "brief.md").write_text(
+                "# Brief\n\nSee README.md for the overview.\n",
+                encoding="utf-8",
+            )
+            (repo / "KB_PLAN.md").write_text(
+                """# Knowledge Base Manifest
+
+## Task Manifest
+
+- [planned] overview-routing
+  - **ID**: `overview-routing`
+  - **KB**: `.agent/kb/overview/routing.md`
+  - **Sources**: `README.md`
+  - **Focus**: Overview routing.
+  - **Tags**: `docs`
+  - **Docs Comparison**: No existing docs.
+  - **Status**: `planned`
+""",
+                encoding="utf-8",
+            )
+
+            proc, data = docs_json(repo)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(data["duplicateHintSeverityCounts"], {"high": 0, "medium": 1, "low": 0})
+            self.assertEqual(data["duplicateHints"][0]["severity"], "medium")
+            self.assertEqual(data["duplicateHints"][0]["sourceMentionKind"], "docs")
+
     def test_check_manifest_fails_when_comparison_is_missing(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "project"

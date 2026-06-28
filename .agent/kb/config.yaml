@@ -1,6 +1,6 @@
-# kb-tricks artifact boundary config
+# dev-cycle artifact boundary config
 #
-# This repository dogfoods kb-tricks. The KB artifacts explain routing and
+# This repository dogfoods dev-cycle. The KB artifacts explain routing and
 # operational contracts, but source, tests, packaging metadata, and release
 # outputs remain authoritative.
 

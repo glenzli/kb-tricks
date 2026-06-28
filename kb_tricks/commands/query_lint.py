@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lint kb-tricks query answers for provenance and inference isolation."""
+"""Lint dev-cycle query answers for provenance and inference isolation."""
 
 from __future__ import annotations
 

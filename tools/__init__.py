@@ -1,1 +1,1 @@
-"""Source-checkout compatibility wrappers for kb-tricks commands."""
+"""Source-checkout compatibility wrappers for dev-cycle commands."""

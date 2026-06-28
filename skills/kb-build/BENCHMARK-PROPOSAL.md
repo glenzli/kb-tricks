@@ -1,4 +1,4 @@
-# kb-tricks 技能套件评测方案 (Benchmark Proposal)
+# dev-cycle 技能套件评测方案 (Benchmark Proposal)
 
 为了科学地评测 `kb-build` 及其衍生技能（如 `kb-update`, `kb-audit`, `moe-cr`）的有效性，我们需要结合**静态制品检查**、**动态检索测试**、**可控执行测试**和**维护抗衰退测试**，构建一条完整的评测 Benchmark 链路。
 

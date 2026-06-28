@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Map changed files to kb-tricks manifest tasks."""
+"""Map changed files to dev-cycle manifest tasks."""
 
 from __future__ import annotations
 
@@ -29,6 +29,8 @@ CONTEXT_DOC_PREFIXES = (
     "docs/context/",
     "dev/docs/",
 )
+KB_SUPPORT_FILES = {"AGENT_GUIDE.md", "GLOSSARY.md", "CHANGELOG.md", "ONBOARDING.md"}
+KB_RESERVED_DIRS = {"_draft", "_impact", "_validation"}
 
 
 @dataclass
@@ -180,6 +182,16 @@ def context_doc_to_dict(path: str) -> dict[str, str]:
     }
 
 
+def kb_support_file(path: str) -> bool:
+    normalized = normalize_path(path)
+    if not normalized.startswith(".agent/kb/"):
+        return False
+    parts = normalized.split("/")
+    if len(parts) >= 3 and parts[2] in KB_RESERVED_DIRS:
+        return True
+    return Path(normalized).name in KB_SUPPORT_FILES
+
+
 def impact_to_dict(impact: ImpactedTask) -> dict[str, Any]:
     data = task_to_dict(impact.task)
     data["matchedFiles"] = [
@@ -229,7 +241,26 @@ def build_impact_data(
         if not config_present and possible_context_doc(path)
     ]
     possible_context_files = {item["file"] for item in possible_context_docs}
-    unmatched = [path for path in raw_unmatched if path not in possible_context_files]
+    setup_support_files = [
+        path
+        for path in raw_unmatched
+        if not config_present and kb_support_file(path)
+    ]
+    setup_support_set = set(setup_support_files)
+    setup_warnings = []
+    if setup_support_files:
+        setup_warnings.append(
+            {
+                "code": "missing-config-kb-support-files",
+                "message": "config missing; KB support files may be treated as source candidates",
+                "files": sorted(setup_support_files),
+            }
+        )
+    unmatched = [
+        path
+        for path in raw_unmatched
+        if path not in possible_context_files and path not in setup_support_set
+    ]
     return {
         "schemaVersion": 1,
         "repo": str(repo),
@@ -243,6 +274,7 @@ def build_impact_data(
         "slice": slice_size,
         "docsChanges": docs_changes,
         "possibleContextDocs": possible_context_docs,
+        "setupWarnings": setup_warnings,
         "specialChanges": special_changes,
         "unmatchedFiles": unmatched,
         "warnings": warnings,
@@ -260,6 +292,8 @@ def print_markdown(data: dict[str, Any]) -> None:
         print(f"- Existing docs changes: {len(data['docsChanges'])}")
     if data.get("possibleContextDocs"):
         print(f"- Possible context docs: {len(data['possibleContextDocs'])}")
+    if data.get("setupWarnings"):
+        print(f"- Setup warnings: {len(data['setupWarnings'])}")
     if any(data["specialChanges"].values()):
         changed = [key for key, value in data["specialChanges"].items() if value]
         print("- Special changes: " + ", ".join(changed))
@@ -281,6 +315,13 @@ def print_markdown(data: dict[str, Any]) -> None:
         print("## Possible Context Docs")
         for item in data["possibleContextDocs"]:
             print(f"- {item['file']}: {item['recommendation']}")
+    if data.get("setupWarnings"):
+        print()
+        print("## Setup Warnings")
+        for warning in data["setupWarnings"]:
+            print(f"- {warning['message']}")
+            for path in warning["files"]:
+                print(f"  - {path}")
     if data["warnings"]:
         print()
         print("## Warnings")

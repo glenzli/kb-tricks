@@ -1,1 +1,1 @@
-"""Released deterministic command implementations for kb-tricks."""
+"""Released deterministic command implementations for dev-cycle."""

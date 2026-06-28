@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic kb-tricks artifact audit.
+"""Deterministic dev-cycle artifact audit.
 
 This tool validates the structures defined in spec/KB_SPEC.md. It does not
 generate or rewrite KB prose; that remains the job of the skills.

@@ -1,14 +1,26 @@
-# kb-tricks Next Design Plan
+# dev-cycle Next Design Plan
 
 ## Goal
 
-Move `kb-tricks` from a set of KB-generating skills into a controllable, auditable, incrementally maintainable AI development context system.
+Shape `dev-cycle` as a repo-native development lifecycle toolkit for AI-assisted engineering: context building, querying, updating, design review, code review, test review, migration planning, onboarding, changelogging, and postmortem analysis.
 
 The knowledge base is not the source of truth. Source code, configuration, tests, release artifacts, and maintained human-facing docs remain authoritative. The KB exists to route questions, compress context, explain cross-module contracts, and expose uncertainty.
 
+`dev-cycle` is not a project-management replacement, scheduler, database, or LLM runtime. Its scope is the repository-local development cycle and the deterministic checks that keep AI-assisted work bounded and auditable.
+
 ## Architecture
 
-`kb-tricks` should evolve in three layers:
+`dev-cycle` evolves in three product layers and three implementation layers.
+
+Product layers:
+
+| Layer | Responsibility |
+|---|---|
+| Context Layer | Repository understanding through KB planning, building, querying, updating, auditing, onboarding, changelogging, and migration context. |
+| Review Layer | Design, code, and test review workflows that use fresh KB when useful and fall back to source when needed. |
+| Evolution Layer | Migration planning, postmortem analysis, onboarding, and changelogging that turn project changes into reusable context. |
+
+Implementation layers:
 
 | Layer | Responsibility |
 |---|---|
@@ -16,9 +28,9 @@ The knowledge base is not the source of truth. Source code, configuration, tests
 | Spec Layer | Stable artifacts and schemas: `.agent/kb/config.yaml`, `KB_PLAN.md`, KB frontmatter, `_validation/`, and `index.json`. |
 | Tool Layer | Deterministic checks such as hashing, dirty-state detection, link validation, manifest validation, and CI exit codes. |
 
-The first implementation stage should strengthen the Skill and Spec layers without pretending that a full CLI already exists. CLI-shaped options such as `slice 2` or `dry-run` are interpreted as skill invocation contracts until a real tool layer is added.
+The tool layer should stay deterministic. It should not become an LLM executor or workflow engine; it gives skills scoped inputs, checks, and policy gates.
 
-Distribution model: deterministic tools should ship through normal releases and the stable `kb` CLI. Skills may call that released CLI directly when available; when operating inside a target repository, they may copy the released tool bundle or reference it through an external mechanism such as `vasmc`. The target repository should own KB artifacts, not the kb-tricks tool implementation.
+Distribution model: deterministic tools ship through normal releases under the `dev-cycle` Python distribution and the stable `kb` context CLI. Skills may call that released CLI directly when available; when operating inside a target repository, they may copy the released tool bundle or reference it through an external mechanism such as `vasmc`. The target repository should own lifecycle artifacts, not the dev-cycle tool implementation.
 
 Current repository support:
 
@@ -26,7 +38,7 @@ Current repository support:
 - `skills/` contains copyable Agent skill prompts, with one `SKILL.md` per released skill directory.
 - `templates/` provides starter artifacts for target repositories.
 - `kb_tricks/templates/` packages those starter artifacts so installed `kb scaffold` does not depend on a source checkout.
-- `kb_tricks/commands/` contains the released command implementations used by the installed `kb` CLI.
+- `kb_tricks/commands/` contains the released command implementations used by the installed `kb` CLI; the import package name is retained during the `dev-cycle` transition.
 - `tools/kb_*.py` are source-checkout wrappers around `kb_tricks.commands.*` for direct `python3 tools/kb_*.py` usage.
 - `kb_tricks.commands.scaffold` installs starter config, manifest, and reserved KB directories into a target repository without generating KB prose.
 - `kb_tricks.commands.manifest` selects bounded `KB_PLAN.md` tasks by status, ID/tag/path filters, and slice size; it does not execute or generate KB prose.
@@ -143,7 +155,7 @@ Suggested entry shape:
 
 ### 6. Existing docs comparison
 
-Many repositories already have useful docs. `kb-tricks` should not automatically create a second documentation island.
+Many repositories already have useful docs. `dev-cycle` should not automatically create a second documentation island.
 
 Planning and audit flows should be able to answer:
 
@@ -191,7 +203,7 @@ Each validation file should record questions, KB-only answers, citations, pass/f
 
 ### 10. Machine-readable index and CI
 
-`kb-tricks` can generate `.agent/kb/index.json` with document paths, terms, source files, fingerprints, links, tags, status, and staleness through `kb audit --write-index`.
+`dev-cycle` can generate `.agent/kb/index.json` with document paths, terms, source files, fingerprints, links, tags, status, and staleness through `kb audit --write-index`.
 
 The deterministic tool layer supports CI-friendly checks such as:
 

@@ -1,12 +1,14 @@
-# kb-tricks
+# dev-cycle
 
-> Agent-native skill suite for building, maintaining, querying, reviewing, testing, migrating, and onboarding codebases with AI.
+> Development lifecycle skills and deterministic checks for AI-assisted engineering.
 
-A collection of composable AI skills designed around **Cognitive Mapping**, **Adversarial Validation**, and **Mixture-of-Experts** patterns. These skills cover the full knowledge lifecycle: plan → build → maintain → query → audit → review design → review code → review tests → incident postmortem → migrate → changelog → onboard.
+`dev-cycle` is a repo-native toolkit for the software development lifecycle. It combines copyable AI skills, stable artifact contracts, and deterministic CLI checks for context building, querying, updating, design review, code review, test review, migration planning, onboarding, changelogging, and postmortem analysis.
+
+It is not a project-management replacement, scheduler, database, or LLM runtime. Source code, configuration, tests, release artifacts, and maintained human-facing docs remain authoritative. `dev-cycle` helps AI agents and developers work around those assets in smaller, auditable steps.
 
 ## Design Direction
 
-`kb-tricks` is evolving from a "KB generation" skill suite into a controllable, auditable, incrementally maintainable AI development context system.
+`dev-cycle` treats KB as one subsystem in a broader development-cycle workflow. The KB is the context layer; review and evolution skills use that layer when it is fresh, and fall back to source when it is not.
 
 The KB is an auxiliary context layer, not the authority for a repository. Source code, configuration, tests, release artifacts, and maintained human-facing docs remain authoritative. The KB should route questions, compress context, explain cross-module contracts, and expose uncertainty.
 
@@ -37,6 +39,8 @@ The next-phase design is tracked in [ROADMAP.md](./ROADMAP.md). The most importa
 - [tools/kb_query_lint.py](./tools/kb_query_lint.py): source-checkout wrapper for provenance linting of `kb-query` answers.
 - [tools/release_smoke.py](./tools/release_smoke.py): local/CI release smoke runner for tests, CLI import checks, scaffold dry-run, query lint, and whitespace checks.
 - [tools/release_rehearsal.py](./tools/release_rehearsal.py): full release rehearsal for sdist/wheel content boundaries, installed CLI checks, and packaging metadata warnings.
+
+The released Python distribution is `dev-cycle`. The import package remains `kb_tricks` for now, and the installed deterministic context CLI remains `kb`.
 
 Installed CLI example:
 
@@ -91,6 +95,14 @@ python3 -B tools/release_rehearsal.py
 ```
 
 ## Skills
+
+The skills are grouped by development-cycle role:
+
+- **Context Layer**: `kb-plan`, `kb-build`, `kb-query`, `kb-update`, `kb-audit`, `kb-onboard`, `kb-changelog`, `kb-migrate`.
+- **Review Layer**: `moe-design`, `moe-cr`, `moe-test`.
+- **Evolution Layer**: `kb-migrate`, `moe-postmortem`, `kb-changelog`, `kb-onboard`.
+
+The KB skills provide the context substrate. The review and evolution skills remain source-first and must not trust stale KB as authority.
 
 ### 🚀 [kb-init](./skills/kb-init/SKILL.md) — One-Click Orchestration Pipeline
 
@@ -238,15 +250,17 @@ kb-plan ──manifest──→ kb-build ──fingerprints──→ kb-update �
 
 ---
 
-# kb-tricks
+# dev-cycle
 
-> 面向 Agent 原生设计的技能套件：用 AI 构建、维护、查询、审查、测试、迁移知识库并引导新人入门。
+> 面向 AI 辅助研发的开发周期技能与确定性检查工具。
 
-一组可组合的 AI 技能，围绕**认知地图（Cognitive Mapping）**、**对抗性验证（Adversarial Validation）**和**混合专家（Mixture-of-Experts）**模式设计。覆盖知识全生命周期：规划 → 构建 → 维护 → 查询 → 体检 → 设计审查 → 代码审查 → 测试审查 → 事故复盘 → 迁移规划 → 变更日志 → 新人入门。
+`dev-cycle` 是一套面向代码仓库的软件开发周期辅助工具。它把可复制的 AI 技能、稳定的产物契约和确定性的 CLI 检查组合在一起，覆盖上下文构建、查询、更新、设计评审、代码评审、测试评审、迁移规划、入门引导、变更记录和事故复盘。
+
+它不是项目管理系统、调度器、数据库或 LLM runtime。源码、配置、测试、发布产物和面向人的维护文档仍然是权威。`dev-cycle` 的目标是帮助 AI agent 和开发者围绕这些权威资产进行更小步、更可审计的工作。
 
 ## 设计方向
 
-`kb-tricks` 正在从“生成 KB 的 skill 套件”演进为一个可控、可审计、可增量维护的 AI 开发上下文系统。
+`dev-cycle` 把 KB 视为更大开发周期工作流里的一个子系统。KB 是上下文层；review 和 evolution 技能可以在 KB 新鲜时使用它，在 KB 过期时回退到源码。
 
 KB 不是代码仓库的权威来源。源码、配置、测试、发布产物和面向人的维护文档仍然是权威。KB 的职责是路由问题、压缩上下文、解释跨模块契约，并显式暴露不确定性。
 
@@ -277,6 +291,8 @@ KB 不是代码仓库的权威来源。源码、配置、测试、发布产物�
 - [tools/kb_query_lint.py](./tools/kb_query_lint.py)：源码 checkout wrapper，用于 `kb-query` 回答来源类型与推断隔离检查。
 - [tools/release_smoke.py](./tools/release_smoke.py)：本地/CI release smoke 入口，统一运行测试、CLI import 检查、scaffold dry-run、query lint 和 whitespace 检查。
 - [tools/release_rehearsal.py](./tools/release_rehearsal.py)：完整 release 预演入口，用于验证 sdist/wheel 内容边界、安装态 CLI 和 packaging metadata 警告。
+
+发布到 Python 生态的 distribution 名称是 `dev-cycle`。当前过渡阶段，import package 仍然是 `kb_tricks`，安装后的确定性上下文 CLI 仍然是 `kb`。
 
 安装后的 CLI 示例：
 
@@ -330,6 +346,14 @@ python3 -B tools/release_rehearsal.py
 ```
 
 ## 技能一览
+
+这些技能按开发周期职责分组：
+
+- **Context Layer**：`kb-plan`、`kb-build`、`kb-query`、`kb-update`、`kb-audit`、`kb-onboard`、`kb-changelog`、`kb-migrate`。
+- **Review Layer**：`moe-design`、`moe-cr`、`moe-test`。
+- **Evolution Layer**：`kb-migrate`、`moe-postmortem`、`kb-changelog`、`kb-onboard`。
+
+KB 技能提供上下文底座。Review 和 evolution 技能仍然以源码为权威，不能把 stale KB 当作事实来源。
 
 ### 🚀 [kb-init](./skills/kb-init/SKILL.md) — 一键编排流水线
 
