@@ -35,12 +35,12 @@ packaging metadata, and release outputs remain the source of truth.
 - [built] deterministic-toolchain
   - **ID**: `deterministic-toolchain`
   - **KB**: `.agent/kb/toolchain/deterministic-tools.md`
-  - **Sources**: `kb_tricks/cli.py`, `kb_tricks/commands/__init__.py`, `kb_tricks/commands/audit.py`, `kb_tricks/commands/manifest.py`, `kb_tricks/commands/update_plan.py`, `kb_tricks/commands/impact.py`, `kb_tricks/commands/fingerprint.py`, `kb_tricks/commands/docs.py`, `kb_tricks/commands/query_lint.py`, `kb_tricks/commands/scaffold.py`, `tools/__init__.py`, `tools/kb_audit.py`, `tools/kb_manifest.py`, `tools/kb_update_plan.py`, `tools/kb_impact.py`, `tools/kb_fingerprint.py`, `tools/kb_docs.py`, `tools/kb_query_lint.py`, `tools/kb_scaffold.py`, `tests/test_kb_scaffold.py`
-  - **Focus**: CLI dispatch, package command implementations, source-checkout wrappers, deterministic audit/manifest/update planning, dirty-aware fingerprints, docs inventory, query provenance linting, scaffold boundaries, and scaffold audit behavior.
+  - **Sources**: `kb_tricks/cli.py`, `kb_tricks/commands/__init__.py`, `kb_tricks/commands/audit.py`, `kb_tricks/commands/manifest.py`, `kb_tricks/commands/migrate_plan.py`, `kb_tricks/commands/update_plan.py`, `kb_tricks/commands/impact.py`, `kb_tricks/commands/fingerprint.py`, `kb_tricks/commands/docs.py`, `kb_tricks/commands/query_lint.py`, `kb_tricks/commands/scaffold.py`, `tools/__init__.py`, `tools/kb_audit.py`, `tools/kb_manifest.py`, `tools/kb_migrate_plan.py`, `tools/kb_update_plan.py`, `tools/kb_impact.py`, `tools/kb_fingerprint.py`, `tools/kb_docs.py`, `tools/kb_query_lint.py`, `tools/kb_scaffold.py`, `tests/test_kb_cli.py`, `tests/test_kb_docs.py`, `tests/test_kb_impact.py`, `tests/test_kb_manifest.py`, `tests/test_kb_migrate_plan.py`, `tests/test_kb_scaffold.py`, `tests/test_kb_update_plan.py`
+  - **Focus**: CLI dispatch, package command implementations, source-checkout wrappers, deterministic audit/manifest/migration/update planning, dirty-aware fingerprints, docs inventory, query provenance linting, scaffold boundaries, context-doc noise control, and toolchain regression coverage.
   - **Tags**: `cli`, `audit`, `bounded`, `fingerprint`, `impact`
   - **Docs Comparison**: README lists commands, but the KB records how the tools compose and where source authority lives.
   - **Status**: `built`
-  - **LastValidated**: `2026-06-26`
+  - **LastValidated**: `2026-06-28`
 
 - [built] skill-template-contract
   - **ID**: `skill-template-contract`
@@ -50,7 +50,7 @@ packaging metadata, and release outputs remain the source of truth.
   - **Tags**: `skills`, `templates`, `spec`, `provenance`
   - **Docs Comparison**: spec/KB_SPEC.md defines structure; KB adds agent routing and practical maintenance guidance.
   - **Status**: `built`
-  - **LastValidated**: `2026-06-26`
+  - **LastValidated**: `2026-06-28`
 
 - [built] release-packaging
   - **ID**: `release-packaging`
@@ -60,4 +60,4 @@ packaging metadata, and release outputs remain the source of truth.
   - **Tags**: `release`, `packaging`, `ci`, `templates`
   - **Docs Comparison**: README and RELEASE document commands; KB explains why package resources, source templates, and CI smoke checks must move together.
   - **Status**: `built`
-  - **LastValidated**: `2026-06-26`
+  - **LastValidated**: `2026-06-28`

@@ -100,10 +100,10 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:3f11169b1c453b30b559d7b3c826bca12c25a981b883de65f66f50d2f8252533"
   - file: "spec/KB_SPEC.md"
-    commit: "e34ed786f4440147155ea52ec9aa991d0f795e97"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:63bdb42370757da82af927f76de866a9eda283e4230cd2ac0bf871a8b3ca28fb"
+    contentHash: "sha256:4a2437ff1f31bd8d5ceebdcab89ccb6d534cd7d2d8ab8e89fcaaf4e9039b17f4"
 tags: ["skills", "templates", "spec", "provenance"]
 ---
 
@@ -133,6 +133,9 @@ artifacts but does not replace skill judgment.
 - The spec now distinguishes compact summary JSON from full JSON for docs and
   audit outputs, and requires update-plan draft actions to expose the target
   authoritative KB separately from the draft path.
+- The spec now defines `migrate-plan` for legacy path-only Manifest entries,
+  `possibleContextDocs` for missing-config development docs, and grouped
+  duplicate-hint summaries for agent loops.
 
 ## Boundary Between Skill and CLI
 

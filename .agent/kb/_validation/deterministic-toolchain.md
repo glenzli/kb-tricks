@@ -27,6 +27,13 @@
 - **Citations**: `.agent/kb/toolchain/deterministic-tools.md`
 - **Result**: pass
 
+### Q4 Legacy Migration
+
+- **Question**: Which command migrates legacy path-only Manifest entries, and does it write by default?
+- **KB-only Answer**: `kb migrate-plan` converts legacy path-only Manifest entries into explicit task fields. It previews by default and only writes when `--write` is supplied.
+- **Citations**: `.agent/kb/toolchain/deterministic-tools.md`
+- **Result**: pass
+
 ## Blindspots
 
 - The validation confirms routing knowledge, not implementation correctness.

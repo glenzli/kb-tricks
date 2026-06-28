@@ -50,25 +50,25 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:2a3ce16cd0ca1e923c6ef13b8443c8ab46996b6baa113f2bde608d7c02e14727"
   - file: "tools/release_rehearsal.py"
-    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:3fb1431e04602e783e5c47e1b46af83a6d44b11dbbb284e736ea076cc6b350f6"
+    contentHash: "sha256:92310b091296ca2c473c89dd90895d4e97dba1395d3172b6b580b4ce685290f6"
   - file: "tests/test_packaging.py"
-    commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:ed90be8389a0da64c3d18415c6f6bea22bf25f68edd2e94b1c0c44dd6c5d1529"
+    contentHash: "sha256:9a4e8720f9450eefe2e0a96cd8a9e36589535dc281e23167bc087a9d2f22345a"
   - file: ".github/workflows/ci.yml"
     commit: "95653ed4add23dcd17e68fd77148b694f0144c47"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:6a42e1b9c8a575d8a67080adb5743355c02678380dca6af0ed77c42fef112c65"
   - file: "README.md"
-    commit: "e34ed786f4440147155ea52ec9aa991d0f795e97"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:2a3095ca6a1d7d8d9a5c7902fbc390317aed37df10d139629b4e3a56e1dc324d"
+    contentHash: "sha256:ea57b526af75231e978e62f1791df14fad8a48f84dce193f5d102763c04df52b"
   - file: "RELEASE.md"
     commit: "32d2c13f4f098138fe02d3f77147e1b85428f47e"
     tracked: true
@@ -107,7 +107,9 @@ checkout.
 - [release_rehearsal.py](../../../tools/release_rehearsal.py) exports committed
   `HEAD`, builds sdist and wheel in a temporary tree, checks package boundaries
   and license metadata, installs the wheel into a temporary venv, and runs
-  installed CLI smoke checks.
+  installed CLI smoke checks. The artifact boundary now includes the
+  `migrate-plan` command module in wheels and the source-checkout wrapper only
+  in sdists.
 - Manual scaffold smoke commands must create the target directory first because
   `kb scaffold --repo` targets an existing repository.
 - [ci.yml](../../../.github/workflows/ci.yml) verifies source smoke, package
@@ -117,7 +119,8 @@ checkout.
   release rehearsal boundaries.
 - [README.md](../../../README.md) is the public command surface for installed
   users; it now shows compact `--summary-json` entry points for `docs` and
-  `audit` without changing package boundaries.
+  `audit`, plus `migrate-plan` dry-run/write examples, without changing package
+  boundaries.
 
 ## Release Boundary
 

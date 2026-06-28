@@ -5,10 +5,10 @@ status: "built"
 notAuthoritative: false
 fingerprint:
   - file: "kb_tricks/cli.py"
-    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:e39dc3da8f031cc915418422f586184e781d6ab6f231c08629aca52eb4507422"
+    contentHash: "sha256:5fef537bc7afd51702b1a18d27dffd07122c735543a742db0d5537fcdcc1403a"
   - file: "kb_tricks/commands/__init__.py"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
@@ -20,30 +20,35 @@ fingerprint:
     worktree: "clean"
     contentHash: "sha256:7b9a0047a0e4defb206817274087d4f08b7326bd9334b2f99f3e7e7d5cd7b589"
   - file: "kb_tricks/commands/manifest.py"
-    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:8ba50351310cbb614fc89c069fdbcba55d925d859127b3c39f423e3661ab3482"
+    contentHash: "sha256:f8efa860e4d468d0f250b077cff0b664154ad27b5b70d45e4a353aad11beafc4"
+  - file: "kb_tricks/commands/migrate_plan.py"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:6f2beba8e02681b30479f11f35a37e2a9dbb3505209142ea67747ce3b054e4f5"
   - file: "kb_tricks/commands/update_plan.py"
-    commit: "e34ed786f4440147155ea52ec9aa991d0f795e97"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:09025d2f2b8f4f2ae9d36b3abba6bdedd63f668a475b44e9d8780e6d8105b454"
+    contentHash: "sha256:771cd82e453336d9bba12315d8d354fd1c5b6b519b45c240eba77267477d8641"
   - file: "kb_tricks/commands/impact.py"
-    commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:b935aa6da34dbcf0fb1991b557f3deec502af67fedfae34588e656501d0c5bdf"
+    contentHash: "sha256:7359a5399764e6f571e40f91949deaa139c773245577fae5111298131b877778"
   - file: "kb_tricks/commands/fingerprint.py"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:d38da0319caf13489b3b5b9bb656aed4b6447a5cd4462c5091613a27e20ccba3"
   - file: "kb_tricks/commands/docs.py"
-    commit: "e34ed786f4440147155ea52ec9aa991d0f795e97"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
     tracked: true
     worktree: "clean"
-    contentHash: "sha256:0e867a00736b02f795330f43eec7afd4960397b1ecc91a7b75ba5080ac1a40aa"
+    contentHash: "sha256:c0dd37ff290995bf34b0ddc726440da080397a95fbebadf8abc15e5f0ddbfc40"
   - file: "kb_tricks/commands/query_lint.py"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
@@ -69,6 +74,11 @@ fingerprint:
     tracked: true
     worktree: "clean"
     contentHash: "sha256:92e5b1743ac26e30ae7b32e760cd5c8a4cf7fd225f04ba57c7d8eb8999f00fdf"
+  - file: "tools/kb_migrate_plan.py"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:2d0014a1f241a023d747601279967ee56b3848997245a6d3516c6f91303c37c3"
   - file: "tools/kb_update_plan.py"
     commit: "deffe8781f912ab49c08903da4bfffb1e3ba6555"
     tracked: true
@@ -99,11 +109,41 @@ fingerprint:
     tracked: true
     worktree: "clean"
     contentHash: "sha256:c5f9b52d014189300ca3053fe90c1a74071d5e84befb0c73f4f09c17692c15b7"
+  - file: "tests/test_kb_cli.py"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:698a22baf8b11738dda0ebca62c45d9c585679046912d977f18cffd0a8e6bad9"
+  - file: "tests/test_kb_docs.py"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:75bcb5c310b1e0813ca62b9382c8c3ce41de7edc4599a622ea3330383cc7c15a"
+  - file: "tests/test_kb_impact.py"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:bd7e6ebbd94b37f8d36150862a60b15828086b28834cf08ad5189990e507d667"
+  - file: "tests/test_kb_manifest.py"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:52e6c4c7285b03b8fa15bcc667f62fe8502b9c7ddf717d24db6695085cde4e94"
+  - file: "tests/test_kb_migrate_plan.py"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:87f342f8dbf9108300b0bd061c6a78fb21d36c5a2d6721062d487d290758c505"
   - file: "tests/test_kb_scaffold.py"
     commit: "ae44a4ef50290a56cb3ace542242d2749d6a1eae"
     tracked: true
     worktree: "clean"
     contentHash: "sha256:4b4aeb22bb05411ae565d23f28720e768ffb15c9e251037a816a110e67924cc0"
+  - file: "tests/test_kb_update_plan.py"
+    commit: "3bc882c866bdbdfe53ca37d5eefc60cd10aab32c"
+    tracked: true
+    worktree: "clean"
+    contentHash: "sha256:6681cf8348f5fc539356ded5ee5ba668a89353f04dd6804d5e40cee97d0c0735"
 tags: ["cli", "audit", "bounded", "fingerprint", "impact"]
 ---
 
@@ -121,11 +161,17 @@ authoritative KB prose; skills and humans write or update the prose.
 ## Contracts
 
 - `kb manifest` reads `KB_PLAN.md` and enforces bounded selection with
-  `--slice`, `--only`, and status filters.
+  `--slice`, `--only`, and status filters. It warns when path-only legacy
+  Manifest entries should be migrated.
+- `kb migrate-plan` converts legacy path-only Manifest entries into explicit
+  task fields. Dry-run is the default; `--write` is required to mutate
+  `KB_PLAN.md`.
 - `kb fingerprint` records commit, tracked state, worktree state, and SHA-256
   content hashes for source files.
 - `kb impact` maps changed files to manifest tasks by sources, KB paths, and
-  KB fingerprints.
+  KB fingerprints. When config is missing, development-doc paths such as
+  `docs/dev/**` are reported as `possibleContextDocs` instead of ordinary
+  unmatched source files.
 - `kb update-plan` starts from diff impact and blocks dirty or untracked sources
   unless the user explicitly opts into draft or allow modes.
 - `kb update-plan` emits `targetKb` for task actions and `draftTarget` for
@@ -135,7 +181,8 @@ authoritative KB prose; skills and humans write or update the prose.
   candidate noise as `setupWarnings` instead of creating misleading KB topics.
 - `kb docs` inventories existing Markdown docs declared in boundary config and
   compares them with manifest tasks. Duplicate hints carry severity and generic
-  tag-only matches are down-ranked or suppressed.
+  tag-only matches are suppressed unless paired with source or slug evidence.
+  Summary JSON includes both global top hints and `topDuplicateHintsByTask`.
 - `kb audit` checks manifest coverage, KB freshness, links, validation files,
   boundary config, release-excluded hits, auxiliary agent guide files, and
   optional CI failure policies. `--summary-json` returns compact counts and
@@ -175,11 +222,16 @@ severity-ranked duplicate hints, explicit draft targets in update plans, and
 setup warnings for missing config cases that otherwise misclassify `.agent/kb`
 support files.
 
+The follow-up pass adds deterministic legacy Manifest migration, classifies
+missing-config `docs/dev/**` changes as possible context docs, and groups
+duplicate-hint summaries by task so one task cannot dominate an agent loop.
+
 ## SSOT Links
 
 - CLI dispatcher: [cli.py](../../../kb_tricks/cli.py)
 - Command package: [kb_tricks/commands](../../../kb_tricks/commands)
 - Audit implementation: [audit.py](../../../kb_tricks/commands/audit.py)
+- Manifest migration: [migrate_plan.py](../../../kb_tricks/commands/migrate_plan.py)
 - Update planner: [update_plan.py](../../../kb_tricks/commands/update_plan.py)
 - Impact mapper: [impact.py](../../../kb_tricks/commands/impact.py)
 - Source wrappers: [tools](../../../tools)

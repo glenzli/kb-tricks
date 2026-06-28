@@ -27,6 +27,13 @@
 - **Citations**: `.agent/kb/skills/templates-and-skills.md`
 - **Result**: pass
 
+### Q4 Spec Additions
+
+- **Question**: Which spec additions reduce pressure-test noise?
+- **KB-only Answer**: The spec adds `migrate-plan` for legacy Manifest entries, `possibleContextDocs` for missing-config development docs, and grouped duplicate-hint summaries.
+- **Citations**: `.agent/kb/skills/templates-and-skills.md`
+- **Result**: pass
+
 ## Blindspots
 
 - This validation does not inspect every MoE skill.
