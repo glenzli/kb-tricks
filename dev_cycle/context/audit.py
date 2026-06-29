@@ -116,6 +116,7 @@ class AuditResult:
     health_grade: str
     completeness_grade: str
     artifact_git_state: list[dict[str, str]]
+    manifest_coverage: dict[str, Any]
     failures: list[str]
 
 
@@ -135,6 +136,13 @@ def relpath(path: Path, root: Path) -> str:
         return path.resolve().relative_to(root.resolve()).as_posix()
     except ValueError:
         return path.as_posix()
+
+
+def normalize_path(value: str) -> str:
+    value = value.replace("\\", "/").strip()
+    while value.startswith("./"):
+        value = value[2:]
+    return value.rstrip("/")
 
 
 def strip_value(value: str) -> str:
@@ -420,6 +428,165 @@ def pattern_matches(path: str, pattern: str) -> bool:
 
 def in_patterns(path: str, patterns: list[str]) -> bool:
     return any(pattern_matches(path, pattern) for pattern in patterns)
+
+
+def matching_pattern(path: str, patterns: list[str]) -> str | None:
+    for pattern in patterns:
+        if pattern_matches(path, pattern):
+            return pattern
+    return None
+
+
+def git_list_files(repo: Path) -> list[str]:
+    code, stdout, _ = run_git(repo, ["ls-files"])
+    if code != 0:
+        return []
+    return sorted({normalize_path(line) for line in stdout.splitlines() if line.strip()})
+
+
+def context_support_kind(path: str, context_root: str) -> str | None:
+    normalized = normalize_path(path)
+    root = normalize_path(context_root)
+    if not root or not normalized.startswith(root + "/"):
+        return None
+    suffix = normalized[len(root) + 1 :]
+    parts = suffix.split("/")
+    if parts and parts[0] in RESERVED_DIRS:
+        return "reserved"
+    if Path(normalized).name in AUXILIARY_MD:
+        return "support"
+    return None
+
+
+def source_task_map(tasks: list[ManifestTask]) -> dict[str, list[str]]:
+    mapping: dict[str, list[str]] = {}
+    for task in tasks:
+        for source in task.sources:
+            normalized = normalize_path(source)
+            if not normalized:
+                continue
+            mapping.setdefault(normalized, []).append(task.task_id)
+    return {path: sorted(set(task_ids)) for path, task_ids in mapping.items()}
+
+
+def coverage_record(
+    path: str,
+    config: dict[str, list[str]],
+    *,
+    task_ids: list[str] | None = None,
+    kind: str | None = None,
+    recommendation: str | None = None,
+) -> dict[str, Any]:
+    include_pattern = matching_pattern(path, config.get("include", []))
+    exclude_pattern = matching_pattern(path, config.get("exclude", []))
+    release_pattern = matching_pattern(path, config.get("releaseExcluded", []))
+    docs_pattern = matching_pattern(path, config.get("docs.existing", []))
+    record: dict[str, Any] = {
+        "file": path,
+        "included": include_pattern is not None or not config.get("include", []),
+        "includePattern": include_pattern,
+        "excluded": exclude_pattern is not None,
+        "excludePattern": exclude_pattern,
+        "releaseExcluded": release_pattern is not None,
+        "releaseExcludedPattern": release_pattern,
+        "docsExisting": docs_pattern is not None,
+        "docsExistingPattern": docs_pattern,
+    }
+    if task_ids is not None:
+        record["taskIds"] = task_ids
+    if kind:
+        record["kind"] = kind
+    if recommendation:
+        record["recommendation"] = recommendation
+    return record
+
+
+def collect_manifest_coverage(
+    repo: Path,
+    context_root: Path,
+    tasks: list[ManifestTask],
+    config: dict[str, list[str]],
+) -> dict[str, Any]:
+    tracked_files = git_list_files(repo)
+    source_to_tasks = source_task_map(tasks)
+    context_root_rel = relpath(context_root, repo)
+    include = config.get("include", [])
+    exclude = config.get("exclude", [])
+    docs_existing = config.get("docs.existing", [])
+
+    covered_files: list[dict[str, Any]] = []
+    uncovered_files: list[dict[str, Any]] = []
+    ignored_files: list[dict[str, Any]] = []
+    release_excluded_files: list[dict[str, Any]] = []
+    docs_existing_files: list[dict[str, Any]] = []
+    context_support_files: list[dict[str, Any]] = []
+    outside_include_count = 0
+    scoped_count = 0
+
+    for path in tracked_files:
+        included = not include or in_patterns(path, include)
+        excluded = in_patterns(path, exclude)
+        release_excluded = in_patterns(path, config.get("releaseExcluded", []))
+        support_kind = context_support_kind(path, context_root_rel)
+        docs_existing_match = in_patterns(path, docs_existing)
+
+        if release_excluded:
+            release_excluded_files.append(coverage_record(path, config))
+        if excluded:
+            ignored_files.append(coverage_record(path, config, kind="exclude"))
+            continue
+        if not included:
+            outside_include_count += 1
+            continue
+
+        scoped_count += 1
+        if support_kind:
+            context_support_files.append(
+                coverage_record(path, config, kind=support_kind)
+            )
+            continue
+        if docs_existing_match:
+            docs_existing_files.append(coverage_record(path, config, kind="existing-docs"))
+            continue
+
+        task_ids = source_to_tasks.get(path, [])
+        if task_ids:
+            covered_files.append(coverage_record(path, config, task_ids=task_ids))
+            continue
+
+        if release_excluded:
+            recommendation = (
+                "add to a task Sources list if this is context input; otherwise narrow include, "
+                "add docs.existing, or exclude it intentionally"
+            )
+        else:
+            recommendation = (
+                "add to a task Sources list, add docs.existing, or adjust include/exclude"
+            )
+        uncovered_files.append(
+            coverage_record(path, config, recommendation=recommendation)
+        )
+
+    return {
+        "schemaVersion": 1,
+        "summary": {
+            "trackedFiles": len(tracked_files),
+            "scopedFiles": scoped_count,
+            "coveredFiles": len(covered_files),
+            "uncoveredFiles": len(uncovered_files),
+            "ignoredFiles": len(ignored_files),
+            "outsideIncludeFiles": outside_include_count,
+            "releaseExcludedFiles": len(release_excluded_files),
+            "docsExistingFiles": len(docs_existing_files),
+            "contextSupportFiles": len(context_support_files),
+        },
+        "coveredFiles": covered_files,
+        "uncoveredFiles": uncovered_files,
+        "ignoredFiles": ignored_files,
+        "releaseExcludedFiles": release_excluded_files,
+        "docsExistingFiles": docs_existing_files,
+        "contextSupportFiles": context_support_files,
+    }
 
 
 def audit_document(path: Path, repo: Path, context_root: Path) -> DocumentAudit:
@@ -750,6 +917,7 @@ def build_index(result: AuditResult) -> dict[str, Any]:
             "failures": result.failures,
         },
         "artifactGitState": result.artifact_git_state,
+        "manifestCoverage": result.manifest_coverage,
     }
     try:
         from .docs import collect_docs_data
@@ -805,6 +973,7 @@ def audit(repo: Path, context_root: Path, manifest: Path, config_path: Path) -> 
     boundary_violations, release_excluded_hits = collect_boundary_issues(
         tasks, documents, config
     )
+    manifest_coverage = collect_manifest_coverage(repo, context_root, tasks, config)
 
     planned_built_stale = active_tasks(tasks)
     coverage = metric_ratio(
@@ -868,6 +1037,7 @@ def audit(repo: Path, context_root: Path, manifest: Path, config_path: Path) -> 
         health_grade=health_grade,
         completeness_grade=completeness_grade,
         artifact_git_state=context_artifact_git_state(repo, context_root, manifest),
+        manifest_coverage=manifest_coverage,
         failures=[],
     )
 
@@ -893,6 +1063,10 @@ def failure_reasons(result: AuditResult, fail_on: list[str], min_score: str | No
         "orphaned": [doc.path for doc in docs if doc.orphaned],
         "untracked": result.untracked_context,
         "not-authoritative": [doc.path for doc in docs if doc.not_authoritative],
+        "manifest-coverage": [
+            item["file"]
+            for item in result.manifest_coverage.get("uncoveredFiles", [])
+        ],
     }
     failures: list[str] = []
     for name in fail_on:
@@ -923,6 +1097,7 @@ def result_to_dict(result: AuditResult) -> dict[str, Any]:
         result.release_excluded_hits,
         config,
     )
+    data["manifestCoverage"] = result.manifest_coverage
     data["releaseExcludedUses"] = [
         {
             "path": path,
@@ -985,6 +1160,9 @@ def summary_to_dict(result: AuditResult) -> dict[str, Any]:
             "boundaryViolations": len(result.boundary_violations),
             "releaseExcludedHits": len(result.release_excluded_hits),
             "artifactGitState": len(result.artifact_git_state),
+            "manifestCoverageUncovered": result.manifest_coverage["summary"][
+                "uncoveredFiles"
+            ],
         },
         "topIssues": {
             "stale": stale[:10],
@@ -996,6 +1174,7 @@ def summary_to_dict(result: AuditResult) -> dict[str, Any]:
             "missingValidation": result.validation_missing[:10],
             "failedValidation": result.validation_failed[:10],
             "boundaryViolations": result.boundary_violations[:10],
+            "manifestCoverage": result.manifest_coverage["uncoveredFiles"][:10],
         },
         "supportDocuments": [
             {
@@ -1009,6 +1188,14 @@ def summary_to_dict(result: AuditResult) -> dict[str, Any]:
             if doc.kind == "support"
         ],
         "releaseExcludedUses": release_excluded_summary(result.release_excluded_hits, config),
+        "manifestCoverage": {
+            "summary": result.manifest_coverage["summary"],
+            "uncoveredFiles": result.manifest_coverage["uncoveredFiles"][:20],
+            "ignoredFiles": result.manifest_coverage["ignoredFiles"][:20],
+            "releaseExcludedFiles": result.manifest_coverage["releaseExcludedFiles"][:20],
+            "docsExistingFiles": result.manifest_coverage["docsExistingFiles"][:20],
+            "contextSupportFiles": result.manifest_coverage["contextSupportFiles"][:20],
+        },
         "artifactGitState": result.artifact_git_state[:20],
     }
 
@@ -1052,6 +1239,15 @@ def print_markdown(result: AuditResult) -> None:
     print(f"- Failed validation files: {len(result.validation_failed)}")
     print(f"- Boundary violations: {len(result.boundary_violations)}")
     print(f"- Context artifact Git changes: {len(result.artifact_git_state)}")
+    print(
+        "- Manifest coverage gaps: "
+        f"{result.manifest_coverage['summary']['uncoveredFiles']}"
+    )
+    if result.manifest_coverage["uncoveredFiles"]:
+        print()
+        print("## Manifest Coverage Gaps")
+        for item in result.manifest_coverage["uncoveredFiles"][:20]:
+            print(f"- {item['file']}: {item['recommendation']}")
     print()
     if result.failures:
         print("## Policy Failures")
@@ -1083,6 +1279,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
             "orphaned",
             "untracked",
             "not-authoritative",
+            "manifest-coverage",
         ],
         help="Policy failure condition. May be repeated.",
     )

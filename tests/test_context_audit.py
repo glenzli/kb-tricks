@@ -172,6 +172,56 @@ class KbAuditTests(unittest.TestCase):
                 ],
             )
 
+    def test_manifest_coverage_reports_uncovered_tracked_sources(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = materialize_fixture(tmp, "valid-context")
+            extra = repo / "src" / "extra.py"
+            extra.write_text("VALUE = 1\n", encoding="utf-8")
+            run(["git", "add", "src/extra.py"], repo)
+
+            proc, data = audit_json(repo, "--fail-on", "manifest-coverage")
+            self.assertEqual(proc.returncode, 1)
+            failures = data["summary"]["failures"]
+            self.assertTrue(
+                any(item.startswith("manifest-coverage:") for item in failures),
+                failures,
+            )
+            uncovered = data["manifestCoverage"]["uncoveredFiles"]
+            self.assertEqual([item["file"] for item in uncovered], ["src/extra.py"])
+            self.assertEqual(
+                data["manifestCoverage"]["summary"]["uncoveredFiles"],
+                1,
+            )
+
+    def test_manifest_coverage_skips_existing_docs_and_excluded_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = materialize_fixture(tmp, "valid-context")
+            config = repo / ".dev-cycle" / "context" / "config.yaml"
+            config.write_text(
+                config.read_text(encoding="utf-8").replace(
+                    "include:\n  - src/**",
+                    "include:\n  - src/**\n  - README.md",
+                ),
+                encoding="utf-8",
+            )
+            dist = repo / "dist"
+            dist.mkdir()
+            (dist / "bundle.js").write_text("console.log('built');\n", encoding="utf-8")
+            run(["git", "add", "dist/bundle.js"], repo)
+
+            proc, data = audit_json(repo, "--fail-on", "manifest-coverage")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            coverage = data["manifestCoverage"]
+            self.assertEqual(coverage["uncoveredFiles"], [])
+            self.assertEqual(
+                [item["file"] for item in coverage["docsExistingFiles"]],
+                ["README.md"],
+            )
+            self.assertEqual(
+                [item["file"] for item in coverage["ignoredFiles"]],
+                ["dist/bundle.js"],
+            )
+
     def test_partial_bounded_context_keeps_health_separate_from_completeness(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = materialize_fixture(tmp, "valid-context")

@@ -29,7 +29,7 @@ Use `tools/context_audit.py` / `tools/context_docs.py` wrappers when the install
 ## Checks
 
 - Setup: config, manifest, reserved dirs.
-- Manifest coverage: tasks vs actual authoritative Context docs.
+- Manifest coverage: tracked files inside include boundaries vs Manifest `Sources`.
 - Freshness: fingerprint commit, content hash, tracked, worktree, source existence.
 - Dirty/draft authority: `notAuthoritative`, `_draft/`, `_impact/`.
 - Links: local Markdown links and glossary targets.

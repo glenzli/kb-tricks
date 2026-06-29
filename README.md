@@ -62,7 +62,7 @@ dev-cycle context impact --repo /path/to/project --since HEAD~1 --json
 dev-cycle context update-plan --repo /path/to/project --staged --json
 dev-cycle context update-plan --repo /path/to/project --worktree --draft --json
 dev-cycle context query-lint --repo /path/to/project templates/context-query-answer.md
-dev-cycle context audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
+dev-cycle context audit --repo /path/to/project --fail-on stale --fail-on dead-links --fail-on manifest-coverage --min-score B
 dev-cycle context audit --repo /path/to/project --summary-json
 dev-cycle context fingerprint --repo /path/to/project --check .dev-cycle/context/release/packaging.md
 ```
@@ -73,7 +73,7 @@ how to use Context as auxiliary context rather than authority.
 
 `dev-cycle context docs` and `dev-cycle context impact/update-plan` apply `.dev-cycle/context/config.yaml` `exclude` rules when collecting existing docs, so broad patterns such as `docs.existing: ["*.md"]` can safely pair with exclusions like `.dev-cycle/**` and `CONTEXT_PLAN.md`.
 
-`dev-cycle context docs --json` and `dev-cycle context audit --json` keep the full payload for detailed automation; `--summary-json` returns a compact top-issues view for agents and CI logs.
+`dev-cycle context docs --json` and `dev-cycle context audit --json` keep the full payload for detailed automation; `--summary-json` returns a compact top-issues view for agents and CI logs. Audit also reports `manifestCoverage`, which compares tracked files inside the configured include boundary against Manifest `Sources`; use `--fail-on manifest-coverage` to make uncovered files fail CI.
 
 Source checkout fallback:
 
@@ -321,7 +321,7 @@ dev-cycle context impact --repo /path/to/project --since HEAD~1 --json
 dev-cycle context update-plan --repo /path/to/project --staged --json
 dev-cycle context update-plan --repo /path/to/project --worktree --draft --json
 dev-cycle context query-lint --repo /path/to/project templates/context-query-answer.md
-dev-cycle context audit --repo /path/to/project --fail-on stale --fail-on dead-links --min-score B
+dev-cycle context audit --repo /path/to/project --fail-on stale --fail-on dead-links --fail-on manifest-coverage --min-score B
 dev-cycle context audit --repo /path/to/project --summary-json
 dev-cycle context fingerprint --repo /path/to/project --check .dev-cycle/context/release/packaging.md
 ```
@@ -331,7 +331,7 @@ dev-cycle context fingerprint --repo /path/to/project --check .dev-cycle/context
 
 `dev-cycle context docs` 和 `dev-cycle context impact/update-plan` 收集现有文档时会应用 `.dev-cycle/context/config.yaml` 的 `exclude` 规则，所以文档型仓库可以用 `docs.existing: ["*.md"]`，再排除 `.dev-cycle/**` 和 `CONTEXT_PLAN.md`。
 
-`dev-cycle context docs --json` 和 `dev-cycle context audit --json` 保留完整 payload，适合细粒度自动化；`--summary-json` 返回紧凑的 top issues 视图，更适合 agent 和 CI 日志。
+`dev-cycle context docs --json` 和 `dev-cycle context audit --json` 保留完整 payload，适合细粒度自动化；`--summary-json` 返回紧凑的 top issues 视图，更适合 agent 和 CI 日志。Audit 同时输出 `manifestCoverage`，用于比较配置 include 边界内的 tracked 文件和 Manifest `Sources`；使用 `--fail-on manifest-coverage` 可以让未覆盖文件在 CI 中失败。
 
 源码 checkout fallback：
 

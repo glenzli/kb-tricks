@@ -360,6 +360,7 @@ Deterministic audit tools should support:
 --fail-on orphaned
 --fail-on untracked
 --fail-on not-authoritative
+--fail-on manifest-coverage
 --summary-json
 --full-json
 --min-score B
@@ -367,6 +368,6 @@ Deterministic audit tools should support:
 
 Missing `CONTEXT_PLAN.md` or `.dev-cycle/context/config.yaml` must affect the audit grade even when the caller does not pass `--fail-on`: the `setup` metric is `0` until both files exist. Policy exit codes remain explicit through `--fail-on` and `--min-score`.
 
-`--json` and `--full-json` emit the full index-shaped payload plus audit-only fields. `--summary-json` emits compact counts, top issues, support document links, and `releaseExcludedUses`. A release-excluded reference is reported with severity `context` and is not a health concern by itself; the review question is whether the prose wrongly treats that path as release authority.
+`--json` and `--full-json` emit the full index-shaped payload plus audit-only fields. `--summary-json` emits compact counts, top issues, support document links, `manifestCoverage`, and `releaseExcludedUses`. `manifestCoverage` scans tracked files inside the configured include boundary, skips excluded/support/existing-doc files, and reports files missing from Manifest `Sources`; `--fail-on manifest-coverage` turns those gaps into policy failures. A release-excluded reference is reported with severity `context` and is not a health concern by itself; the review question is whether the prose wrongly treats that path as release authority.
 
 Exit code `0` means policy passed. Exit code `1` means the audit completed but policy failed. Exit code `2` means the audit itself could not run.
