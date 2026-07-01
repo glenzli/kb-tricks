@@ -2,32 +2,32 @@
 
 ## Purpose
 
-Describe why this project exists in 3-7 bullets or short paragraphs.
+Why this project exists. Keep it short.
 
 ## Non-Goals
 
-List what this project intentionally does not do.
+What this project intentionally does not do.
 
 ## Source Of Truth
 
-Name the files or artifact categories that are authoritative, such as source code, tests, config, release artifacts, public docs, schemas, or generated outputs.
+Authoritative files or artifact categories: source, tests, config, release artifacts, public docs, schemas, generated outputs.
 
 ## Stable Constraints
 
-List constraints that should affect future work. Prefer stable constraints over implementation details.
+Constraints that should affect future work.
 
 ## Domain Assumptions
 
-Record assumptions an agent is unlikely to infer from a small diff.
+Assumptions an agent is unlikely to infer from a small diff.
 
 ## Entry Hints
 
-Point to the best places to start reading for common task types. Do not summarize implementation details.
+Best starting points for common task types. Do not summarize implementation details.
 
 ## Refresh Triggers
 
-List the kinds of changes that should update this skeleton.
+Changes that should update this skeleton.
 
-## Not Authority
+## Boundary
 
-This file is orientation only. Verify facts against source-of-truth files before making implementation decisions.
+Orientation only. Verify facts against source-of-truth files.

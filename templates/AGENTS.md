@@ -7,4 +7,4 @@ Before planning or editing this repository:
 3. Treat skeleton files as orientation, not authority.
 4. Verify factual claims against source code, tests, config, release artifacts, or maintained docs.
 
-Do not create long-lived implementation summaries unless explicitly requested and justified.
+Do not create long-lived implementation summaries without explicit justification.

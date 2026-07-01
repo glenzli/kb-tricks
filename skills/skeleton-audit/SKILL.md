@@ -1,13 +1,13 @@
 ---
 name: skeleton-audit
-description: Audit project skeleton files for source-first discipline, stale KB behavior, excessive implementation detail, missing purpose or non-goals, unclear source-of-truth rules, weak review constraints, and links that encourage agents to trust skeletons over source. Use when reviewing DEV_SKELETON.md, REVIEW_SKELETON.md, AGENTS.md, or a proposed skeleton migration.
+description: Audit DEV_SKELETON.md, REVIEW_SKELETON.md, and AGENTS.md for source-first discipline, stale KB behavior, excessive implementation detail, missing purpose or non-goals, unclear source-of-truth rules, weak review constraints, and language that makes skeletons compete with source.
 ---
 
 # Skeleton Audit
 
-Review skeletons as orientation artifacts.
+Audit skeletons as orientation, not source documentation.
 
-## Checks
+## Check
 
 - Does `DEV_SKELETON.md` state purpose, non-goals, source of truth, constraints, entry hints, and refresh triggers?
 - Does `REVIEW_SKELETON.md` state review priorities, red lines, risk patterns, and verification expectations?
@@ -18,6 +18,6 @@ Review skeletons as orientation artifacts.
 
 ## Output
 
-Lead with findings. For each issue, cite the file and explain whether to delete, shorten, or reframe the content.
+Lead with findings. For each issue, cite the file and say whether to delete, shorten, or reframe.
 
 Do not ask the user to build deterministic tooling unless a repeated failure shows prompt-only audit is insufficient.

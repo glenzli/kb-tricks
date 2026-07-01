@@ -1,68 +1,111 @@
 # dev-skeleton
 
-Source-first project intent and review skeleton skills for LLM-assisted development.
+[English](#english) | [中文](#中文)
 
-`dev-skeleton` is not a knowledge base system, code indexer, CLI package, or project-management framework. It provides copyable skills and templates that help an AI agent start from the right intent, constraints, source-of-truth rules, and review preferences before reading the actual code.
+## English
 
-The source remains authoritative. Skeleton files only tell the agent how to orient itself and what to protect.
+Source-first project skeletons for LLM-assisted development.
 
-## Principles
+`dev-skeleton` ships short, LLM-readable skill prompts and copyable templates. It is not tied to any specific agent runtime, and it does not ship a CLI, code indexer, KB builder, or project-management workflow.
 
-- **Source first**: code, configuration, tests, release artifacts, and maintained docs are authoritative.
-- **Skeleton, not archive**: record project purpose, non-goals, stable constraints, source-of-truth rules, and review preferences.
-- **No source mirror**: do not maintain module summaries, class maps, function behavior, call graphs, or API signatures as long-lived knowledge.
-- **Dynamic reading**: let the LLM inspect source on demand for the task at hand.
-- **Light updates**: refresh skeletons only when intent, constraints, tech stack, runtime/release boundaries, or review preferences change.
-- **Review preference injection**: review skeletons tell the LLM what this project cares about; the LLM still performs the review from source and diff.
+Skeletons orient the model before it reads source. They do not answer implementation questions.
 
-## Repository Layout
+### Rules
+
+- Source is authority: code, config, tests, release artifacts, and maintained docs.
+- Skeleton is orientation: purpose, non-goals, stable constraints, truth sources, and review preferences.
+- Do not mirror modules, classes, functions, call graphs, APIs, or current behavior.
+- Let the model inspect source for the task at hand.
+- Update skeletons only when durable intent, constraints, truth sources, or review preferences change.
+
+### Layout
 
 ```text
 skills/
-  skeleton-init/      Create a source-first project skeleton.
-  skeleton-refresh/   Update skeletons only for stable intent or constraint changes.
-  skeleton-audit/     Check skeletons for source-first discipline and over-detail.
-  review-skeleton/    Use project review preferences during source-first review.
-
+  skeleton-init/
+  skeleton-refresh/
+  skeleton-audit/
+  review-skeleton/
 templates/
   DEV_SKELETON.md
   REVIEW_SKELETON.md
   AGENTS.md
-
-docs/
-  DESIGN.md
 ```
 
-Root `DEV_SKELETON.md` and `REVIEW_SKELETON.md` describe this repository itself.
+Root `DEV_SKELETON.md`, `REVIEW_SKELETON.md`, and `AGENTS.md` describe this repo itself.
 
-## Usage
+### Use
 
-Copy or adapt the templates into a target repository:
+Copy the templates into a target repo, then give the relevant skill prompt to your LLM or agent environment:
+
+- `skeleton-init`: create initial skeleton files.
+- `skeleton-refresh`: update skeletons after durable direction changes.
+- `skeleton-audit`: find over-detail, stale claims, and source-first violations.
+- `review-skeleton`: review source and diffs using project review preferences.
+
+Skill distribution is intentionally external to this repo.
+
+### Boundaries
+
+- No persistent implementation KB.
+- No source index.
+- No CLI.
+- No test, onboarding, release, or multi-agent workflow.
+
+### Maintenance
+
+When a skeleton starts explaining how the code works today, delete that detail and point back to source.
+
+## 中文
+
+面向 LLM 辅助开发的 source-first 项目骨架。
+
+`dev-skeleton` 提供简短、可被 LLM 直接阅读的 skill prompt 和可复制模板。它不绑定任何特定 agent runtime，也不提供 CLI、代码索引、KB 构建器或项目管理流程。
+
+Skeleton 的作用是在模型阅读源码前提供方向感。它不回答实现细节问题。
+
+### 规则
+
+- 源码优先：代码、配置、测试、release 产物和维护中的文档才是权威。
+- 骨架只做定向：记录目的、非目标、稳定约束、事实来源和 review 偏好。
+- 不镜像模块、类、函数、调用图、API 或当前行为。
+- 让模型根据当前任务动态阅读源码。
+- 只有长期意图、约束、事实来源或 review 偏好变化时，才更新 skeleton。
+
+### 结构
 
 ```text
-DEV_SKELETON.md
-REVIEW_SKELETON.md
-AGENTS.md
+skills/
+  skeleton-init/
+  skeleton-refresh/
+  skeleton-audit/
+  review-skeleton/
+templates/
+  DEV_SKELETON.md
+  REVIEW_SKELETON.md
+  AGENTS.md
 ```
 
-Then ask an AI agent to use the relevant skill:
+根目录的 `DEV_SKELETON.md`、`REVIEW_SKELETON.md` 和 `AGENTS.md` 描述的是本仓库自身。
 
-- `skeleton-init`: create initial skeletons from source, README, manifests, and release/runtime files.
-- `skeleton-refresh`: update existing skeletons after stable project intent or constraints change.
-- `skeleton-audit`: check whether skeletons are too detailed, stale, or not source-first.
-- `review-skeleton`: perform source-first review using project-specific review preferences.
+### 使用
 
-There is no install step and no released CLI. Skill distribution is intentionally left to the user or an external skill distributor.
+把模板复制到目标仓库，然后把对应的 skill prompt 交给你使用的 LLM 或 agent 环境：
 
-## Out Of Scope
+- `skeleton-init`：创建初始 skeleton 文件。
+- `skeleton-refresh`：在长期方向变化后更新 skeleton。
+- `skeleton-audit`：检查过度细节、陈旧声明和 source-first 违规。
+- `review-skeleton`：基于项目 review 偏好审查源码和 diff。
 
-- Persistent KBs that try to answer implementation details.
-- Long-lived architecture mirrors.
-- Static class/function/method indexes.
-- Context build/update/audit CLI workflows.
-- Test/onboarding/release automation.
-- Multi-agent review frameworks that replace ordinary source-first review.
+Skill 分发方式刻意留给外部系统处理。
 
-## Maintenance Rule
+### 边界
 
-When in doubt, delete detail from skeletons and point the agent back to source.
+- 不做持久化实现 KB。
+- 不做源码索引。
+- 不做 CLI。
+- 不做测试、新人引导、release 或多 agent 工作流。
+
+### 维护
+
+当 skeleton 开始解释“当前代码如何工作”时，删掉这部分细节，让模型回到源码。
