@@ -1,9 +1,0 @@
-include:
-  - src/**
-exclude:
-  - dist/**
-releaseExcluded:
-  - .dev-cycle/**
-docs:
-  existing:
-    - README.md

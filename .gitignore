@@ -1,3 +1,4 @@
+.DS_Store
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -6,6 +7,4 @@ __pycache__/
 build/
 dist/
 *.egg-info/
-.dev-cycle/context/index.json
-**/.dev-cycle/context/index.json
 tmp/
