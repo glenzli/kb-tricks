@@ -15,6 +15,7 @@
 - Long-lived module, class, function, API, or architecture summaries.
 - Test, onboarding, release, or multi-agent workflows added as completeness filler.
 - Claims that treat skeletons as proof of implementation facts.
+- Project-defining red lines hidden only in risk patterns instead of `Block`.
 
 ## Review Method
 

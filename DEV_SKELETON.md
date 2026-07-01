@@ -28,6 +28,7 @@ Current repository files are authoritative for implementation facts.
 - Keep templates generic and copyable.
 - Prefer deletion over preserving stale detail.
 - Do not record code structure or current behavior as durable knowledge.
+- Keep entry hints at file or artifact-category level, not function level.
 - Review support injects priorities and red lines; source and diff still decide facts.
 
 ## Entry Hints
@@ -39,4 +40,4 @@ Current repository files are authoritative for implementation facts.
 
 ## Refresh Triggers
 
-Update this file only when purpose, non-goals, skill set, distribution model, truth-source rules, or review constraints change.
+Update this file only when purpose, non-goals, skill set, distribution model, truth-source rules, or review constraints change. Routine implementation changes should not update it.

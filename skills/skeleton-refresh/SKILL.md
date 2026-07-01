@@ -17,6 +17,7 @@ Update only durable orientation.
 - Recommended entrypoints for common work.
 
 Skip routine refactors, renamed helpers, implementation movement, and test churn.
+If only current implementation details changed, leave skeletons unchanged.
 
 1. Read the existing skeleton files.
 2. Inspect the source-of-truth files relevant to the claimed change.

@@ -17,6 +17,7 @@ Skeletons orient the model before it reads source. They do not answer implementa
 - Do not mirror modules, classes, functions, call graphs, APIs, or current behavior.
 - Let the model inspect source for the task at hand.
 - Update skeletons only when durable intent, constraints, truth sources, or review preferences change.
+- Routine implementation changes should not update skeletons.
 
 ### Layout
 
@@ -71,6 +72,7 @@ Skeleton 的作用是在模型阅读源码前提供方向感。它不回答实�
 - 不镜像模块、类、函数、调用图、API 或当前行为。
 - 让模型根据当前任务动态阅读源码。
 - 只有长期意图、约束、事实来源或 review 偏好变化时，才更新 skeleton。
+- 日常实现改动不应该触发 skeleton 更新。
 
 ### 结构
 

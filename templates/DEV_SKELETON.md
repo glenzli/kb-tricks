@@ -22,11 +22,11 @@ Assumptions an agent is unlikely to infer from a small diff.
 
 ## Entry Hints
 
-Best starting points for common task types. Do not summarize implementation details.
+Best starting points for common task types. Keep file or artifact-category level; do not summarize implementation details.
 
 ## Refresh Triggers
 
-Changes that should update this skeleton.
+Durable changes that should update this skeleton. Routine implementation changes should not.
 
 ## Boundary
 

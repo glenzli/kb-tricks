@@ -6,11 +6,11 @@ What reviewers should prioritize.
 
 ## Block
 
-Changes to block or challenge strongly.
+Project-defining red lines and changes to block or challenge strongly.
 
 ## Risk Patterns
 
-Recurring risks or failure modes. Keep them at policy or boundary level.
+Recurring risks or failure modes. Keep them at policy or boundary level; do not hide core red lines only here.
 
 ## Verification Expectations
 

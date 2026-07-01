@@ -19,6 +19,7 @@ Use skeletons to bias review, not to prove facts.
 ## Focus
 
 - Purpose fit.
+- Project-defining red lines from `Block`.
 - Source-of-truth violations.
 - Release, runtime, or compatibility boundaries.
 - Over-engineering and scope creep.
