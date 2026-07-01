@@ -1,5 +1,9 @@
 # dev-skeleton
 
+<p align="center">
+  <img src="assets/dev-skeleton-banner.png" alt="dev-skeleton banner: dense project context compressed into a lightweight source-first skeleton">
+</p>
+
 [English](#english) | [中文](#中文)
 
 ## English
