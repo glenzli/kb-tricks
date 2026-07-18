@@ -1,7 +1,7 @@
 # dev-skeleton
 
 <p align="center">
-  <img src="assets/dev-skeleton-banner.png" alt="dev-skeleton banner: dense project context compressed into a lightweight source-first skeleton">
+  <img src="assets/dev-skeleton-banner.webp" width="100%" alt="dev-skeleton banner: four durable project signals forming a lightweight skeleton while source remains authoritative">
 </p>
 
 [English](#english) | [中文](#中文)
