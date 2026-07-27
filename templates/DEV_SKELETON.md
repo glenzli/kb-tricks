@@ -15,6 +15,7 @@ Authoritative files or artifact categories: source, tests, config, release artif
 ## Stable Constraints
 
 Constraints that should affect future work.
+Include durable source-navigation expectations when relevant. Describe semantic ownership rules, not the current module inventory.
 
 ## Domain Assumptions
 

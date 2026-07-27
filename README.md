@@ -23,6 +23,12 @@ Skeletons orient the model before it reads source. They do not answer implementa
 - Update skeletons only when durable intent, constraints, truth sources, or review preferences change.
 - Routine implementation changes should not update skeletons.
 
+### Source As Index
+
+Source-first is economical only when the code tree preserves clear semantic ownership. Code that shares one intent, lifecycle, invariant, or failure policy should stay together; responsibilities that change independently should separate. Large cohesive modules are acceptable. Mixed-responsibility hubs are not.
+
+Root documentation should route readers to subsystems, and entry modules should route them to semantic owners. Implementation facts still belong in source. Dev-skeleton records durable navigation constraints, not a second inventory of the codebase.
+
 ### Layout
 
 ```text
@@ -77,6 +83,12 @@ Skeleton 的作用是在模型阅读源码前提供方向感。它不回答实�
 - 让模型根据当前任务动态阅读源码。
 - 只有长期意图、约束、事实来源或 review 偏好变化时，才更新 skeleton。
 - 日常实现改动不应该触发 skeleton 更新。
+
+### 源码作为索引
+
+只有当代码树保持清晰的语义所有权时，source-first 才是经济的。共享同一意图、生命周期、不变量或失败策略的代码应当聚合；因不同原因独立变化的责任应当分离。大而内聚的模块可以保留，混合责任的中心文件不应继续增长。
+
+根文档负责指向子系统，入口模块负责指向语义 owner，实现事实仍以源码为准。Dev-skeleton 只记录长期有效的导航约束，不维护第二份代码清单。
 
 ### 结构
 

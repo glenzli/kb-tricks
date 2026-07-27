@@ -28,6 +28,7 @@ Current repository files are authoritative for implementation facts.
 - Keep templates generic and copyable.
 - Prefer deletion over preserving stale detail.
 - Do not record code structure or current behavior as durable knowledge.
+- Treat the code tree as the detailed index: preserve durable semantic-ownership expectations, not current module inventories.
 - Keep entry hints at file or artifact-category level, not function level.
 - Review support injects priorities and red lines; source and diff still decide facts.
 

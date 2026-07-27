@@ -10,12 +10,13 @@ Create three short orientation files, not a knowledge base.
 ## Do
 
 1. Read authoritative files: README, manifests, config, release notes, tests, schemas, and obvious entrypoints.
-2. Capture only durable orientation: purpose, non-goals, truth sources, constraints, domain assumptions, entry hints, review priorities, and core red lines.
-3. Create or update:
+2. Capture only durable orientation: purpose, non-goals, truth sources, constraints, domain assumptions, entry hints, source-navigation expectations, review priorities, and core red lines.
+3. Express source-navigation expectations as semantic ownership rules, never a current module inventory.
+4. Create or update:
    - `DEV_SKELETON.md`
    - `REVIEW_SKELETON.md`
    - `AGENTS.md`
-4. Mark uncertainty instead of inventing intent.
+5. Mark uncertainty instead of inventing intent.
 
 ## Never Include
 
