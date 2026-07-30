@@ -2,7 +2,7 @@
 
 ## Purpose
 
-- Provide short skills and templates that orient an AI agent before source reading.
+- Provide short source-first skills and templates that orient an AI agent and preserve navigable source during changes.
 - Preserve project intent, constraints, truth-source rules, and review preferences.
 - Avoid durable implementation knowledge.
 
@@ -12,7 +12,7 @@
 - CLI package.
 - Source indexer.
 - Module, class, function, API, or architecture mirror.
-- Test, onboarding, release, or project-management workflow.
+- Standalone test, onboarding, release, or project-management workflow.
 
 ## Source Of Truth
 
@@ -25,6 +25,7 @@ Current repository files are authoritative for implementation facts.
 ## Stable Constraints
 
 - Keep skills short and trigger descriptions precise.
+- Keep broadly triggered skill bodies concise and load stack-specific guidance only when relevant.
 - Keep templates generic and copyable.
 - Prefer deletion over preserving stale detail.
 - Do not record code structure or current behavior as durable knowledge.
@@ -36,6 +37,7 @@ Current repository files are authoritative for implementation facts.
 
 - Start with `README.md` for positioning.
 - Use `skills/README.md` to see available skills.
+- Use `skills/maintain-source-cohesion/` for development-time ownership and navigation guidance.
 - Use `templates/` for target-repository skeleton files.
 - Read `REVIEW_SKELETON.md` before reviewing this repo.
 

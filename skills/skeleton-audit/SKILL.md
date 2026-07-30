@@ -14,6 +14,7 @@ Audit skeletons as orientation, not source documentation.
 - Does `AGENTS.md` tell agents to verify facts against source?
 - Are project-defining red lines visible in `Block`, not only risk patterns?
 - Are entry hints file or artifact-category level rather than function level?
+- Are source-navigation expectations durable ownership rules rather than a current module inventory?
 - Do refresh triggers exclude routine implementation changes?
 - Does any file summarize modules, classes, functions, or behavior that should be read from source?
 - Does any file imply skeleton content is authoritative?

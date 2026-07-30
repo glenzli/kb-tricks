@@ -5,6 +5,7 @@
 - Preserve source-first behavior.
 - Reject persistent KBs and implementation mirrors.
 - Keep skills concise.
+- Keep broadly triggered skill cores generic; move stack-specific guidance to conditional references.
 - Keep templates generic enough to copy into unrelated repositories.
 - Prefer clear constraints over broad frameworks.
 - Prefer no tooling over low-value tooling.
@@ -14,6 +15,7 @@
 - CLI, indexers, or automation without a current need that prompts cannot meet.
 - Long-lived module, class, function, API, or architecture summaries.
 - Test, onboarding, release, or multi-agent workflows added as completeness filler.
+- Stack-specific field notes copied into a broadly triggered skill core without a loading boundary.
 - Claims that treat skeletons as proof of implementation facts.
 - Project-defining red lines hidden only in risk patterns instead of `Block`.
 
@@ -27,6 +29,6 @@
 
 ## Verification Expectations
 
-- Skill changes: check names, trigger descriptions, stale terminology, and concise instructions.
+- Skill changes: check names, trigger descriptions, stale terminology, concise instructions, reference links, and duplicated guidance.
 - Template changes: check source-first language and copyability.
 - Tooling changes: require tests and a clear reason the LLM cannot do the task directly from source.

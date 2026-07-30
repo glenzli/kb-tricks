@@ -22,6 +22,7 @@ Use skeletons to bias review, not to prove facts.
 - Project-defining red lines from `Block`.
 - Source-of-truth violations.
 - Release, runtime, or compatibility boundaries.
+- Semantic ownership and false modularity when a change grows or moves a responsibility.
 - Over-engineering and scope creep.
 - Stale documentation or skeleton risk.
 - Missing verification for risky changes.

@@ -29,6 +29,8 @@ Source-first is economical only when the code tree preserves clear semantic owne
 
 Root documentation should route readers to subsystems, and entry modules should route them to semantic owners. Implementation facts still belong in source. Dev-skeleton records durable navigation constraints, not a second inventory of the codebase.
 
+The `maintain-source-cohesion` skill turns this premise into a lightweight growth review during implementation.
+
 ### Layout
 
 ```text
@@ -36,6 +38,8 @@ skills/
   skeleton-init/
   skeleton-refresh/
   skeleton-audit/
+  maintain-source-cohesion/
+    references/
   review-skeleton/
 templates/
   DEV_SKELETON.md
@@ -52,6 +56,7 @@ Copy the templates into a target repo, then give the relevant skill prompt to yo
 - `skeleton-init`: create initial skeleton files.
 - `skeleton-refresh`: update skeletons after durable direction changes.
 - `skeleton-audit`: find over-detail, stale claims, and source-first violations.
+- `maintain-source-cohesion`: keep the code tree navigable while adding, moving, or splitting responsibilities.
 - `review-skeleton`: review source and diffs using project review preferences.
 
 Skill distribution is intentionally external to this repo.
@@ -61,11 +66,12 @@ Skill distribution is intentionally external to this repo.
 - No persistent implementation KB.
 - No source index.
 - No CLI.
-- No test, onboarding, release, or multi-agent workflow.
+- No standalone test, onboarding, release, or multi-agent workflow.
 
 ### Maintenance
 
 When a skeleton starts explaining how the code works today, delete that detail and point back to source.
+Keep broadly triggered skills short. Move stack-specific guidance into references that are loaded only when the task touches that boundary.
 
 ## 中文
 
@@ -90,6 +96,8 @@ Skeleton 的作用是在模型阅读源码前提供方向感。它不回答实�
 
 根文档负责指向子系统，入口模块负责指向语义 owner，实现事实仍以源码为准。Dev-skeleton 只记录长期有效的导航约束，不维护第二份代码清单。
 
+`maintain-source-cohesion` skill 把这个前提转化为实现期间的轻量增长审查。
+
 ### 结构
 
 ```text
@@ -97,6 +105,8 @@ skills/
   skeleton-init/
   skeleton-refresh/
   skeleton-audit/
+  maintain-source-cohesion/
+    references/
   review-skeleton/
 templates/
   DEV_SKELETON.md
@@ -113,6 +123,7 @@ templates/
 - `skeleton-init`：创建初始 skeleton 文件。
 - `skeleton-refresh`：在长期方向变化后更新 skeleton。
 - `skeleton-audit`：检查过度细节、陈旧声明和 source-first 违规。
+- `maintain-source-cohesion`：在增加、移动或拆分责任时保持代码树可导航。
 - `review-skeleton`：基于项目 review 偏好审查源码和 diff。
 
 Skill 分发方式刻意留给外部系统处理。
@@ -122,8 +133,9 @@ Skill 分发方式刻意留给外部系统处理。
 - 不做持久化实现 KB。
 - 不做源码索引。
 - 不做 CLI。
-- 不做测试、新人引导、release 或多 agent 工作流。
+- 不做独立的测试、新人引导、release 或多 agent 工作流。
 
 ### 维护
 
 当 skeleton 开始解释“当前代码如何工作”时，删掉这部分细节，让模型回到源码。
+高频触发的 skill 必须保持精简；技术栈相关指导应放入仅在任务触及相应边界时才读取的 reference。

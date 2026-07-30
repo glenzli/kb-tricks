@@ -1,6 +1,6 @@
 ---
 name: skeleton-refresh
-description: Refresh DEV_SKELETON.md, REVIEW_SKELETON.md, or AGENTS.md only when stable project intent, non-goals, source-of-truth rules, runtime or release constraints, domain assumptions, entry hints, or review preferences changed. Use after meaningful project direction changes, not routine implementation edits.
+description: Refresh DEV_SKELETON.md, REVIEW_SKELETON.md, or AGENTS.md only when stable project intent, non-goals, source-of-truth rules, runtime or release constraints, domain assumptions, source-navigation expectations, entry hints, or review preferences changed. Use after meaningful project direction changes, not routine implementation edits.
 ---
 
 # Skeleton Refresh
@@ -13,6 +13,7 @@ Update only durable orientation.
 - Runtime, platform, or release boundaries.
 - Source-of-truth files or artifact categories.
 - Stable domain assumptions.
+- Durable semantic-ownership or source-navigation expectations.
 - Review priorities or red lines.
 - Recommended entrypoints for common work.
 
