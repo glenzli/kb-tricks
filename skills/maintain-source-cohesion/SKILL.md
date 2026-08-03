@@ -94,7 +94,7 @@ Review extraction when:
 - Read [async-ui.md](references/async-ui.md) for asynchronous controllers, state projection,
   declarative UI, localization, gestures, or packaged component boundaries.
 - Read [native-cross-language.md](references/native-cross-language.md) for C/C++, Rust, FFI, ABI,
-  translation units, embedded languages, native resources, or multiple build graphs.
+  translation units, embedded languages, generated bindings, or multiple build graphs.
 - Read [large-payload-and-acceleration.md](references/large-payload-and-acceleration.md) for image,
   audio, tensor, or other large buffers; zero-copy views; caches; tiling; GPU or accelerator
   execution; or interactive preview pipelines.

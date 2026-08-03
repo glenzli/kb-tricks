@@ -26,13 +26,17 @@ through caches, previews, tiles, native bridges, GPUs, or other accelerators.
   independently creates capability and cache-key drift.
 - Keep fallback selection and accelerated execution behind one semantic contract. Record which path
   produced an output so failures and performance regressions remain diagnosable.
+- Keep portable fallback algorithms outside optional third-party adapters, and validate both
+  dependency-present and dependency-absent builds.
 - Cache compiled or prepared resources by their complete semantic identity, not a convenient subset
   of visible parameters.
 
-## Preserve Authored Topology
+## Preserve Authored Topology When Present
 
-- Model continuous authored input as paths, regions, kernels, or other semantic primitives before
-  sampling it into execution-specific points or tiles.
+Apply this section only when a payload derives from authored continuous geometry or time-domain intent.
+
+- Model authored input as paths, regions, envelopes, kernels, or other semantic primitives before
+  sampling it into execution-specific points, frames, or tiles.
 - Keep coordinate transforms explicit and invariant across preview scale, full resolution, tiles,
   crop, orientation, and display projection.
 - Define overlap and boundary policy with the algorithm owner. Tiling must not introduce seams,

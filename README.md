@@ -51,7 +51,8 @@ Root `DEV_SKELETON.md`, `REVIEW_SKELETON.md`, and `AGENTS.md` describe this repo
 
 ### Use
 
-Copy the templates into a target repo, then give the relevant skill prompt to your LLM or agent environment:
+Copy the templates into a target repo. Distribute each selected skill as a complete directory, not
+`SKILL.md` alone, so its conditional references remain available to the LLM or agent environment:
 
 - `skeleton-init`: create initial skeleton files.
 - `skeleton-refresh`: update skeletons after durable direction changes.
@@ -59,7 +60,8 @@ Copy the templates into a target repo, then give the relevant skill prompt to yo
 - `maintain-source-cohesion`: keep the code tree navigable while adding, moving, or splitting responsibilities.
 - `review-skeleton`: review source and diffs using project review preferences.
 
-Skill distribution is intentionally external to this repo.
+The distribution mechanism is intentionally external to this repo; the complete skill directory is
+the portable unit.
 
 ### Boundaries
 
@@ -118,7 +120,7 @@ templates/
 
 ### 使用
 
-把模板复制到目标仓库，然后把对应的 skill prompt 交给你使用的 LLM 或 agent 环境：
+把模板复制到目标仓库。分发 skill 时必须保留完整目录，不能只复制 `SKILL.md`，这样 LLM 或 agent 环境才能按需读取其中的 reference：
 
 - `skeleton-init`：创建初始 skeleton 文件。
 - `skeleton-refresh`：在长期方向变化后更新 skeleton。
@@ -126,7 +128,7 @@ templates/
 - `maintain-source-cohesion`：在增加、移动或拆分责任时保持代码树可导航。
 - `review-skeleton`：基于项目 review 偏好审查源码和 diff。
 
-Skill 分发方式刻意留给外部系统处理。
+Skill 分发方式刻意留给外部系统处理；完整的 skill 目录是可移植单元。
 
 ### 边界
 

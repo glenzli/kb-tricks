@@ -1,7 +1,7 @@
 # Native And Cross-Language Boundaries
 
-Use this reference for C/C++, Rust, FFI, ABI, native resources, translation units, embedded
-languages, generated bindings, or repositories with several maintained build graphs.
+Use this reference for C/C++, Rust, FFI, ABI, translation units, embedded languages, generated
+bindings, or repositories with several maintained build graphs.
 
 ## Preserve Public Contracts
 
@@ -38,7 +38,7 @@ languages, generated bindings, or repositories with several maintained build gra
 - Treat an embedded shader, SQL program, generated-language block, or other independently evolving
   DSL as its own language owner even when hosted in one native source file.
 
-## Own Bridge And Resource Lifecycles
+## Own Bridge Contracts
 
 - Give a large bidirectional bridge mapping one projection owner before splitting workflows around
   it. Cover nested identities, bounded collections, optional fields, geometry, and history metadata.
@@ -46,14 +46,6 @@ languages, generated bindings, or repositories with several maintained build gra
   one route forgot to populate.
 - Keep structural boundary validation separate from route-dependent capability negotiation. The
   selected backend owns executability and provider policy.
-- Keep portable fallback algorithms outside optional third-party adapters. Validate both
-  dependency-present and dependency-absent builds.
-- For fresh native resources, move negotiation, admission, configuration, allocation, execution,
-  bounded conversion, provenance, and failure policy together.
-- Keep resource admission, resident cache state, synchronization, leases, memory budget, and
-  consistency counters together when they form one runtime aggregate.
-- When planning metadata and execution derive from the same parameters, let one owner prepare an
-  opaque plan consumed by both query and execution paths.
 
 ## Validate Every Build Graph
 
