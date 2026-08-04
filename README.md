@@ -1,7 +1,7 @@
 # dev-skeleton
 
 <p align="center">
-  <img src="assets/dev-skeleton-banner.webp" width="100%" alt="dev-skeleton banner: four durable project signals forming a lightweight skeleton while source remains authoritative">
+  <img src="assets/dev-skeleton-banner.webp" width="100%" alt="dev-skeleton banner: a central code workspace held within a sparse, open structural framework">
 </p>
 
 [English](#english) | [中文](#中文)
@@ -10,9 +10,9 @@
 
 Source-first project skeletons for LLM-assisted development.
 
-`dev-skeleton` ships short, LLM-readable skill prompts and copyable templates. It is not tied to any specific agent runtime, and it does not ship a CLI, code indexer, KB builder, or project-management workflow.
+`dev-skeleton` ships concise, LLM-readable core skills, conditional references, and copyable templates. It is not tied to any specific agent runtime, and it does not ship a CLI, code indexer, KB builder, or project-management workflow.
 
-Skeletons orient the model before it reads source. They do not answer implementation questions.
+Skeleton files orient the model before source reading. The development skill guides boundary decisions while source remains authoritative; neither replaces implementation inspection.
 
 ### Rules
 
@@ -60,6 +60,13 @@ Copy the templates into a target repo. Distribute each selected skill as a compl
 - `maintain-source-cohesion`: keep the code tree navigable while adding, moving, or splitting responsibilities.
 - `review-skeleton`: review source and diffs using project review preferences.
 
+Conditional references for `maintain-source-cohesion`, loaded only when the task touches their boundary:
+
+- `async-ui.md`: asynchronous lifecycles, state projection, declarative UI, and runtime interaction.
+- `native-cross-language.md`: native module ownership, ABI/FFI contracts, bridges, and build graphs.
+- `large-payload-and-acceleration.md`: large buffers, caching, zero-copy ownership, tiling, and acceleration.
+- `test-topology-and-migration.md`: test ownership, reachability, legacy topology, and suite migration.
+
 The distribution mechanism is intentionally external to this repo; the complete skill directory is
 the portable unit.
 
@@ -79,9 +86,9 @@ Keep broadly triggered skills short. Move stack-specific guidance into reference
 
 面向 LLM 辅助开发的 source-first 项目骨架。
 
-`dev-skeleton` 提供简短、可被 LLM 直接阅读的 skill prompt 和可复制模板。它不绑定任何特定 agent runtime，也不提供 CLI、代码索引、KB 构建器或项目管理流程。
+`dev-skeleton` 提供精简、可被 LLM 直接阅读的核心 skill、条件 reference 和可复制模板。它不绑定任何特定 agent runtime，也不提供 CLI、代码索引、KB 构建器或项目管理流程。
 
-Skeleton 的作用是在模型阅读源码前提供方向感。它不回答实现细节问题。
+Skeleton 文件在模型阅读源码前提供方向；开发期 skill 在源码仍然权威的前提下指导边界决策，两者都不代替对实现的阅读。
 
 ### 规则
 
@@ -127,6 +134,13 @@ templates/
 - `skeleton-audit`：检查过度细节、陈旧声明和 source-first 违规。
 - `maintain-source-cohesion`：在增加、移动或拆分责任时保持代码树可导航。
 - `review-skeleton`：基于项目 review 偏好审查源码和 diff。
+
+`maintain-source-cohesion` 的条件 reference 只在任务触及相应边界时加载：
+
+- `async-ui.md`：异步生命周期、状态投影、声明式 UI 和运行时交互。
+- `native-cross-language.md`：原生模块所有权、ABI/FFI 契约、bridge 和构建图。
+- `large-payload-and-acceleration.md`：大型缓冲区、缓存、零拷贝所有权、分块和加速。
+- `test-topology-and-migration.md`：测试归属、可达性、遗留拓扑和 suite 迁移。
 
 Skill 分发方式刻意留给外部系统处理；完整的 skill 目录是可移植单元。
 
