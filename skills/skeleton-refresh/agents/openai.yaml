@@ -1,0 +1,7 @@
+interface:
+  display_name: "Skeleton Refresh"
+  short_description: "Refresh durable orientation without implementation drift"
+  default_prompt: "Use $skeleton-refresh to refresh durable project orientation after this direction change."
+
+policy:
+  allow_implicit_invocation: false

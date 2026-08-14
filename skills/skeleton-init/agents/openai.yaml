@@ -1,0 +1,7 @@
+interface:
+  display_name: "Skeleton Init"
+  short_description: "Initialize source-first project orientation files"
+  default_prompt: "Use $skeleton-init to initialize source-first orientation files for this repository."
+
+policy:
+  allow_implicit_invocation: false

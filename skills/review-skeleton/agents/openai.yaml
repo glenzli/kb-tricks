@@ -1,0 +1,7 @@
+interface:
+  display_name: "Review Skeleton"
+  short_description: "Review changes using source-first project constraints"
+  default_prompt: "Use $review-skeleton to review this change against the repository's source-first constraints."
+
+policy:
+  allow_implicit_invocation: true

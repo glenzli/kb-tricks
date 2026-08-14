@@ -1,0 +1,7 @@
+interface:
+  display_name: "Maintain Source Cohesion"
+  short_description: "Preserve semantic ownership as code and tests evolve"
+  default_prompt: "Use $maintain-source-cohesion to keep this change within a clear semantic owner."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,152 +1,140 @@
 ---
 name: maintain-source-cohesion
-description: Keep production and test code navigable through cohesive semantic ownership and growth-triggered boundary review. Use when adding substantial behavior or tests to an existing module, introducing a responsibility, refactoring or moving code, splitting a large or high-churn owner, or changing controllers, services, UI, bridges, persistence, systems, or algorithms whose current boundary may no longer fit.
+description: Keep production and test code navigable through cohesive semantic ownership. Use when substantial behavior grows an existing owner, a new responsibility appears, code moves or splits, a large test suite or test topology changes, or work touches a controller, facade, service, bridge, persistence boundary, UI surface, system, or algorithm whose ownership may no longer fit. Skip small changes that do not pressure an ownership boundary.
 ---
 
 # Maintain Source Cohesion
 
-Optimize for task-local context and stable semantic ownership, not small files.
+Use these principles to improve architectural judgment, not to impose a decomposition workflow.
+Optimize for task-local context, stable ownership, and safe change boundaries rather than small files
+or uniform structure.
 
 A semantic owner is the narrowest stable module, component, service, type, package, or translation
-unit that owns a behavior's state, lifecycle, invariants, and failure policy.
+unit that owns a behavior's state, lifecycle, invariants, mutation authority, and failure policy.
 
-## Contract
+## Orient From the Repository
 
-- Keep a large owner when it contains one cohesive domain, pipeline, ABI surface, or aggregate root.
-- Split responsibilities that have independent lifecycles, policies, dependencies, or reasons to change.
-- Prefer a few coarse semantic owners over thin wrappers or one-file-per-function structure.
-- Make a typical change require one primary owner plus at most a few contract files.
-- Keep tightly coupled encode/decode/validate/compile stages together unless one stage evolves independently.
-- Keep controllers, public entries, registries, and application roots focused on routing, composition,
-  lifecycle, compatibility, and delegation.
-- Preserve public APIs, schemas, ABI layouts, serialization, ordering, numeric behavior, and supported
-  runtime contracts during structural moves.
-- Use size, churn, contention, and reading cost as review signals, never automatic split criteria.
-- Respect the repository's language-native module mechanisms and established public boundaries.
-- Keep extraction bounded to the responsibility exposed by the current work.
+- Read the nearest `SKELETON.md` for durable boundaries and navigation. If it is absent, a legacy
+  `DEV_SKELETON.md` may provide the same orientation.
+- Treat skeletons as priors. Verify current behavior and dependency facts in source, tests, schemas,
+  build graphs, and packaged artifacts.
+- Let the root skeleton route to a subsystem and local source entries route to the owner. README may
+  serve product or public documentation and is not required to be the internal navigation index.
+- Add or update a nested `SKELETON.md` only when a large subsystem cannot expose its stable owners
+  clearly through ordinary source entries in one or two hops.
 
-## Run a Growth Review
+## Judge the Ownership Boundary
 
-Before adding substantial code to an existing owner:
+Keep a large owner when it represents one cohesive domain, aggregate, pipeline, ABI surface, or
+consistency boundary. Size, churn, contention, and reading cost are signals to investigate, not
+automatic split criteria.
 
-1. State its current responsibility in one sentence.
-2. Map the responsibilities touched by the change: state, lifecycle, interaction, orchestration,
-   validation, persistence, protocol, rendering, algorithm, or presentation.
-3. Classify the change:
-   - **Cohesive extension:** extend the current owner.
-   - **New responsibility:** create a semantic owner and wire it through the current entry.
-   - **Exposed boundary:** extract the smallest complete existing responsibility that gives the
-     change a stable owner.
-4. Decide explicitly to keep, extract, or defer. Do not let the current file location decide.
+Reconsider the boundary when the change reveals one or more of these conditions:
 
-Review extraction when:
+- Independently cancellable jobs, state machines, lifecycles, or failure policies share one owner.
+- Unrelated product work repeatedly changes the same controller, facade, registry, bridge, storage
+  module, or application root.
+- A normal change requires understanding distant regions or modifying tests for another concern.
+- Validation, conversion, serialization, display math, or operating policy is duplicated across paths.
+- A new UI region, protocol family, persistence concern, service, or algorithm stage has its own
+  durable reason to evolve.
+- A public entry has accumulated domain behavior instead of routing, composition, compatibility,
+  lifecycle coordination, or delegation.
 
-- The owner cannot be described without joining unrelated domains.
-- It contains independently cancellable jobs, state machines, lifecycles, or failure policies.
-- A normal change requires reading distant unrelated regions or changing unrelated tests.
-- Unrelated product work repeatedly modifies the same file.
-- A facade, compatibility layer, bridge, test target, or persistence module has become a generic hub.
-- The same validation, conversion, serialization, display math, or policy exists in several paths.
-- A new UI region, service, protocol family, storage concern, or algorithm stage would deepen an
-  already concentrated owner.
+The current file location is weak evidence. Prefer boundaries derived from state ownership,
+mutation authority, lifecycle, invariants, dependency closure, and error or rollback policy.
 
-## Make the Code Tree the Index
+## Choose the Smallest Coherent Change
 
-- Let root documentation route to subsystems, local entry points route to semantic owners, and module
-  names answer likely maintenance questions.
-- Keep package and application entries readable as executable indexes: exports, registration,
-  composition, and concise navigation before implementation.
-- Use the nearest code-owned README or module documentation only for ownership, boundary intent, and
-  the next navigation step. Leave current mechanics in source.
-- Update the nearest index when adding, extracting, renaming, or removing a responsibility.
+- Extend the current owner when the behavior shares its state and invariants.
+- Give a genuinely new responsibility a semantic owner from the start when the boundary is clear.
+- When existing concentration is exposed, extract the smallest complete responsibility that makes
+  the requested change easier to own. Do not refactor unrelated hotspots for symmetry.
+- Preserve behavior during a structural move when practical, then add the new behavior through the
+  new boundary.
+- If concurrency, migration risk, or an unstable contract makes extraction unsafe, use narrow
+  temporary wiring without deepening the old owner's policy surface. Leave a boundary note only
+  when it will materially help the next change.
+
+Move an owner as a unit: state, invariants, helpers, operating policy, focused tests, terminal
+lifecycle handling, and the public declarations that define the behavior. A declaration-only file,
+forwarding chain, or wrapper whose implementation remains in the old hub is a navigation alias, not
+a meaningful extraction.
+
+When one operation atomically updates multiple models, projections, caches, or compatibility views,
+let its consistency and rollback contract define one owner. Do not split that operation merely
+because its data crosses several nouns or layers.
+
+## Preserve Navigability
+
+- Keep package entries, module declarations, registries, application roots, bridge facades, and
+  top-level controllers readable as composition boundaries.
 - Prefer responsibility names over `helpers`, `common`, `misc`, historical names, or numbered parts.
-- Give every production owner a direct dependency closure. Do not rely on an umbrella entry or
-  lexical prelude to inject unrelated imports, types, macros, or helpers.
-- Remove unreachable implementations, disabled reference code, and stale navigation edges. Version
-  control owns obsolete history.
-- Keep navigation layered: root indexes answer "which subsystem?"; local indexes answer "which owner?".
+- Give each owner a direct dependency closure. Do not depend on an umbrella entry or lexical prelude
+  to inject unrelated imports, types, macros, or helpers.
+- Inspect call sites before promoting a helper. Establish one canonical owner before extracting
+  shared validation, conversion, serialization, or policy.
+- Remove unreachable implementations, stale navigation edges, obsolete names, and disabled
+  reference code when they are owned by the current change. Version control owns old history.
+- Update `SKELETON.md` only when a stable responsibility or navigation route was added, moved,
+  renamed, or removed. Current mechanics stay in source.
 
-## Refactor During the Change
+## Preserve Contracts While Moving Code
 
-- Put a genuinely new responsibility in its own owner from the start.
-- When the change exposes a stable boundary, move the minimal complete responsibility instead of
-  adding another branch to the hub.
-- Preserve behavior while moving code, then add new behavior in the new owner when practical.
-- Move state, invariants, helpers, operating policy, focused tests, and terminal lifecycle handling
-  together. Do not leave half an owner behind.
-- Move public declarations with their implementation and private behavior. A declaration-only split
-  whose implementation remains in the old hub is a navigation alias.
-- Derive boundaries from mutation authority, lifecycle, invariants, and failure policy, not shared
-  nouns, numeric types, UI labels, or current call proximity.
-- Establish one canonical owner before extracting duplicated validation, conversion, or policy.
-- When one operation atomically updates several models, projections, or compatibility views, let
-  its consistency and rollback contract define one owner.
-- Inspect all call sites before promoting a helper. Delete dormant branches or call an existing
-  owner instead of creating a generic shared abstraction.
-- Keep public signature types reachable through the intended public surface after moving or
-  re-exporting APIs.
-- Make every extracted owner compile or type-check from its direct imports when the language permits.
-- If concurrent work or migration risk makes extraction unsafe, do not deepen the concentration.
-  Record the intended boundary and use the narrowest temporary wiring.
+- Preserve public APIs, schemas, ABI layouts, serialization, ordering, numeric behavior, identity,
+  and supported runtime contracts unless the task explicitly changes them.
+- Keep public signature types reachable through the intended surface after moving or re-exporting APIs.
+- Make extracted owners compile or type-check from direct imports when the language permits.
+- Update every maintained build, packaging, registration, generated-binding, and runtime graph that
+  explicitly owns the moved file or component.
+- Treat source reachability, test reachability, and packaged runtime reachability as distinct facts.
 
-## Load Detailed Guidance Only When Needed
+## Keep Tests With Their Evidence Owner
+
+- Keep private-invariant tests with the semantic owner and public cross-owner behavior at the real
+  integration boundary.
+- Move focused tests with an extracted responsibility. Leave only facade and cross-owner contracts
+  at the former boundary.
+- Keep fixtures with the narrowest owner that consumes them; promote them only after genuine reuse.
+- Do not expose production internals or duplicate production logic solely to make a test convenient.
+- Preserve test registration, build metadata, runtime prerequisites, and runner reachability when a
+  suite moves.
+
+## Avoid False Modularity
+
+- Do not split solely for line count, a preferred file shape, or document symmetry.
+- Do not create one-file-per-function structures or fragments that must always be read and changed together.
+- Keep tightly coupled encode/decode/validate/compile stages together unless one stage has an
+  independent lifecycle or policy.
+- Require an extracted owner to have a semantic name, owned behavior or state, and a concrete reason
+  future work could change it independently.
+- Prefer a few coarse owners over many passive forwarding layers.
+
+## Load Detailed Guidance Only When the Boundary Is Active
 
 - Read [async-ui.md](references/async-ui.md) for asynchronous controllers, state projection,
   declarative UI, localization, gestures, or packaged component boundaries.
 - Read [native-cross-language.md](references/native-cross-language.md) for C/C++, Rust, FFI, ABI,
   translation units, embedded languages, generated bindings, or multiple build graphs.
 - Read [large-payload-and-acceleration.md](references/large-payload-and-acceleration.md) for image,
-  audio, tensor, or other large buffers; zero-copy views; caches; tiling; GPU or accelerator
-  execution; or interactive preview pipelines.
-- Read [test-topology-and-migration.md](references/test-topology-and-migration.md) for large test
-  suites, inline-test policy, legacy structural debt, disabled tests, or test-runner migration.
+  audio, tensor, or other large buffers; zero-copy views; caches; tiling; accelerator execution; or
+  interactive preview pipelines.
+- Read [test-topology-and-migration.md](references/test-topology-and-migration.md) for large suites,
+  inline-test policy, legacy structural debt, disabled tests, or test-runner migration.
 
-Do not load a reference merely because its technology is present. Load it when the current change
-touches that boundary.
+Do not load a reference merely because its technology exists in the repository.
 
-## Place Tests by Responsibility
+## Validate in Proportion to the Boundary
 
-- Treat tests as part of the owner's navigation and maintenance cost.
-- Keep private-invariant tests adjacent to their semantic owner and public cross-owner behavior at
-  the real integration boundary.
-- Move focused tests with an extracted responsibility. Leave only facade and cross-owner contracts
-  at the former boundary.
-- Keep fixtures with the narrowest owner that consumes them. Promote them only after genuine reuse.
-- Do not expose production internals or duplicate production logic solely to make a test convenient.
-- Distinguish production reachability from test reachability. Test-only use does not prove a
-  production path is live.
-- Keep test registration, build metadata, runtime prerequisites, and runner reachability intact
-  when moving or splitting a suite.
-
-## Avoid False Modularity
-
-- Do not split solely to satisfy a line count.
-- Do not create passive forwarding chains, one file per function, or several fragments that must
-  always be read and changed together.
-- Keep code together when it shares invariants, data lifetime, error policy, or one algorithmic pipeline.
-- Require every extracted owner to have a semantic name, owned behavior or state, and a concrete
-  reason future work would change it independently.
-
-## Validate the Boundary
-
-- Run focused tests for the moved owner and its public facade or cross-owner contract.
-- Verify public APIs, schemas, ABI, serialization, ordering, numeric behavior, and identity fixtures
-  that the move could affect.
-- Compile or type-check both production and test configurations through the new dependency boundary.
-- Update every maintained build, packaging, registration, generated-binding, and runtime graph that
-  owns an explicit file or component list.
-- For mechanical moves, compare owned declarations, symbols, tests, and registrations before and
-  after. Equal totals are insufficient if one item disappeared and another was duplicated.
+- Exercise focused owner tests and the facade or cross-owner contract affected by the change.
+- Check the compatibility properties the move could alter, including schema, ABI, ordering, numeric,
+  serialization, and identity fixtures.
+- Build or type-check production and test configurations through the new dependency boundary.
+- For mechanical moves, compare named declarations, symbols, tests, and registrations; equal totals
+  alone do not prove nothing was lost or duplicated.
 - Exercise a real linked or packaged consumer when compile-only checks cannot prove reachability.
-- Search for stale duplicate implementations, obsolete helpers, old names, and split ownership.
-- Confirm that a likely follow-up change can be made primarily in the new owner.
+- Confirm that a likely follow-up change can be made primarily in the intended owner.
 
-Finish by reporting whether the growth review kept the owner whole, extracted a responsibility, or
-deferred a split for a concrete safety reason.
-
-Treat the implementation as incomplete when it adds a distinct responsibility to an already
-concentrated owner without either extracting it or explaining why extraction is currently unsafe.
-
-Keep reusable boundary principles in this skill. Put exact file topologies, commands, named
-hotspots, product semantics, generated artifacts, and zero-debt gates in the repository that owns
-them.
+Keep exact topologies, named hotspots, project semantics, commands, generated artifacts, and
+zero-debt gates in the repository that owns them. Report a keep/extract/defer decision only when it
+helps explain a non-obvious boundary or handoff; it is not a ritual required for every edit.

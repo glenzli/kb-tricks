@@ -1,0 +1,7 @@
+interface:
+  display_name: "Skeleton Audit"
+  short_description: "Audit project skeletons for drift, bloat, and authority"
+  default_prompt: "Use $skeleton-audit to audit this repository's skeleton files for drift and source-first violations."
+
+policy:
+  allow_implicit_invocation: false

@@ -4,14 +4,14 @@ Use this reference when tests obscure production ownership, live inline in growi
 files, form a multi-responsibility suite, depend on legacy structure, or require a gradual topology
 migration.
 
-## Choose A Physical Test Shape
+## Respect Local Test Shape
 
-- Define one canonical physical shape for each language and visibility level.
-- In AI-first repositories, prefer executable test bodies outside production files when the
-  language supports adjacent private-test modules. Keep only test registration at the implementation
-  boundary.
-- If the language or repository keeps inline tests, define an enforceable local cap and a named
-  migration trigger. Historical inline tests are not automatic precedent for adding another body.
+- Follow language-native mechanisms and the repository's maintained test conventions unless the
+  task explicitly changes that policy.
+- Do not impose one physical layout, inline-test cap, or migration gate from this reference. Keep
+  those choices in the repository that owns their costs and enforcement.
+- Reconsider the current shape when tests obscure the production owner, require unrelated fixtures
+  or setup, or repeatedly force one concern to change another concern's suite.
 - Keep private-invariant tests adjacent to the production owner. Put public cross-owner behavior in
   integration locations that consume the real product boundary.
 - Let the production owner declare its adjacent tests. Registration from a distant facade is
@@ -48,19 +48,17 @@ migration.
 - Split a mixed test into an adjacent unit contract and a higher-level cross-owner contract when it
   combines local invariants with orchestration, persistence, or aggregate behavior.
 
-## Migrate Legacy Topology With A Ratchet
+## Respect Repository-Owned Migration Policy
 
-- Baseline exact legacy identities, not a reusable count allowance. Reject new identities and shrink
-  the baseline when debt is removed.
-- Anchor comparisons to an immutable review base or validate every relevant transition in complete
-  version-control history. Fail closed when a shallow checkout omits required history.
-- Treat the ratchet as a migration index, not a line-count target. Move complete semantic owners and
-  reserve genuinely complex suites explicitly.
-- Replace a zero legacy allowance with an absolute zero gate. Do not retain an empty baseline that
-  permits future repopulation.
-- Validate the baseline and checker as production architecture: reject duplicates, unknown fields,
-  ambiguous identities, and missing history.
-- Apply cohesion review to the checker itself so enforcement tooling does not become another generic hub.
+- Introduce or enforce a cap, baseline, ratchet, or history requirement only when the repository
+  explicitly owns that migration policy. Do not create enforcement tooling merely because legacy
+  test debt exists.
+- When an active policy tracks legacy exceptions, identify exact items rather than granting a
+  reusable count allowance, and shrink the exception set as debt is removed.
+- Validate against the review base or history required by the local contract. If that evidence is
+  unavailable, report the gap instead of inventing a weaker comparison.
+- Keep migration policy, exceptions, commands, and checker implementation in the repository. Apply
+  cohesion review to the checker so enforcement does not become another generic hub.
 
 ## Split Suites Without Losing Contracts
 

@@ -18,7 +18,7 @@ When tests, release checks, screenshots, migrations, or manual verification are 
 
 ## Review Method
 
-1. Read this file and `DEV_SKELETON.md`.
+1. Read this file and `SKELETON.md`; fall back to `DEV_SKELETON.md` only in a legacy setup.
 2. Inspect the actual diff and source files.
 3. Lead with concrete findings and file references.
 4. Treat skeleton content as preference, not factual proof.

@@ -1,0 +1,35 @@
+{
+  "name": "dev-skeleton",
+  "version": "0.1.0",
+  "description": "Source-first repository orientation and cohesion workflows for AI-assisted development.",
+  "author": {
+    "name": "Glen Li",
+    "url": "https://github.com/glenzli"
+  },
+  "homepage": "https://github.com/glenzli/dev-skeleton",
+  "repository": "https://github.com/glenzli/dev-skeleton",
+  "license": "MIT",
+  "keywords": [
+    "source-first",
+    "repository",
+    "architecture",
+    "skills",
+    "codex"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Dev Skeleton",
+    "shortDescription": "Source-first repository orientation and cohesion skills.",
+    "longDescription": "Create, refresh, audit, and review bounded repository skeletons while keeping source authoritative and semantic ownership navigable as projects grow.",
+    "developerName": "Glen Li",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Initialize source-first orientation for this repository.",
+      "Review whether this change preserves cohesive ownership."
+    ]
+  }
+}
