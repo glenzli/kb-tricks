@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Dev Skeleton</title>
+  <desc id="desc">Three connected structural windows on a light gray background.</desc>
+  <rect width="512" height="512" rx="112" fill="#F1F3F3"/>
+  <path d="M224 178h64M256 240v60" fill="none" stroke="#6F787A" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="256" cy="240" r="12" fill="#202629"/>
+  <rect x="68" y="116" width="156" height="124" rx="26" fill="#FCFDFD" stroke="#202629" stroke-width="12"/>
+  <rect x="288" y="116" width="156" height="124" rx="26" fill="#FCFDFD" stroke="#202629" stroke-width="12"/>
+  <rect x="178" y="300" width="156" height="124" rx="26" fill="#FCFDFD" stroke="#202629" stroke-width="12"/>
+  <path d="M92 160h108M312 160h108M202 344h108" fill="none" stroke="#D8DDDE" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="104" cy="160" r="6" fill="#202629"/>
+  <circle cx="124" cy="160" r="6" fill="#202629"/>
+  <circle cx="324" cy="160" r="6" fill="#202629"/>
+  <circle cx="344" cy="160" r="6" fill="#202629"/>
+  <circle cx="214" cy="344" r="6" fill="#202629"/>
+  <circle cx="234" cy="344" r="6" fill="#202629"/>
+  <path d="M102 190l15 12-15 12M139 190l-15 12 15 12" fill="none" stroke="#202629" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="160" y="199" width="38" height="10" rx="5" fill="#8A9496"/>
+  <rect x="318" y="190" width="84" height="10" rx="5" fill="#202629"/>
+  <rect x="318" y="212" width="56" height="10" rx="5" fill="#8A9496"/>
+  <rect x="208" y="374" width="96" height="10" rx="5" fill="#202629"/>
+  <rect x="208" y="396" width="62" height="10" rx="5" fill="#8A9496"/>
+</svg>

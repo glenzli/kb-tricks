@@ -23,6 +23,9 @@
     "longDescription": "Create, refresh, audit, and review bounded repository skeletons while keeping source authoritative and semantic ownership navigable as projects grow.",
     "developerName": "Glen Li",
     "category": "Developer Tools",
+    "brandColor": "#202629",
+    "composerIcon": "./assets/dev-skeleton-icon.png",
+    "logo": "./assets/dev-skeleton-icon.png",
     "capabilities": [
       "Read",
       "Write"
