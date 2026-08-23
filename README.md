@@ -20,6 +20,16 @@ repository without copying individual skills into a global skill directory.
 principles while source remains authoritative; neither replaces implementation inspection or the
 model's judgment.
 
+### Install with Codex
+
+```bash
+codex plugin marketplace add glenzli/marketplace --ref main
+codex plugin add dev-skeleton@glenzli-marketplace
+```
+
+Register the reviewed marketplace once, then install or update `dev-skeleton` explicitly from it.
+The marketplace publishes validated release snapshots; development remains in this repository.
+
 ### Rules
 
 - Source is authority: code, config, tests, release artifacts, and maintained docs.
@@ -109,6 +119,16 @@ bundle 顶层 `templates/`；本地 marketplace 可以直接指向本仓库，�
 到全局 skill 目录。
 
 `SKELETON.md` 在模型阅读源码前提供方向；开发期 skill 在源码仍然权威的前提下补充边界判断，两者都不代替对实现的阅读，也不替代模型自身决策。
+
+### 在 Codex 中安装
+
+```bash
+codex plugin marketplace add glenzli/marketplace --ref main
+codex plugin add dev-skeleton@glenzli-marketplace
+```
+
+首次使用时注册一次经过审查的 marketplace，之后从中显式安装或更新 `dev-skeleton`。
+Marketplace 发布的是经过验证的 release snapshot；日常开发仍在本仓库进行。
 
 ### 规则
 
